@@ -12,6 +12,8 @@ import {
   MenuItem,
   Menu,
   Avatar,
+  useMediaQuery,
+  Grid2,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../Layout';
@@ -19,6 +21,7 @@ import apiClient from '../../utils/axiosConfig'; // Use axiosConfig here
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import UserGroups from './UserGroups';
+import { useTheme } from '@emotion/react';
 
 const SettleMate = () => {
   const tokenUsername = localStorage.getItem('tokenUsername');
@@ -31,6 +34,8 @@ const SettleMate = () => {
   const [groupImage, setGroupImage] = useState(null);
   const [joinCode, setJoinCode] = useState('');
   const [anchorEl, setAnchorEl] = useState(null);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
     const authToken = localStorage.getItem('authToken');
@@ -95,42 +100,73 @@ const SettleMate = () => {
             Join Group
           </Button>
         </Box>
-        <UserGroups />
+        {/* <UserGroups /> */}
 
-        <Box>
-          {groups.map((group, index) => (
-            <Card
-              key={index}
-              sx={{ mb: 2, display: 'flex', alignItems: 'center', cursor: 'pointer' }}
-              onClick={() => setGroupDetails(group)}
-            >
-              <Avatar src={group.groupPicture} alt={group.groupName} sx={{ width: 56, height: 56, m: 2 }} />
-              <Typography variant="h6">{group.groupName}</Typography>
-            </Card>
-          ))}
-        </Box>
-
-        {groupDetails && (
-          <Card sx={{ p: 2, mt: 2 }}>
-            <Box display="flex" alignItems="center" justifyContent="space-between">
-              <Box display="flex" alignItems="center">
-                <Avatar src={groupDetails.groupPicture} alt={groupDetails.groupName} sx={{ width: 56, height: 56, mr: 2 }} />
-                <Typography variant="h6">{groupDetails.groupName}</Typography>
-              </Box>
-              <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
-                <MoreVertIcon />
-              </IconButton>
-            </Box>
-            <Menu
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              onClose={() => setAnchorEl(null)}
-              PaperProps={{ style: { width: '200px' } }}
-            >
-              <MenuItem onClick={() => console.log('Generate Code')}>Generate Group Code</MenuItem>
-            </Menu>
+        <Box
+          display="flex"
+          flexDirection={isMobile ? "column" : "row"}
+          gap={1} p={1} sx={{bgcolor: '#f5f5f5', borderRadius:'10px', margin: '-10px'}}
+        >
+          <Card sx={{
+            flex: 1.5, 
+            height: '73vh', // Fixed height relative to viewport
+            overflowY: 'auto',
+            bgcolor: 'white', // Card background color (customizable)
+            borderRadius: 3, // Card border radius (customizable)
+            boxShadow: 3, // Shadow for a modern look
+            scrollbarWidth: 'thin'
+        }}>
+          <Box sx={{padding: '1rem'}}>
+          <Typography position="relative" variant="h6">Groups</Typography>
+          <Grid2 style={{paddingTop:'1rem'}}>
+            {groups.map((group, index) => (
+              <Card
+                key={index}
+                sx={{  mb: 1, display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+                onClick={() => setGroupDetails(group)}
+              >
+                <Avatar src={group.groupPicture} alt={group.groupName} sx={{ width: 56, height: 56, m: 2 }} />
+                <Typography variant="h6">{group.groupName}</Typography>
+              </Card>
+            ))}
+            </Grid2>
+          </Box>
           </Card>
-        )}
+
+          <Card sx={{
+              flex: 3, padding: '1rem',
+              height: '73vh', // Fixed height relative to viewport
+              overflowY: 'auto',
+              bgcolor: 'white', // Card background color (customizable)
+              borderRadius: 3, // Card border radius (customizable)
+              boxShadow: 3, // Shadow for a modern look
+              scrollbarWidth: 'thin'
+          }}>
+            {/* <Typography variant="h6">{groupDetails.groupName}</Typography> */}
+            {groupDetails && (
+              <Card sx={{ p: 1, mt: 1, borderRadius: '8px', backgroundColor: 'transparent' }}>
+                <Box display="flex" alignItems="center" justifyContent="space-between">
+                  <Box display="flex" alignItems="center">
+                    <Avatar src={groupDetails.groupPicture} alt={groupDetails.groupName} sx={{ width: 56, height: 56, mr: 2 }} />
+                    <Typography variant="h6">{groupDetails.groupName}</Typography>
+                  </Box>
+                  <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
+                    <MoreVertIcon />
+                  </IconButton>
+                </Box>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={() => setAnchorEl(null)}
+                  PaperProps={{ style: { width: '200px' } }}
+                >
+                  <MenuItem onClick={() => console.log('Generate Code')}>Generate Group Code</MenuItem>
+                </Menu>
+              </Card>
+            )}
+          </Card>
+
+        </Box>
 
         <Dialog open={openCreateGroup} onClose={() => setOpenCreateGroup(false)}>
           <Box p={3} display="flex" flexDirection="column" alignItems="center">
