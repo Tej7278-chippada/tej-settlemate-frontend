@@ -119,7 +119,7 @@ const SettleMate = () => {
         >
           <Card sx={{
             flex: 1.5, 
-            height: '73vh', // Fixed height relative to viewport
+            height: '77vh', // Fixed height relative to viewport
             overflowY: 'auto',
             bgcolor: 'white', // Card background color (customizable)
             borderRadius: 3, // Card border radius (customizable)
@@ -153,7 +153,7 @@ const SettleMate = () => {
               scrollbarWidth: 'thin'
           }}>
             {/* <Typography variant="h6">{groupDetails.groupName}</Typography> */}
-            { groupDetails && (
+            {/* { groupDetails && (
               <Card sx={{ p: 1, mt: 1, borderRadius: '8px', backgroundColor: 'transparent' }}>
                 <Box display="flex" alignItems="center" justifyContent="space-between">
                   <Box display="flex" alignItems="center">
@@ -173,9 +173,11 @@ const SettleMate = () => {
                   <MenuItem onClick={() => console.log('Generate Code')}>Generate Group Code</MenuItem>
                 </Menu>
               </Card>
-            )}
+            )} */}
             {groupDetailsId ? (
-                <GroupDetails groupId={groupDetailsId} /> // Use GroupDetails component
+                <Box sx={{margin:'-2rem'}}>
+                <GroupDetails groupId={groupDetailsId} /> {/* // Use GroupDetails component */}
+                </Box>
               ) : (
                 <Typography variant="h6">Select a group to see details</Typography>
               )}

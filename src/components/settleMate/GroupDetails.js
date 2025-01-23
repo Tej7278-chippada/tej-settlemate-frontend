@@ -48,22 +48,28 @@ const GroupDetails = ({groupId: propGroupId}) => {
         <Typography>Loading...</Typography>
       </Layout>
     ) : (
-      <Typography>Loading...</Typography>
+      <Box sx={{margin:'2rem'}}>
+        <Typography>Loading...</Typography>
+      </Box>
     );
   }
 
   const content = (
     <Box p={3}>
       <Card sx={{ p: 3, display: 'flex', justifyContent: 'space-between' }}>
-        <div>
-        <Typography variant="h5">{group.groupName}</Typography>
-        <Typography sx={{ display: 'inline-block', float: 'right' }}>
-          <small>{new Date(group.createdAt).toLocaleString()}</small>
-        </Typography>
-        </div>
+        
+          <Box display="flex" alignItems="center">
+            <Avatar src={group.groupPicture} alt={group.groupName} sx={{ width: 56, height: 56, mr: 2 }} />
+            <div>
+            <Typography variant="h5">{group.groupName}</Typography>
+            <Typography variant='body2' sx={{ display: 'inline-block', float: 'right' }}>
+              <small>{new Date(group.createdAt).toLocaleString()}</small>
+            </Typography>
+            </div>
+          </Box>
         <div>
         <Typography variant="subtitle1">Code: {group.joinCode}</Typography>
-        <Typography sx={{ display: 'inline-block', float: 'right' }}>
+        <Typography variant='body2' sx={{ display: 'inline-block', float: 'right' }}>
           <small>{new Date(group.joinCodeExpiry).toLocaleString()}</small>
         </Typography>
         </div>
@@ -79,7 +85,7 @@ const GroupDetails = ({groupId: propGroupId}) => {
                 <Typography>{member.user.username}</Typography>
                 <div style={{ display: 'inline-block', float: 'right', marginLeft:'1rem', }}>
                 <Typography sx={{ color: member?.role === "Admin" ? "blue" : "grey"}}>{member.role}</Typography>
-                <Typography sx={{ display: 'inline-block', float: 'right' }}>
+                <Typography variant='body2' sx={{ display: 'inline-block', float: 'right' }}>
                   <small>{new Date(member.joined_at).toLocaleString()}</small>
                 </Typography>
                 </div>
