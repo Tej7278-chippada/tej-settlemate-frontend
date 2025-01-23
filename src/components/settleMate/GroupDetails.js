@@ -1,15 +1,25 @@
 // GroupDetails.js
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Box, Typography, Card, Avatar, Grid } from '@mui/material';
+import { Box, Typography, Card, Avatar, Grid, useMediaQuery } from '@mui/material';
 import apiClient from '../../utils/axiosConfig';
 import Layout from '../Layout';
+import { useTheme } from '@emotion/react';
 
 const GroupDetails = ({groupId: propGroupId}) => {
   // const { groupId } = useParams();
   const { groupId: paramGroupId } = useParams(); // Get groupId from URL if available
   const groupId = propGroupId || paramGroupId; // Use propGroupId if provided, else use paramGroupId
   const [group, setGroup] = useState(null);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const [isMediaReady, setIsMediaReady] = useState(false); // Track media query readiness
+
+
+  useEffect(() => {
+    // Set media query readiness after first render
+    setIsMediaReady(true);
+  }, [isMobile]);
 
   useEffect(() => {
     const fetchGroupDetails = async () => {
@@ -27,15 +37,22 @@ const GroupDetails = ({groupId: propGroupId}) => {
     fetchGroupDetails();
   }, [groupId]);
 
-  if (!group) {
-    return (
-      <Layout>
-    <Typography>Loading...</Typography>
-    </Layout>);
+  if (!isMediaReady) {
+    // Prevent rendering until media query result is ready
+    return null;
   }
 
-  return (
-    <Layout>
+  if (!group) {
+    return isMobile ? (
+      <Layout>
+        <Typography>Loading...</Typography>
+      </Layout>
+    ) : (
+      <Typography>Loading...</Typography>
+    );
+  }
+
+  const content = (
     <Box p={3}>
       <Card sx={{ p: 3, display: 'flex', justifyContent: 'space-between' }}>
         <div>
@@ -72,8 +89,9 @@ const GroupDetails = ({groupId: propGroupId}) => {
         </Grid>
       </Box>
     </Box>
-    </Layout>
   );
+
+  return isMobile ? <Layout>{content}</Layout> : content;
 };
 
 export default GroupDetails;
