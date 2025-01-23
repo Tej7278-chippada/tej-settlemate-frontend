@@ -22,6 +22,7 @@ import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import UserGroups from './UserGroups';
 import { useTheme } from '@emotion/react';
+import GroupDetails from './GroupDetails';
 
 const SettleMate = () => {
   const tokenUsername = localStorage.getItem('tokenUsername');
@@ -36,6 +37,7 @@ const SettleMate = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const [groupDetailsId, setGroupDetailsId] = useState(null); // Store the selected group ID
 
   useEffect(() => {
     const authToken = localStorage.getItem('authToken');
@@ -48,10 +50,10 @@ const SettleMate = () => {
 
   const fetchGroups = async () => {
     try {
-      const response = await apiClient.get('/api/groups', {
+      const response = await apiClient.get('/api/groups/user-groups', {
         headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
       });
-      setGroups(response.data.groups || []);
+      setGroups(response.data.groups.reverse() || []);
     } catch (error) {
       console.error('Error fetching groups:', error);
     }
@@ -89,6 +91,14 @@ const SettleMate = () => {
     }
   };
 
+  const handleGroupClick = (group) => {
+    setGroupDetails(group);
+    setGroupDetailsId(group._id);
+    if (isMobile) {
+      navigate(`/group/${group._id}`);
+    }
+  };
+
   return (
     <Layout username={tokenUsername}>
       <Box p={2}>
@@ -119,11 +129,11 @@ const SettleMate = () => {
           <Box sx={{padding: '1rem'}}>
           <Typography position="relative" variant="h6">Groups</Typography>
           <Grid2 style={{paddingTop:'1rem'}}>
-            {groups.map((group, index) => (
+            {groups.map((group) => (
               <Card
-                key={index}
-                sx={{  mb: 1, display: 'flex', alignItems: 'center', cursor: 'pointer' }}
-                onClick={() => setGroupDetails(group)}
+                key={group._id}
+                sx={{  mb: 1, display: 'flex', alignItems: 'center', cursor: 'pointer',  '&:hover': { backgroundColor: '#f5f5f5' }, }}
+                onClick={() => handleGroupClick(group)}
               >
                 <Avatar src={group.groupPicture} alt={group.groupName} sx={{ width: 56, height: 56, m: 2 }} />
                 <Typography variant="h6">{group.groupName}</Typography>
@@ -133,7 +143,7 @@ const SettleMate = () => {
           </Box>
           </Card>
 
-          <Card sx={{
+          {!isMobile && ( <Card sx={{
               flex: 3, padding: '1rem',
               height: '73vh', // Fixed height relative to viewport
               overflowY: 'auto',
@@ -143,7 +153,7 @@ const SettleMate = () => {
               scrollbarWidth: 'thin'
           }}>
             {/* <Typography variant="h6">{groupDetails.groupName}</Typography> */}
-            {groupDetails && (
+            { groupDetails && (
               <Card sx={{ p: 1, mt: 1, borderRadius: '8px', backgroundColor: 'transparent' }}>
                 <Box display="flex" alignItems="center" justifyContent="space-between">
                   <Box display="flex" alignItems="center">
@@ -164,7 +174,12 @@ const SettleMate = () => {
                 </Menu>
               </Card>
             )}
-          </Card>
+            {groupDetailsId ? (
+                <GroupDetails groupId={groupDetailsId} /> // Use GroupDetails component
+              ) : (
+                <Typography variant="h6">Select a group to see details</Typography>
+              )}
+          </Card> )}
 
         </Box>
 
