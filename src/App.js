@@ -8,6 +8,7 @@ import PrivateRoute from './components/PriviteRoute';
 import { ThemeProvider, createTheme } from '@mui/material';
 import ForgotPassword from './components/ForgotPassword';
 import SettleMate from './components/settleMate/SettleMate';
+import UserProfile from './components/UserProfile';
 
 const theme = createTheme({
   breakpoints: {
@@ -34,6 +35,11 @@ function App() {
             </PrivateRoute>
         } />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/user/:id" element={
+          <PrivateRoute>
+            <UserProfile />
+          </PrivateRoute>} 
+        />
       </Routes>
     </Router>
     </ThemeProvider>

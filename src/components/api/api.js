@@ -3,9 +3,66 @@ import axios from 'axios';
 
 const API = axios.create({ baseURL: process.env.REACT_APP_API_URL });
 
-export const fetchProducts = () => API.get('/api/products');
-export const addProduct = (data) => API.post('/api/products/add/products', data, { headers: { 'Content-Type': 'multipart/form-data' } });
-export const updateProduct = (id, data) => API.put(`/api/products/${id}`, data, { headers: { 'Content-Type': 'multipart/form-data' } });
-export const deleteProduct = (id) => API.delete(`/api/products/${id}`);
-export const likeProduct = (id) => API.post(`/api/products/${id}/like`);
-export const addComment = (id, comment) => API.post(`/api/products/${id}/comment`, comment);
+// Function to check and refresh the token
+const refreshAuthToken = async () => {
+    const authToken = localStorage.getItem('authToken');
+    if (authToken) {
+        try {
+            const { data } = await axios.post(
+                `${process.env.REACT_APP_API_URL}/api/auth/refresh-token`,
+                {},
+                { headers: { Authorization: `Bearer ${authToken}` } }
+            );
+            const newToken = data.authToken;
+
+            // Update tokens in localStorage
+            const tokens = JSON.parse(localStorage.getItem('authTokens')) || {};
+            const tokenUsername = localStorage.getItem('tokenUsername');
+            tokens[tokenUsername] = newToken;
+            localStorage.setItem('authTokens', JSON.stringify(tokens));
+            localStorage.setItem('authToken', newToken);
+        } catch (error) {
+            console.error('Error refreshing token:', error);
+            // If token refresh fails, log the user out
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('authTokens');
+            localStorage.removeItem('tokenUsername');
+            localStorage.removeItem('userId');
+            localStorage.removeItem('currentPage');
+            window.location.reload();
+        }
+    }
+};
+
+// Add interceptors to refresh token if expired
+API.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+        const originalRequest = error.config;
+
+        if (error.response && error.response.status === 401 && !originalRequest._retry) {
+            originalRequest._retry = true;
+            await refreshAuthToken();
+            const newAuthToken = localStorage.getItem('authToken');
+            if (newAuthToken) {
+                originalRequest.headers['Authorization'] = `Bearer ${newAuthToken}`;
+                return API(originalRequest);
+            }
+        }
+        return Promise.reject(error);
+    }
+);
+
+// Add activity listener to refresh tokens proactively
+let activityTimeout;
+const extendSession = () => {
+    clearTimeout(activityTimeout);
+    activityTimeout = setTimeout(refreshAuthToken, 10 * 60 * 1000); // 10 minutes
+};
+['mousemove', 'keydown', 'scroll', 'click'].forEach((event) =>
+    window.addEventListener(event, extendSession)
+);
+
+export default API;
+
+
