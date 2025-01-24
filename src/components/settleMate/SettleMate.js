@@ -1,3 +1,4 @@
+// components/settleMate/settleMate.js
 import React, { useEffect, useState } from 'react';
 import {
   Box,
@@ -192,7 +193,7 @@ const SettleMate = () => {
                 onClick={() => handleGroupClick(group)}
               >
                 {/* <Avatar src={group.groupPicture} alt={group.groupName} sx={{ width: 56, height: 56, m: 2 }} /> */}
-                <Avatar
+                {/* <Avatar
                   alt={group.groupName[0]}
                   src={
                     group.groupPic
@@ -200,7 +201,16 @@ const SettleMate = () => {
                       : undefined
                   }
                   sx={{ width: 56, height: 56, m: 2 }}
-                >{group.groupName[0]}</Avatar>
+                >{group.groupName[0]}</Avatar> */}
+                <Avatar
+                  src={
+                    group.groupPic
+                      ? `data:image/jpeg;base64,${group.groupPic}`
+                      : 'https://placehold.co/56x56?text=No+Image'
+                  }
+                  alt={group.groupName}
+                  sx={{ width: 56, height: 56, mr: 2, m: 1 }}
+                />
                 <Typography variant="h6">{group.groupName}</Typography>
               </Card>
             ))}
