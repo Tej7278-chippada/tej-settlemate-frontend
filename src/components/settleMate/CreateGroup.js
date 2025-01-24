@@ -11,6 +11,7 @@ import {
   Alert,
   CircularProgress,
   IconButton,
+  Snackbar,
 } from '@mui/material';
 import Cropper from 'react-easy-crop';
 import apiClient from '../../utils/axiosConfig';
@@ -24,8 +25,9 @@ const CreateGroup = ({ open, onClose, onGroupCreated }) => {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  // const [error, setError] = useState('');
   // const [success, setSuccess] = useState('');
+  const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' });
 
   const handleCropComplete = async (_, croppedAreaPixels) => {
     if (!groupPic) return; // Ensure profilePic is set before proceeding
@@ -64,9 +66,25 @@ const CreateGroup = ({ open, onClose, onGroupCreated }) => {
     setGroupPic(null);
   };
 
+  const validateGroupName = () => {
+    const regex = /^[A-Z][a-zA-Z\s]{5,}$/; // Starts with a capital letter and has at least 6 characters
+    if (!groupName) {
+      return 'Please enter the Group Name (e.g., Goa Tour).';
+    }
+    if (!regex.test(groupName)) {
+      return 'Group Name should start with a capital letter and be at least 6 characters long.';
+    }
+    return null;
+  };
+
   const handleCreateGroup = async (e) => {
     e.preventDefault();
-    setError('');
+    // setError('');
+    const validationError = validateGroupName();
+    if (validationError) {
+      setNotification({ open: true, message: validationError, severity: 'warning' });
+      return;
+    }
     setLoading(true);
     setCroppedImage(null);
 
@@ -81,20 +99,40 @@ const CreateGroup = ({ open, onClose, onGroupCreated }) => {
           'Content-Type': 'multipart/form-data',
         },
       });
+      const group = response.data.group;
       // setSuccess(`Group "${groupName}" created successfully.`);
-      onGroupCreated(response.data.group); // Notify parent about the new group
+      onGroupCreated(group); // Notify parent about the new group
       setLoading(false);
       setGroupName('');
       setGroupPic(null);
       onClose();
+      setNotification({
+        open: true,
+        message: `Group "${group.groupName}" created successfully.`,
+        severity: 'success',
+      });
     } catch (error) {
-      console.error('Error creating group:', error);
-      setError('Failed to create group. Try again.');
+      // console.error('Error creating group:', error);
+      // setError('Failed to create group. Try again.');
       setLoading(false);
+      setNotification({
+        open: true,
+        message: 'Error on creating new Group, please try again later.',
+        severity: 'error',
+      });
     }
   };
 
+  const handleCloseNotification = () => {
+    setNotification({ ...notification, open: false });
+};
+
+// const showNotification = (message, severity) => {
+//     setNotification({ open: true, message, severity });
+// };
+
   return (
+    <>
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <Box p={3} display="flex" flexDirection="column" alignItems="center">
         {/* <IconButton component="label">
@@ -187,7 +225,7 @@ const CreateGroup = ({ open, onClose, onGroupCreated }) => {
           value={groupName}
           onChange={(e) => setGroupName(e.target.value)}
         />
-        {error && <Alert severity="error">{error}</Alert>}
+        {/* {error && <Alert severity="error">{error}</Alert>} */}
         {/* {success && <Alert severity="success">{success}</Alert>} */}
         <Button type="submit" variant="contained" color="primary" style={{ marginTop: '1rem', margin: '1rem', maxWidth: '300px' }} onClick={handleCreateGroup} fullWidth disabled={loading}>
           {loading ? <CircularProgress size={24} /> : 'Submit'}
@@ -197,6 +235,18 @@ const CreateGroup = ({ open, onClose, onGroupCreated }) => {
             </Button> */}
       </Box>
     </Dialog>
+
+    <Snackbar
+        open={notification.open}
+        autoHideDuration={6000}
+        onClose={handleCloseNotification}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+    >
+        <Alert onClose={handleCloseNotification} severity={notification.severity} sx={{ width: '100%' }}>
+            {notification.message}
+        </Alert>
+    </Snackbar>
+    </>
   );
 };
 

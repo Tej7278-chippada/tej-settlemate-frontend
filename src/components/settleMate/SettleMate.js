@@ -78,7 +78,7 @@ const SettleMate = () => {
 
   const handleGroupCreated = (newGroup) => {
     setGroups([newGroup, ...groups]);
-    showNotification(`Group created successfully.`, "success");
+    // showNotification(`Group created successfully.`, "success");
   };
 
   const handleGroupJoined = (newGroup) => {
