@@ -1,10 +1,11 @@
 // GroupDetails.js
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Box, Typography, Card, Avatar, Grid, useMediaQuery } from '@mui/material';
+import { Box, Typography, Card, Avatar, Grid, useMediaQuery, IconButton, CircularProgress } from '@mui/material';
 import apiClient from '../../utils/axiosConfig';
 import Layout from '../Layout';
 import { useTheme } from '@emotion/react';
+import { Refresh } from '@mui/icons-material';
 
 const GroupDetails = ({groupId: propGroupId}) => {
   // const { groupId } = useParams();
@@ -14,6 +15,7 @@ const GroupDetails = ({groupId: propGroupId}) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [isMediaReady, setIsMediaReady] = useState(false); // Track media query readiness
+  const [loadingJoinCode, setLoadingJoinCode] = useState(false); // Track loading state for join code
 
 
   useEffect(() => {
@@ -37,6 +39,26 @@ const GroupDetails = ({groupId: propGroupId}) => {
     fetchGroupDetails();
   }, [groupId]);
 
+  const handleGenerateJoinCode = async () => {
+    setLoadingJoinCode(true);
+    try {
+      const response = await apiClient.post(
+        `/api/groups/${groupId}/generate-code`,
+        {},
+        { headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` } }
+      );
+      setGroup((prevGroup) => ({
+        ...prevGroup,
+        joinCode: response.data.joinCode,
+        joinCodeExpiry: new Date(Date.now() + 60 * 60 * 1000).toISOString(), // 1-hour expiry
+      }));
+    } catch (error) {
+      console.error('Error generating new join code:', error);
+    } finally {
+      setLoadingJoinCode(false);
+    }
+  };
+
   if (!isMediaReady) {
     // Prevent rendering until media query result is ready
     return null;
@@ -53,6 +75,10 @@ const GroupDetails = ({groupId: propGroupId}) => {
       </Box>
     );
   }
+
+  const isAdmin = group.members.some(
+    (member) => member.user._id === localStorage.getItem('userId') && member.role === 'Admin'
+  );
 
   const content = (
     <Box p={3}>
@@ -77,7 +103,19 @@ const GroupDetails = ({groupId: propGroupId}) => {
             </div>
           </Box>
         <div>
-        <Typography variant="subtitle1">Code: {group.joinCode}</Typography>
+        <Box display="flex" alignItems="center">
+            <Typography variant="subtitle1">Code: {group.joinCode}</Typography>
+            {isAdmin && (
+              <IconButton
+                onClick={handleGenerateJoinCode}
+                disabled={loadingJoinCode}
+                sx={{ ml: 1 }}
+              >
+                {loadingJoinCode ? <CircularProgress size={20} /> : <Refresh />}
+              </IconButton>
+            )}
+          </Box>
+        {/* <Typography variant="subtitle1">Code: {group.joinCode}</Typography> */}
         <Typography variant='body2' sx={{ display: 'inline-block', float: 'right' }}>
           <small>{new Date(group.joinCodeExpiry).toLocaleString()}</small>
         </Typography>
