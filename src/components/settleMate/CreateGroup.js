@@ -25,7 +25,7 @@ const CreateGroup = ({ open, onClose, onGroupCreated }) => {
   const [zoom, setZoom] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  // const [success, setSuccess] = useState('');
 
   const handleCropComplete = async (_, croppedAreaPixels) => {
     if (!groupPic) return; // Ensure profilePic is set before proceeding
@@ -81,7 +81,7 @@ const CreateGroup = ({ open, onClose, onGroupCreated }) => {
           'Content-Type': 'multipart/form-data',
         },
       });
-      setSuccess(`Group "${groupName}" created successfully.`);
+      // setSuccess(`Group "${groupName}" created successfully.`);
       onGroupCreated(response.data.group); // Notify parent about the new group
       setLoading(false);
       setGroupName('');
@@ -96,25 +96,25 @@ const CreateGroup = ({ open, onClose, onGroupCreated }) => {
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-    <Box p={3} display="flex" flexDirection="column" alignItems="center">
-            {/* <IconButton component="label">
+      <Box p={3} display="flex" flexDirection="column" alignItems="center">
+        {/* <IconButton component="label">
               <AddPhotoAlternateIcon sx={{ fontSize: 48 }} />
               <input type="file" hidden accept="image/*" onChange={(e) => setGroupImage(e.target.files[0])} />
             </IconButton> */}
-            <IconButton
-                    onClick={onClose}
-                    style={{
-                        position: 'absolute',
-                        top: 10,
-                        right: 10,
-                        // color: '#fff', backgroundColor: 'rgba(0, 0, 0, 0.2)',
-                    }}
-                >
-                    <CloseIcon />
-                </IconButton>
-            <Box textAlign="center" paddingTop={1} mb={2} >
-      {croppedImage ? (
-              <div>
+        <IconButton
+          onClick={onClose}
+          style={{
+            position: 'absolute',
+            top: 10,
+            right: 10,
+            // color: '#fff', backgroundColor: 'rgba(0, 0, 0, 0.2)',
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+        <Box textAlign="center" paddingTop={1} mb={2} >
+          {croppedImage ? (
+            <div>
               <img
                 src={croppedImage}
                 alt="Cropped Profile"
@@ -122,9 +122,9 @@ const CreateGroup = ({ open, onClose, onGroupCreated }) => {
                 onClick={() => setCropDialog(true)}
               />
               <Typography variant="body2">Your Profile Pic</Typography>
-              </div>
-            ) : (
-              <div>
+            </div>
+          ) : (
+            <div>
               <img
                 src="https://placehold.co/400?text=Add+Photo"
                 alt="Dummy Profile"
@@ -132,71 +132,71 @@ const CreateGroup = ({ open, onClose, onGroupCreated }) => {
                 onClick={() => setCropDialog(true)}
               />
               <Typography variant="body2">Add Profile Pic</Typography>
-              </div>
-            )}
-            {/* <Typography variant="body2">Profile Pic</Typography> */}
-            </Box>
-            <Dialog open={cropDialog} onClose={() => setCropDialog(false)} fullWidth maxWidth="sm">
-              <DialogTitle>Crop and Upload Picture</DialogTitle>
-              <DialogContent sx={{minHeight:'250px'}}>
-                <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => setGroupPic(e.target.files[0])}
-                style={{ marginTop: 10 }}
-              />
-              {groupPic ? (
-                <Cropper
-                  image={URL.createObjectURL(groupPic)}
-                  crop={crop}
-                  zoom={zoom}
-                  aspect={1}
-                  onCropChange={setCrop}
-                  onZoomChange={setZoom}
-                  onCropComplete={handleCropComplete}
-                />
-              ) : (
-                <Typography variant="body2" textAlign="center">
-                  Please select an image to upload.
-                </Typography>
-              )}
-
-              
-              </DialogContent>
-              <DialogActions>
-              {croppedImage && (
-                <Button color="secondary" onClick={handleReplaceImage}>
-                  Delete
-                </Button>
-              )}
-              <Button onClick={() => setCropDialog(false)}>Cancel</Button>
-              <Button variant="contained"
-                onClick={() => {
-                  setCropDialog(false);
-                }}
-                disabled={!croppedImage}
-              >
-                Save
-              </Button>
-              </DialogActions>
-            </Dialog>
-            <TextField
-              fullWidth 
-              margin="normal" style={{maxWidth:'300px'}}
-              label="Group Name"
-              value={groupName}
-              onChange={(e) => setGroupName(e.target.value)}
+            </div>
+          )}
+          {/* <Typography variant="body2">Profile Pic</Typography> */}
+        </Box>
+        <Dialog open={cropDialog} onClose={() => setCropDialog(false)} fullWidth maxWidth="sm">
+          <DialogTitle>Crop and Upload Picture</DialogTitle>
+          <DialogContent sx={{ minHeight: '250px' }}>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setGroupPic(e.target.files[0])}
+              style={{ marginTop: 10 }}
             />
-            {error && <Alert severity="error">{error}</Alert>}
+            {groupPic ? (
+              <Cropper
+                image={URL.createObjectURL(groupPic)}
+                crop={crop}
+                zoom={zoom}
+                aspect={1}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={handleCropComplete}
+              />
+            ) : (
+              <Typography variant="body2" textAlign="center">
+                Please select an image to upload.
+              </Typography>
+            )}
+
+
+          </DialogContent>
+          <DialogActions>
+            {croppedImage && (
+              <Button color="secondary" onClick={handleReplaceImage}>
+                Delete
+              </Button>
+            )}
+            <Button onClick={() => setCropDialog(false)}>Cancel</Button>
+            <Button variant="contained"
+              onClick={() => {
+                setCropDialog(false);
+              }}
+              disabled={!croppedImage}
+            >
+              Save
+            </Button>
+          </DialogActions>
+        </Dialog>
+        <TextField
+          fullWidth
+          margin="normal" style={{ maxWidth: '300px' }}
+          label="Group Name"
+          value={groupName}
+          onChange={(e) => setGroupName(e.target.value)}
+        />
+        {error && <Alert severity="error">{error}</Alert>}
         {/* {success && <Alert severity="success">{success}</Alert>} */}
-        <Button type="submit" variant="contained" color="primary" style={{marginTop:'1rem', margin:'1rem', maxWidth:'300px'}} marginTop="1rem" onClick={handleCreateGroup} fullWidth disabled={loading}>
+        <Button type="submit" variant="contained" color="primary" style={{ marginTop: '1rem', margin: '1rem', maxWidth: '300px' }} onClick={handleCreateGroup} fullWidth disabled={loading}>
           {loading ? <CircularProgress size={24} /> : 'Submit'}
         </Button>
-            {/* <Button variant="contained" onClick={handleCreateGroup}>
+        {/* <Button variant="contained" onClick={handleCreateGroup}>
               Submit
             </Button> */}
-          </Box>
-          </Dialog>
+      </Box>
+    </Dialog>
   );
 };
 
