@@ -1,7 +1,7 @@
 // GroupDetails.js
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Box, Typography, Card, Avatar, Grid, useMediaQuery, IconButton, CircularProgress } from '@mui/material';
+import { Box, Typography, Card, Avatar, Grid, useMediaQuery, IconButton, CircularProgress, Snackbar, Alert } from '@mui/material';
 import apiClient from '../../utils/axiosConfig';
 import Layout from '../Layout';
 import { useTheme } from '@emotion/react';
@@ -16,6 +16,7 @@ const GroupDetails = ({groupId: propGroupId}) => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [isMediaReady, setIsMediaReady] = useState(false); // Track media query readiness
   const [loadingJoinCode, setLoadingJoinCode] = useState(false); // Track loading state for join code
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: '' }); // Snackbar state
 
 
   useEffect(() => {
@@ -52,12 +53,26 @@ const GroupDetails = ({groupId: propGroupId}) => {
         joinCode: response.data.joinCode,
         joinCodeExpiry: new Date(Date.now() + 60 * 60 * 1000).toISOString(), // 1-hour expiry
       }));
+      // Show success message
+      setSnackbar({
+        open: true,
+        message: 'New Join code generated successfully, & valid till an hour.',
+        severity: 'success',
+      });
     } catch (error) {
       console.error('Error generating new join code:', error);
+      // Show error message
+      setSnackbar({
+        open: true,
+        message: 'Unable to generate new Join code, please try again later.',
+        severity: 'error',
+      });
     } finally {
       setLoadingJoinCode(false);
     }
   };
+
+  const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
 
   if (!isMediaReady) {
     // Prevent rendering until media query result is ready
@@ -154,7 +169,21 @@ const GroupDetails = ({groupId: propGroupId}) => {
     </Box>
   );
 
-  return isMobile ? <Layout>{content}</Layout> : content;
+  return (
+    <>
+      {isMobile ? <Layout>{content}</Layout> : content}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+    </>
+  );
 };
 
 export default GroupDetails;
