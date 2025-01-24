@@ -29,15 +29,31 @@ const JoinGroup = ({ open, onClose, onGroupJoined }) => {
                 { joinCode },
                 { headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` } }
             );
-
-            onGroupJoined(response.data.group); // Notify parent component about the new group
+            const group = response.data.group;
+            onGroupJoined(group); // Notify parent component about the new group
             setLoading(false);
+            setJoinCode('');
             onClose();
-            showNotification('Group joined successfully!', 'success');
+            showNotification(`You are joined the group of ${group.groupName}`, 'success');
         } catch (error) {
-            console.error('Error joining group:', error);
-            showNotification('Failed to join group. Please try again.', 'error');
             setLoading(false);
+            // console.error('Error joining group:', error);
+            // showNotification('Failed to join group. Please try again.', 'error');
+            if (error.response) {
+                const errorMessage = error.response.data.message;
+                if (errorMessage === 'You are already a member of this group') {
+                    showNotification('You are already a member of entered code of Group', 'warning');
+                } else if (errorMessage === 'Invalid join code') {
+                    showNotification('Entered code is wrong, please check the entered code.', 'error');
+                } else if (errorMessage === 'Join code has expired') {
+                    showNotification('Entered code has expired, ask group admin to refresh the group join code.', 'warning');
+                } else {
+                    showNotification('Failed to join group. Please try again.', 'error');
+                }
+            } else {
+                showNotification('An unexpected error occurred. Please try again later.', 'error');
+            }
+            
         }
     };
 
