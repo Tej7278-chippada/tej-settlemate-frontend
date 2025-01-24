@@ -59,7 +59,16 @@ const GroupDetails = ({groupId: propGroupId}) => {
       <Card sx={{ p: 3, display: 'flex', justifyContent: 'space-between' }}>
         
           <Box display="flex" alignItems="center">
-            <Avatar src={group.groupPicture} alt={group.groupName} sx={{ width: 56, height: 56, mr: 2 }} />
+            {/* <Avatar src={group.groupPicture} alt={group.groupName} sx={{ width: 56, height: 56, mr: 2 }} /> */}
+            <Avatar
+                  alt={group.groupName[0]}
+                  src={
+                    group.groupPic
+                      ? `data:image/jpeg;base64,${group.groupPic}`
+                      : undefined
+                  }
+                  sx={{ width: 56, height: 56, mr: 2 }}
+                  >{group.groupName[0]}</Avatar>
             <div>
             <Typography variant="h5">{group.groupName}</Typography>
             <Typography variant='body2' sx={{ display: 'inline-block', float: 'right' }}>
@@ -81,8 +90,18 @@ const GroupDetails = ({groupId: propGroupId}) => {
           {group.members.map((member) => (
             <Grid item key={member.user._id} xs={12} sm={6} md={4}>
               <Card sx={{ display: 'flex', alignItems: 'center', p: 2 }}>
-                <Avatar sx={{ mr: 2 }}>{member.user.username[0]}</Avatar>
+                {/* <Avatar sx={{ mr: 2 }}>{member.user.username[0]}</Avatar> */}
+                <Avatar
+                  alt={member.user.username[0]}
+                  src={
+                    member.user.profilePic
+                      ? `data:image/jpeg;base64,${member.user.profilePic}`
+                      : undefined
+                  }
+                  sx={{ width: 56, height: 56, mr: 2 }}
+                >{member.user.username[0]}</Avatar>
                 <Typography>{member.user.username}</Typography>
+                {/* <Typography>{member.user.phone}</Typography> */}
                 <div style={{ display: 'inline-block', float: 'right', marginLeft:'1rem', }}>
                 <Typography sx={{ color: member?.role === "Admin" ? "blue" : "grey"}}>{member.role}</Typography>
                 <Typography variant='body2' sx={{ display: 'inline-block', float: 'right' }}>

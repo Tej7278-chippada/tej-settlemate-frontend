@@ -14,6 +14,11 @@ import {
   Avatar,
   useMediaQuery,
   Grid2,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Alert,
+  CircularProgress,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../Layout';
@@ -23,6 +28,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import UserGroups from './UserGroups';
 import { useTheme } from '@emotion/react';
 import GroupDetails from './GroupDetails';
+import Cropper from 'react-easy-crop';
 
 const SettleMate = () => {
   const tokenUsername = localStorage.getItem('tokenUsername');
@@ -38,6 +44,14 @@ const SettleMate = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [groupDetailsId, setGroupDetailsId] = useState(null); // Store the selected group ID
+  const [loading, setLoading] = useState(false);
+  const [groupPic, setGroupPic] = useState(null); // State for profile picture
+  const [croppedImage, setCroppedImage] = useState(null);
+  const [cropDialog, setCropDialog] = useState(false);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   useEffect(() => {
     const authToken = localStorage.getItem('authToken');
@@ -59,16 +73,58 @@ const SettleMate = () => {
     }
   };
 
-  const handleCreateGroup = async () => {
+  const handleCropComplete = async (_, croppedAreaPixels) => {
+    if (!groupPic) return; // Ensure profilePic is set before proceeding
+    const canvas = document.createElement('canvas');
+    const image = new Image();
+    // Create an object URL for the image file
+    const objectURL = URL.createObjectURL(groupPic);
+    image.src = objectURL;
+    image.onload = () => {
+      const ctx = canvas.getContext('2d');
+      const { width, height } = croppedAreaPixels;
+      canvas.width = width;
+      canvas.height = height;
+      ctx.drawImage(
+        image,
+        croppedAreaPixels.x,
+        croppedAreaPixels.y,
+        width,
+        height,
+        0,
+        0,
+        width,
+        height
+      );
+      canvas.toBlob((blob) => {
+        // Check if the blob is a valid object before creating a URL
+        if (blob) {
+          setCroppedImage(URL.createObjectURL(blob));
+        }
+      });
+    };
+  };
+
+  const handleReplaceImage = () => {
+    setCroppedImage(null);
+    setGroupPic(null);
+  };
+
+  const handleCreateGroup = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+    setCroppedImage(null);
     try {
       const formData = new FormData();
       formData.append('groupName', groupName);
-      formData.append('groupPicture', groupImage);
+      // formData.append('groupPicture', groupImage);
+      if (groupPic) formData.append('groupPic', groupPic);
 
       const response = await apiClient.post('/api/groups/create', formData, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+        headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}`, 'Content-Type': 'multipart/form-data' },
       });
-
+      setSuccess(`Your new Group created successfully, with name ${groupName} `);
       setGroups([response.data.group, ...groups]);
       setOpenCreateGroup(false);
     } catch (error) {
@@ -135,7 +191,16 @@ const SettleMate = () => {
                 sx={{  mb: 1, display: 'flex', alignItems: 'center', cursor: 'pointer',  '&:hover': { backgroundColor: '#f5f5f5' }, }}
                 onClick={() => handleGroupClick(group)}
               >
-                <Avatar src={group.groupPicture} alt={group.groupName} sx={{ width: 56, height: 56, m: 2 }} />
+                {/* <Avatar src={group.groupPicture} alt={group.groupName} sx={{ width: 56, height: 56, m: 2 }} /> */}
+                <Avatar
+                  alt={group.groupName[0]}
+                  src={
+                    group.groupPic
+                      ? `data:image/jpeg;base64,${group.groupPic}`
+                      : undefined
+                  }
+                  sx={{ width: 56, height: 56, m: 2 }}
+                >{group.groupName[0]}</Avatar>
                 <Typography variant="h6">{group.groupName}</Typography>
               </Card>
             ))}
@@ -187,10 +252,78 @@ const SettleMate = () => {
 
         <Dialog open={openCreateGroup} onClose={() => setOpenCreateGroup(false)}>
           <Box p={3} display="flex" flexDirection="column" alignItems="center">
-            <IconButton component="label">
+            {/* <IconButton component="label">
               <AddPhotoAlternateIcon sx={{ fontSize: 48 }} />
               <input type="file" hidden accept="image/*" onChange={(e) => setGroupImage(e.target.files[0])} />
-            </IconButton>
+            </IconButton> */}
+            <Box textAlign="center" paddingTop={4} mb={2} >
+      {croppedImage ? (
+              <div>
+              <img
+                src={croppedImage}
+                alt="Cropped Profile"
+                style={{ width: '180px', height: '180px', borderRadius: '50%', cursor: 'pointer' }}
+                onClick={() => setCropDialog(true)}
+              />
+              <Typography variant="body2">Your Profile Pic</Typography>
+              </div>
+            ) : (
+              <div>
+              <img
+                src="https://placehold.co/400?text=Add+Photo"
+                alt="Dummy Profile"
+                style={{ width: '180px', height: '180px', borderRadius: '50%', cursor: 'pointer' }}
+                onClick={() => setCropDialog(true)}
+              />
+              <Typography variant="body2">Add Profile Pic</Typography>
+              </div>
+            )}
+            {/* <Typography variant="body2">Profile Pic</Typography> */}
+            </Box>
+            <Dialog open={cropDialog} onClose={() => setCropDialog(false)} fullWidth maxWidth="sm">
+              <DialogTitle>Crop and Upload Picture</DialogTitle>
+              <DialogContent sx={{minHeight:'250px'}}>
+                <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setGroupPic(e.target.files[0])}
+                style={{ marginTop: 10 }}
+              />
+              {groupPic ? (
+                <Cropper
+                  image={URL.createObjectURL(groupPic)}
+                  crop={crop}
+                  zoom={zoom}
+                  aspect={1}
+                  onCropChange={setCrop}
+                  onZoomChange={setZoom}
+                  onCropComplete={handleCropComplete}
+                />
+              ) : (
+                <Typography variant="body2" textAlign="center">
+                  Please select an image to upload.
+                </Typography>
+              )}
+
+              
+              </DialogContent>
+              <DialogActions>
+              {croppedImage && (
+                <Button color="secondary" onClick={handleReplaceImage}>
+                  Delete
+                </Button>
+              )}
+              <Button onClick={() => setCropDialog(false)}>Cancel</Button>
+              <Button variant="contained"
+                onClick={() => {
+                  setCropDialog(false);
+                }}
+                disabled={!croppedImage}
+              >
+                Save
+              </Button>
+              </DialogActions>
+            </Dialog>
             <TextField
               fullWidth
               margin="normal"
@@ -198,9 +331,14 @@ const SettleMate = () => {
               value={groupName}
               onChange={(e) => setGroupName(e.target.value)}
             />
-            <Button variant="contained" onClick={handleCreateGroup}>
+            {error && <Alert severity="error">{error}</Alert>}
+        {success && <Alert severity="success">{success}</Alert>}
+        <Button type="submit" variant="contained" color="primary" onClick={handleCreateGroup} fullWidth disabled={loading}>
+          {loading ? <CircularProgress size={24} /> : 'Submit'}
+        </Button>
+            {/* <Button variant="contained" onClick={handleCreateGroup}>
               Submit
-            </Button>
+            </Button> */}
           </Box>
         </Dialog>
 
