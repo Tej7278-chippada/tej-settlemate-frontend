@@ -2,34 +2,37 @@
 import React, { useEffect, useState } from 'react';
 import {
   Box,
-  List,
+  // List,
   Typography,
   Card,
-  CardContent,
+  // CardContent,
   Dialog,
   TextField,
   Button,
-  IconButton,
-  MenuItem,
-  Menu,
+  // IconButton,
+  // MenuItem,
+  // Menu,
   Avatar,
   useMediaQuery,
   Grid2,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
+  Snackbar,
   Alert,
-  CircularProgress,
+  // DialogTitle,
+  // DialogContent,
+  // DialogActions,
+  // Alert,
+  // CircularProgress,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../Layout';
 import apiClient from '../../utils/axiosConfig'; // Use axiosConfig here
-import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import UserGroups from './UserGroups';
+// import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+// import MoreVertIcon from '@mui/icons-material/MoreVert';
+// import UserGroups from './UserGroups';
 import { useTheme } from '@emotion/react';
 import GroupDetails from './GroupDetails';
-import Cropper from 'react-easy-crop';
+// import Cropper from 'react-easy-crop';
+import CreateGroup from './CreateGroup';
 
 const SettleMate = () => {
   const tokenUsername = localStorage.getItem('tokenUsername');
@@ -37,22 +40,24 @@ const SettleMate = () => {
   const [groups, setGroups] = useState([]);
   const [openCreateGroup, setOpenCreateGroup] = useState(false);
   const [openJoinGroup, setOpenJoinGroup] = useState(false);
-  const [groupDetails, setGroupDetails] = useState(null);
-  const [groupName, setGroupName] = useState('');
-  const [groupImage, setGroupImage] = useState(null);
+  // const [groupDetails, setGroupDetails] = useState(null);
+  // const [groupName, setGroupName] = useState('');
+  // const [groupImage, setGroupImage] = useState(null);
   const [joinCode, setJoinCode] = useState('');
-  const [anchorEl, setAnchorEl] = useState(null);
+  // const [anchorEl, setAnchorEl] = useState(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [groupDetailsId, setGroupDetailsId] = useState(null); // Store the selected group ID
-  const [loading, setLoading] = useState(false);
-  const [groupPic, setGroupPic] = useState(null); // State for profile picture
-  const [croppedImage, setCroppedImage] = useState(null);
-  const [cropDialog, setCropDialog] = useState(false);
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  // const [loading, setLoading] = useState(false);
+  // const [groupPic, setGroupPic] = useState(null); // State for profile picture
+  // const [croppedImage, setCroppedImage] = useState(null);
+  // const [cropDialog, setCropDialog] = useState(false);
+  // const [crop, setCrop] = useState({ x: 0, y: 0 });
+  // const [zoom, setZoom] = useState(1);
+  // const [error, setError] = useState('');
+  // const [success, setSuccess] = useState('');
+  const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' }); // For notifications
+
 
   useEffect(() => {
     const authToken = localStorage.getItem('authToken');
@@ -74,64 +79,64 @@ const SettleMate = () => {
     }
   };
 
-  const handleCropComplete = async (_, croppedAreaPixels) => {
-    if (!groupPic) return; // Ensure profilePic is set before proceeding
-    const canvas = document.createElement('canvas');
-    const image = new Image();
-    // Create an object URL for the image file
-    const objectURL = URL.createObjectURL(groupPic);
-    image.src = objectURL;
-    image.onload = () => {
-      const ctx = canvas.getContext('2d');
-      const { width, height } = croppedAreaPixels;
-      canvas.width = width;
-      canvas.height = height;
-      ctx.drawImage(
-        image,
-        croppedAreaPixels.x,
-        croppedAreaPixels.y,
-        width,
-        height,
-        0,
-        0,
-        width,
-        height
-      );
-      canvas.toBlob((blob) => {
-        // Check if the blob is a valid object before creating a URL
-        if (blob) {
-          setCroppedImage(URL.createObjectURL(blob));
-        }
-      });
-    };
-  };
+  // const handleCropComplete = async (_, croppedAreaPixels) => {
+  //   if (!groupPic) return; // Ensure profilePic is set before proceeding
+  //   const canvas = document.createElement('canvas');
+  //   const image = new Image();
+  //   // Create an object URL for the image file
+  //   const objectURL = URL.createObjectURL(groupPic);
+  //   image.src = objectURL;
+  //   image.onload = () => {
+  //     const ctx = canvas.getContext('2d');
+  //     const { width, height } = croppedAreaPixels;
+  //     canvas.width = width;
+  //     canvas.height = height;
+  //     ctx.drawImage(
+  //       image,
+  //       croppedAreaPixels.x,
+  //       croppedAreaPixels.y,
+  //       width,
+  //       height,
+  //       0,
+  //       0,
+  //       width,
+  //       height
+  //     );
+  //     canvas.toBlob((blob) => {
+  //       // Check if the blob is a valid object before creating a URL
+  //       if (blob) {
+  //         setCroppedImage(URL.createObjectURL(blob));
+  //       }
+  //     });
+  //   };
+  // };
 
-  const handleReplaceImage = () => {
-    setCroppedImage(null);
-    setGroupPic(null);
-  };
+  // const handleReplaceImage = () => {
+  //   setCroppedImage(null);
+  //   setGroupPic(null);
+  // };
 
-  const handleCreateGroup = async (e) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
-    setCroppedImage(null);
-    try {
-      const formData = new FormData();
-      formData.append('groupName', groupName);
-      // formData.append('groupPicture', groupImage);
-      if (groupPic) formData.append('groupPic', groupPic);
+  // const handleCreateGroup = async (e) => {
+  //   e.preventDefault();
+  //   setError('');
+  //   setLoading(true);
+  //   setCroppedImage(null);
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append('groupName', groupName);
+  //     // formData.append('groupPicture', groupImage);
+  //     if (groupPic) formData.append('groupPic', groupPic);
 
-      const response = await apiClient.post('/api/groups/create', formData, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}`, 'Content-Type': 'multipart/form-data' },
-      });
-      setSuccess(`Your new Group created successfully, with name ${groupName} `);
-      setGroups([response.data.group, ...groups]);
-      setOpenCreateGroup(false);
-    } catch (error) {
-      console.error('Error creating group:', error);
-    }
-  };
+  //     const response = await apiClient.post('/api/groups/create', formData, {
+  //       headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}`, 'Content-Type': 'multipart/form-data' },
+  //     });
+  //     setSuccess(`Your new Group created successfully, with name ${groupName} `);
+  //     setGroups([response.data.group, ...groups]);
+  //     setOpenCreateGroup(false);
+  //   } catch (error) {
+  //     console.error('Error creating group:', error);
+  //   }
+  // };
 
   const handleJoinGroup = async () => {
     try {
@@ -149,11 +154,25 @@ const SettleMate = () => {
   };
 
   const handleGroupClick = (group) => {
-    setGroupDetails(group);
+    // setGroupDetails(group);
     setGroupDetailsId(group._id);
     if (isMobile) {
       navigate(`/group/${group._id}`);
     }
+  };
+
+  const handleGroupCreated = (newGroup) => {
+    setGroups([newGroup, ...groups]);
+    // setSuccess('');
+    showNotification(`Group created successfully.`, "success");
+  };
+
+  const handleCloseNotification = () => {
+    setNotification({ ...notification, open: false });
+  };
+
+  const showNotification = (message, severity) => {
+    setNotification({ open: true, message, severity });
   };
 
   return (
@@ -167,6 +186,12 @@ const SettleMate = () => {
             Join Group
           </Button>
         </Box>
+        <CreateGroup
+          open={openCreateGroup}
+          onClose={() => setOpenCreateGroup(false)}
+          onGroupCreated={handleGroupCreated}
+        />
+
         {/* <UserGroups /> */}
 
         <Box
@@ -260,97 +285,7 @@ const SettleMate = () => {
 
         </Box>
 
-        <Dialog open={openCreateGroup} onClose={() => setOpenCreateGroup(false)}>
-          <Box p={3} display="flex" flexDirection="column" alignItems="center">
-            {/* <IconButton component="label">
-              <AddPhotoAlternateIcon sx={{ fontSize: 48 }} />
-              <input type="file" hidden accept="image/*" onChange={(e) => setGroupImage(e.target.files[0])} />
-            </IconButton> */}
-            <Box textAlign="center" paddingTop={4} mb={2} >
-      {croppedImage ? (
-              <div>
-              <img
-                src={croppedImage}
-                alt="Cropped Profile"
-                style={{ width: '180px', height: '180px', borderRadius: '50%', cursor: 'pointer' }}
-                onClick={() => setCropDialog(true)}
-              />
-              <Typography variant="body2">Your Profile Pic</Typography>
-              </div>
-            ) : (
-              <div>
-              <img
-                src="https://placehold.co/400?text=Add+Photo"
-                alt="Dummy Profile"
-                style={{ width: '180px', height: '180px', borderRadius: '50%', cursor: 'pointer' }}
-                onClick={() => setCropDialog(true)}
-              />
-              <Typography variant="body2">Add Profile Pic</Typography>
-              </div>
-            )}
-            {/* <Typography variant="body2">Profile Pic</Typography> */}
-            </Box>
-            <Dialog open={cropDialog} onClose={() => setCropDialog(false)} fullWidth maxWidth="sm">
-              <DialogTitle>Crop and Upload Picture</DialogTitle>
-              <DialogContent sx={{minHeight:'250px'}}>
-                <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => setGroupPic(e.target.files[0])}
-                style={{ marginTop: 10 }}
-              />
-              {groupPic ? (
-                <Cropper
-                  image={URL.createObjectURL(groupPic)}
-                  crop={crop}
-                  zoom={zoom}
-                  aspect={1}
-                  onCropChange={setCrop}
-                  onZoomChange={setZoom}
-                  onCropComplete={handleCropComplete}
-                />
-              ) : (
-                <Typography variant="body2" textAlign="center">
-                  Please select an image to upload.
-                </Typography>
-              )}
-
-              
-              </DialogContent>
-              <DialogActions>
-              {croppedImage && (
-                <Button color="secondary" onClick={handleReplaceImage}>
-                  Delete
-                </Button>
-              )}
-              <Button onClick={() => setCropDialog(false)}>Cancel</Button>
-              <Button variant="contained"
-                onClick={() => {
-                  setCropDialog(false);
-                }}
-                disabled={!croppedImage}
-              >
-                Save
-              </Button>
-              </DialogActions>
-            </Dialog>
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Group Name"
-              value={groupName}
-              onChange={(e) => setGroupName(e.target.value)}
-            />
-            {error && <Alert severity="error">{error}</Alert>}
-        {success && <Alert severity="success">{success}</Alert>}
-        <Button type="submit" variant="contained" color="primary" onClick={handleCreateGroup} fullWidth disabled={loading}>
-          {loading ? <CircularProgress size={24} /> : 'Submit'}
-        </Button>
-            {/* <Button variant="contained" onClick={handleCreateGroup}>
-              Submit
-            </Button> */}
-          </Box>
-        </Dialog>
+       
 
         <Dialog open={openJoinGroup} onClose={() => setOpenJoinGroup(false)}>
           <Box p={3} display="flex" flexDirection="column">
@@ -366,6 +301,16 @@ const SettleMate = () => {
             </Button>
           </Box>
         </Dialog>
+        <Snackbar
+        open={notification.open}
+        autoHideDuration={6000}
+        onClose={handleCloseNotification}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseNotification} severity={notification.severity} sx={{ width: '100%' }}>
+          {notification.message}
+        </Alert>
+      </Snackbar>
       </Box>
     </Layout>
   );
