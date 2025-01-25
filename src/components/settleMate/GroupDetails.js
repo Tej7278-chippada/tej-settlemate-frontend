@@ -1,11 +1,12 @@
 // GroupDetails.js
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Box, Typography, Card, Avatar, Grid, useMediaQuery, IconButton, CircularProgress, Snackbar, Alert } from '@mui/material';
+import { Box, Typography, Card, Avatar, Grid, useMediaQuery, IconButton, CircularProgress, Snackbar, Alert, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button  } from '@mui/material';
 import apiClient from '../../utils/axiosConfig';
 import Layout from '../Layout';
 import { useTheme } from '@emotion/react';
-import { Refresh } from '@mui/icons-material';
+import { Delete, Refresh } from '@mui/icons-material';
+import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 
 const GroupDetails = ({groupId: propGroupId}) => {
   // const { groupId } = useParams();
@@ -17,6 +18,7 @@ const GroupDetails = ({groupId: propGroupId}) => {
   const [isMediaReady, setIsMediaReady] = useState(false); // Track media query readiness
   const [loadingJoinCode, setLoadingJoinCode] = useState(false); // Track loading state for join code
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: '' }); // Snackbar state
+  const [confirmationDialog, setConfirmationDialog] = useState({ open: false, action: null });
 
 
   useEffect(() => {
@@ -95,6 +97,46 @@ const GroupDetails = ({groupId: propGroupId}) => {
     (member) => member.user._id === localStorage.getItem('userId') && member.role === 'Admin'
   );
 
+  const handleDeleteGroup = async () => {
+    try {
+      await apiClient.delete(`/api/groups/${groupId}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+      });
+      setSnackbar({ open: true, message: 'Group deleted successfully.', severity: 'success' });
+      setConfirmationDialog({ open: false, action: null });
+      // Refresh the page
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } catch (error) {
+      setSnackbar({ open: true, message: 'Failed to delete the group.', severity: 'error' });
+    }
+  };
+
+  const handleExitGroup = async () => {
+    try {
+      await apiClient.post(`/api/groups/${groupId}/exit`, {}, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+      });
+      setSnackbar({ open: true, message: 'You have left the group.', severity: 'success' });
+      setConfirmationDialog({ open: false, action: null });
+       // Refresh the page
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } catch (error) {
+      setSnackbar({ open: true, message: 'Failed to leave the group.', severity: 'error' });
+    }
+  };
+
+  const handleOpenConfirmation = (action) => {
+    setConfirmationDialog({ open: true, action });
+  };
+
+  const handleCloseConfirmation = () => {
+    setConfirmationDialog({ open: false, action: null });
+  };
+
   const content = (
     <Box p={3}>
       <Card sx={{ p: 3, display: 'flex', justifyContent: 'space-between' }}>
@@ -111,7 +153,15 @@ const GroupDetails = ({groupId: propGroupId}) => {
                   sx={{ width: 56, height: 56, mr: 2 }}
                   >{group.groupName[0]}</Avatar>
             <div>
-            <Typography variant="h5">{group.groupName}</Typography>
+            <Typography variant="h5">{group.groupName}
+              <IconButton
+                color="error"
+                onClick={() => handleOpenConfirmation(isAdmin ? 'delete' : 'exit')}
+                sx={{ ml: 1 }}
+              >
+                {(isAdmin ? <Delete /> : <LogoutRoundedIcon />) }
+              </IconButton>
+            </Typography>
             <Typography variant='body2' sx={{ display: 'inline-block', float: 'right' }}>
               <small>{new Date(group.createdAt).toLocaleString()}</small>
             </Typography>
@@ -182,6 +232,27 @@ const GroupDetails = ({groupId: propGroupId}) => {
           {snackbar.message}
         </Alert>
       </Snackbar>
+      <Dialog open={confirmationDialog.open} onClose={handleCloseConfirmation}>
+        <DialogTitle>
+          {confirmationDialog.action === 'delete' ? 'Delete Group' : 'Leave Group'}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to {confirmationDialog.action === 'delete' ? 'delete this group permanently' : 'leave this group'}?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseConfirmation}>Cancel</Button>
+          <Button
+            onClick={
+              confirmationDialog.action === 'delete' ? handleDeleteGroup : handleExitGroup
+            }
+            color="error"
+          >
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };
