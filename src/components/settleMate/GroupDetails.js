@@ -195,8 +195,8 @@ const GroupDetails = ({ groupId: propGroupId }) => {
   };
 
   const content = (
-    <Box p={3}>
-      <Card sx={{ p: 3, display: 'flex', justifyContent: 'space-between' }}>
+    <Box p={isMobile ? '6px' : 3}>
+      {/* <Card sx={{ p: (isMobile ? '6px' : 3), display: 'flex', justifyContent: 'space-between' }}>
 
         <Box display="flex" alignItems="center">
           <Avatar
@@ -206,7 +206,7 @@ const GroupDetails = ({ groupId: propGroupId }) => {
                 ? `data:image/jpeg;base64,${group.groupPic}`
                 : undefined
             }
-            sx={{ width: 56, height: 56, mr: 2 }}
+            sx={{ width: 100, height: 100, mr: 2 }}
           >{group.groupName[0]}</Avatar>
           <div>
             <Typography variant="h5">{group.groupName}
@@ -218,14 +218,14 @@ const GroupDetails = ({ groupId: propGroupId }) => {
                 {(isAdmin ? <Delete /> : <LogoutRoundedIcon />)}
               </IconButton>
             </Typography>
-            <Typography variant='body2' sx={{ display: 'inline-block', float: 'right' }}>
-              <small>{new Date(group.createdAt).toLocaleString()}</small>
+            <Typography variant='body2' sx={{  color: 'GrayText', display: 'inline-block', float: 'right' }}>
+              Group created on : <small>{new Date(group.createdAt).toLocaleString()}</small>
             </Typography>
           </div>
         </Box>
         <div>
           <Box display="flex" alignItems="center">
-            <Typography variant="subtitle1">Code: {group.joinCode}</Typography>
+            <Typography variant="subtitle1">Join Code: {group.joinCode}</Typography>
             {isAdmin && (
               <IconButton
                 onClick={handleGenerateJoinCode}
@@ -236,18 +236,93 @@ const GroupDetails = ({ groupId: propGroupId }) => {
               </IconButton>
             )}
           </Box>
-          <Typography variant='body2' sx={{ display: 'inline-block', float: 'right' }}>
-            <small>{new Date(group.joinCodeExpiry).toLocaleString()}</small>
+          <Typography variant='body2' sx={{  color: 'GrayText', display: 'inline-block', float: 'right' }}>
+            Valid till : <small>{new Date(group.joinCodeExpiry).toLocaleString()}</small>
           </Typography>
         </div>
+      </Card> */}
+      <Card sx={{ p: (isMobile ? '6px' : 3), }}>
+
+        <Box
+          display="flex"
+          flexDirection={isMobile ? 'column' : 'row'}
+          justifyContent={isMobile ? 'flex-end' : 'space-between'}
+          alignItems={isMobile ? 'flex-start' : 'center'}
+          gap={isMobile ? 2 : 0} // Add spacing between sections on mobile
+        >
+          {/* Group Name Section */}
+          <Box display="flex" alignItems="center">
+            <Avatar
+              alt={group.groupName[0]}
+              src={
+                group.groupPic
+                  ? `data:image/jpeg;base64,${group.groupPic}`
+                  : undefined
+              }
+              sx={{ width: 100, height: 100, mr: 2 }}
+            >
+              {group.groupName[0]}
+            </Avatar>
+            <Box>
+              <Typography variant="h5">
+                {group.groupName}
+                <IconButton
+                  color="error"
+                  onClick={() => handleOpenConfirmation(isAdmin ? 'delete' : 'exit')}
+                  sx={{ ml: 1 }}
+                >
+                  {isAdmin ? <Delete /> : <LogoutRoundedIcon />}
+                </IconButton>
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={{
+                  color: 'GrayText',
+                  display: isMobile ? 'block' : 'inline-block',
+                }}
+              >
+                Group created on: <small>{new Date(group.createdAt).toLocaleString()}</small>
+              </Typography>
+            </Box>
+          </Box>
+
+          {/* Join Code Section */}
+          <Box display="flex" flexDirection={isMobile ? 'column' : 'column'} alignItems="center" ml={isMobile ? '8rem' : '0rem'}>
+            <Box display="flex" alignItems="center">
+              <Typography variant="subtitle1">
+                Join Code: {group.joinCode}
+              </Typography>
+              {isAdmin && (
+                <IconButton
+                  onClick={handleGenerateJoinCode}
+                  disabled={loadingJoinCode}
+                  sx={{ ml: 1 }}
+                >
+                  {loadingJoinCode ? <CircularProgress size={20} /> : <Refresh />}
+                </IconButton>
+              )}
+            </Box>
+            <Typography
+              variant="body2"
+              sx={{
+                color: 'GrayText',
+                display: isMobile ? 'block' : 'inline-block',
+                mt: isMobile ? 1 : 0, // Add margin on mobile for spacing
+                ml: isMobile ? 0 : 2, // Add margin on desktop for spacing
+              }}
+            >
+              Valid till: <small>{new Date(group.joinCodeExpiry).toLocaleString()}</small>
+            </Typography>
+          </Box>
+        </Box>
       </Card>
 
       <Box mt={2}>
         <Typography variant="h6">Members:</Typography>
-        <Grid container spacing={2}>
+        <Grid container spacing={1}>
           {group.members.map((member) => (
-            <Grid item key={member.user._id} xs={12} sm={6} md={4}>
-              <Card sx={{ display: 'flex', alignItems: 'center', p: 2, justifyContent: 'space-between' }}>
+            <Grid item key={member.user._id} xs={12} sm={12} md={6}>
+              <Card sx={{ display: 'flex', alignItems: 'center', p: (isMobile ? '6px' : 1), justifyContent: 'space-between' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   <Avatar
                     alt={member.user.username[0]}
