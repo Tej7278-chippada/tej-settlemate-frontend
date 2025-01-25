@@ -20,6 +20,7 @@ const GroupDetails = ({groupId: propGroupId}) => {
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: '' }); // Snackbar state
   const [confirmationDialog, setConfirmationDialog] = useState({ open: false, action: null });
   const [groupError, setGroupError] = useState(false); // Track if the group doesn't exist
+  const [confirmationDialog1, setConfirmationDialog1] = useState({ open: false, action: null, data: null });
 
 
   useEffect(() => {
@@ -128,14 +129,15 @@ const GroupDetails = ({groupId: propGroupId}) => {
     }
   };
 
-  const handleRemoveMember = async (memberId) => {
+  const handleRemoveMember = async () => {
+    const { memberId, memberUsername } = confirmationDialog1.data;
     try {
       await apiClient.post(
         `/api/groups/${groupId}/remove-member`,
         { memberId },
         { headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` } }
       );
-      setSnackbar({ open: true, message: 'Member removed successfully.', severity: 'success' });
+      setSnackbar({ open: true, message: `Member ${memberUsername} removed successfully.`, severity: 'success' });
       // Update the group state to reflect the removal
       setGroup((prevGroup) => ({
         ...prevGroup,
@@ -143,7 +145,19 @@ const GroupDetails = ({groupId: propGroupId}) => {
       }));
     } catch (error) {
       setSnackbar({ open: true, message: 'Failed to remove member.', severity: 'error' });
+    } finally {
+      setConfirmationDialog1({ open: false, action: null, data: null });
     }
+  };
+
+  // const handleCloseSnackbar1 = () => setSnackbar({ ...snackbar, open: false });
+
+  const handleOpenConfirmation1 = (action, data) => {
+    setConfirmationDialog1({ open: true, action, data });
+  };
+
+  const handleCloseConfirmation1 = () => {
+    setConfirmationDialog1({ open: false, action: null, data: null });
   };
   
 
@@ -251,7 +265,11 @@ const GroupDetails = ({groupId: propGroupId}) => {
                   {isAdmin && member.role === "Member" && (
                     <IconButton
                       color="error"
-                      onClick={() => handleRemoveMember(member.user._id)}
+                      onClick={() => handleOpenConfirmation1('removeMember', {
+                          memberId: member.user._id,
+                          memberUsername: member.user.username,
+                        })
+                      }
                       aria-label="Delete Member"
                     >
                       <LogoutRoundedIcon />
@@ -293,6 +311,25 @@ const GroupDetails = ({groupId: propGroupId}) => {
             onClick={
               confirmationDialog.action === 'delete' ? handleDeleteGroup : handleExitGroup
             }
+            color="error"
+          >
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={confirmationDialog1.open} onClose={handleCloseConfirmation1}>
+        <DialogTitle>Confirm Action</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {confirmationDialog1.action === 'removeMember'
+              ? `Are you sure you want to remove ${confirmationDialog1.data?.memberUsername} from the group?`
+              : ''}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseConfirmation1}>Cancel</Button>
+          <Button
+            onClick={handleRemoveMember}
             color="error"
           >
             Confirm
