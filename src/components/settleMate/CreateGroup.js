@@ -67,12 +67,12 @@ const CreateGroup = ({ open, onClose, onGroupCreated }) => {
   };
 
   const validateGroupName = () => {
-    const regex = /^[A-Z][a-zA-Z\s]{5,}$/; // Starts with a capital letter and has at least 6 characters
+    const regex = /^[A-Z][a-zA-Z0-9\s]{5,}$/; // Starts with a capital letter, allows numbers, and has at least 6 characters
     if (!groupName) {
       return 'Please enter the Group Name (e.g., Goa Tour).';
     }
     if (!regex.test(groupName)) {
-      return 'Group Name should start with a capital letter and be at least 6 characters long.';
+      return 'Group Name should start with a capital letter, can include numbers, and be at least 6 characters long.';
     }
     return null;
   };
