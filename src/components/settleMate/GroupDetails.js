@@ -128,6 +128,25 @@ const GroupDetails = ({groupId: propGroupId}) => {
     }
   };
 
+  const handleRemoveMember = async (memberId) => {
+    try {
+      await apiClient.post(
+        `/api/groups/${groupId}/remove-member`,
+        { memberId },
+        { headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` } }
+      );
+      setSnackbar({ open: true, message: 'Member removed successfully.', severity: 'success' });
+      // Update the group state to reflect the removal
+      setGroup((prevGroup) => ({
+        ...prevGroup,
+        members: prevGroup.members.filter((member) => member.user._id !== memberId),
+      }));
+    } catch (error) {
+      setSnackbar({ open: true, message: 'Failed to remove member.', severity: 'error' });
+    }
+  };
+  
+
   const handleExitGroup = async () => {
     try {
       await apiClient.post(`/api/groups/${groupId}/exit`, {}, {
@@ -207,25 +226,37 @@ const GroupDetails = ({groupId: propGroupId}) => {
         <Grid container spacing={2}>
           {group.members.map((member) => (
             <Grid item key={member.user._id} xs={12} sm={6} md={4}>
-              <Card sx={{ display: 'flex', alignItems: 'center', p: 2 }}>
+              <Card sx={{ display: 'flex', alignItems: 'center', p: 2, justifyContent: 'space-between' }}>
                 {/* <Avatar sx={{ mr: 2 }}>{member.user.username[0]}</Avatar> */}
-                <Avatar
-                  alt={member.user.username[0]}
-                  src={
-                    member.user.profilePic
-                      ? `data:image/jpeg;base64,${member.user.profilePic}`
-                      : undefined
-                  }
-                  sx={{ width: 56, height: 56, mr: 2 }}
-                >{member.user.username[0]}</Avatar>
-                <Typography>{member.user.username}</Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <Avatar
+                    alt={member.user.username[0]}
+                    src={
+                      member.user.profilePic
+                        ? `data:image/jpeg;base64,${member.user.profilePic}`
+                        : undefined
+                    }
+                    sx={{ width: 56, height: 56, mr: 2 }}
+                  >{member.user.username[0]}</Avatar>
+                  <Box>
+                    <Typography>{member.user.username}</Typography>
                 {/* <Typography>{member.user.phone}</Typography> */}
-                <div style={{ display: 'inline-block', float: 'right', marginLeft:'1rem', }}>
-                <Typography sx={{ color: member?.role === "Admin" ? "blue" : "grey"}}>{member.role}</Typography>
-                <Typography variant='body2' sx={{ display: 'inline-block', float: 'right' }}>
-                  <small>{new Date(member.joined_at).toLocaleString()}</small>
-                </Typography>
-                </div>
+                {/* <div style={{ display: 'inline-block', float: 'right', marginLeft:'1rem', }}> */}
+                    <Typography variant='body1' sx={{ color: member?.role === "Admin" ? "blue" : "grey"}}>{member.role}</Typography>
+                    <Typography variant='body2' sx={{ color:'GrayText', display: 'inline-block', float: 'right' }}>
+                      Joined on : <small>{new Date(member.joined_at).toLocaleString()}</small>
+                    </Typography>
+                  </Box>
+                </Box>
+                  {isAdmin && member.role === "Member" && (
+                    <IconButton
+                      color="error"
+                      onClick={() => handleRemoveMember(member.user._id)}
+                      aria-label="Delete Member"
+                    >
+                      <LogoutRoundedIcon />
+                    </IconButton>
+                  )}
               </Card>
             </Grid>
           ))}
