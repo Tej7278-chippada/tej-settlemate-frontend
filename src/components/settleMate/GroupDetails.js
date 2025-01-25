@@ -109,7 +109,9 @@ const GroupDetails = ({ groupId: propGroupId }) => {
   if (!group) {
     return isMobile ? (
       <Layout>
-        <Typography>Loading...</Typography>
+        <Box sx={{ margin: '2rem', textAlign: 'center' }}>
+          <Typography>Loading...</Typography>
+        </Box>
       </Layout>
     ) : (
       <Box sx={{ margin: '2rem', textAlign: 'center' }}>
