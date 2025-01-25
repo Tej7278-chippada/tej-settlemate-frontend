@@ -137,7 +137,7 @@ const CreateGroup = ({ open, onClose, onGroupCreated }) => {
                   style={{ width: '120px', height: '120px', borderRadius: '50%', cursor: 'pointer' }}
                   onClick={() => setCropDialog(true)}
                 />
-                <Typography variant="body2">Your Profile Pic</Typography>
+                <Typography variant="body2">Your Group Pic</Typography>
               </div>
             ) : (
               <div>
@@ -147,7 +147,7 @@ const CreateGroup = ({ open, onClose, onGroupCreated }) => {
                   style={{ width: '120px', height: '120px', borderRadius: '50%', cursor: 'pointer' }}
                   onClick={() => setCropDialog(true)}
                 />
-                <Typography variant="body2">Add Profile Pic</Typography>
+                <Typography variant="body2">Add Group Pic</Typography>
               </div>
             )}
           </Box>
