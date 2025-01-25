@@ -1,6 +1,6 @@
 // components/settleMate/settleMate.js
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Card, Button, Avatar, useMediaQuery, Grid2, Snackbar, Alert } from '@mui/material';
+import { Box, Typography, Card, Button, Avatar, useMediaQuery, Snackbar, Alert } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../Layout';
 import apiClient from '../../utils/axiosConfig'; // Use axiosConfig here
@@ -8,6 +8,7 @@ import { useTheme } from '@emotion/react';
 import GroupDetails from './GroupDetails';
 import CreateGroup from './CreateGroup';
 import JoinGroup from './JoinGroup';
+import SkeletonGroups from './SkeletonGroups';
 
 const SettleMate = () => {
   const tokenUsername = localStorage.getItem('tokenUsername');
@@ -19,7 +20,7 @@ const SettleMate = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [groupDetailsId, setGroupDetailsId] = useState(null); // Store the selected group ID
   const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' }); // For notifications
-
+  const [loading, setLoading] = useState(true); // Track loading state
 
   useEffect(() => {
     const authToken = localStorage.getItem('authToken');
@@ -39,6 +40,8 @@ const SettleMate = () => {
           } else {
             console.error('Error fetching groups:', error);
           }
+        } finally {
+          setLoading(false); // Stop loading
         }
       };
       fetchGroups();
@@ -97,13 +100,19 @@ const SettleMate = () => {
             overflowY: 'auto',
             bgcolor: 'white', // Card background color (customizable)
             borderRadius: 3, // Card border radius (customizable)
-            boxShadow: 3, // Shadow for a modern look
+            // boxShadow: 3, // Shadow for a modern look
             scrollbarWidth: 'thin'
           }}>
-            <Box sx={{ padding: '1rem' }}>
+            
+            <Box height={isMobile ? "77vh" : "auto"} sx={{ padding: '8px' }}>
               <Typography position="relative" variant="h6">Groups</Typography>
-              <Grid2 style={{ paddingTop: '1rem' }}>
-                {groups.map((group) => (
+
+              {/* <Grid2 style={{ paddingTop: '1rem' }}> */}
+              <Box style={{ paddingTop: '8px', paddingBottom:'1rem' }}>
+                { loading ? (
+                  <SkeletonGroups /> // Show SkeletonGroups while loading
+                ) : (
+                  groups.map((group) => (
                   <Card
                     key={group._id}
                     sx={{ mb: 1, display: 'flex', alignItems: 'center', cursor: 'pointer', '&:hover': { backgroundColor: '#f5f5f5' }, }}
@@ -120,8 +129,11 @@ const SettleMate = () => {
                     />
                     <Typography variant="h6">{group.groupName}</Typography>
                   </Card>
-                ))}
-              </Grid2>
+                ))
+                )}
+              </Box>
+              {/* </Grid2> */}
+
             </Box>
           </Card>
 
