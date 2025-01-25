@@ -45,7 +45,7 @@ const SettleMate = () => {
 
   const fetchGroups = async () => {
     try {
-      const response = await apiClient.get('/api/groups/user-groups', {
+      const response = await apiClient.get('/api/groups', {
         headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
       });
       setGroups(response.data.groups.reverse() || []);
