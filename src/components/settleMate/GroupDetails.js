@@ -127,7 +127,7 @@ const GroupDetails = ({ groupId: propGroupId }) => {
       await apiClient.delete(`/api/groups/${groupId}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
       });
-      setSnackbar({ open: true, message: 'Group deleted successfully.', severity: 'success' });
+      setSnackbar({ open: true, message: `Group ${group.groupName} deleted successfully.`, severity: 'success' });
       setConfirmationDialog({ open: false, action: null });
       // Refresh the page
       setTimeout(() => {
@@ -173,7 +173,7 @@ const GroupDetails = ({ groupId: propGroupId }) => {
       await apiClient.post(`/api/groups/${groupId}/exit`, {}, {
         headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
       });
-      setSnackbar({ open: true, message: 'You have left the group.', severity: 'success' });
+      setSnackbar({ open: true, message: `You have left the group ${group.groupName} .`, severity: 'success' });
       setConfirmationDialog({ open: false, action: null });
       // Refresh the page
       setTimeout(() => {
