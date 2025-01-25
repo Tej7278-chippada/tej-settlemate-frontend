@@ -1,15 +1,14 @@
-// GroupDetails.js
+// components/settleMate/GroupDetails.js
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Box, Typography, Card, Avatar, Grid, useMediaQuery, IconButton, CircularProgress, Snackbar, Alert, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button  } from '@mui/material';
+import { Box, Typography, Card, Avatar, Grid, useMediaQuery, IconButton, CircularProgress, Snackbar, Alert, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@mui/material';
 import apiClient from '../../utils/axiosConfig';
 import Layout from '../Layout';
 import { useTheme } from '@emotion/react';
 import { Delete, Refresh } from '@mui/icons-material';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 
-const GroupDetails = ({groupId: propGroupId}) => {
-  // const { groupId } = useParams();
+const GroupDetails = ({ groupId: propGroupId }) => {
   const { groupId: paramGroupId } = useParams(); // Get groupId from URL if available
   const groupId = propGroupId || paramGroupId; // Use propGroupId if provided, else use paramGroupId
   const [group, setGroup] = useState(null);
@@ -46,7 +45,6 @@ const GroupDetails = ({groupId: propGroupId}) => {
           setGroup(response.data); // Set group data if user is authorized
         }
       } catch (error) {
-        // console.error('Error fetching group details:', error);
         if (error.response?.status === 404) {
           setGroupError(true);
         } else {
@@ -114,7 +112,7 @@ const GroupDetails = ({groupId: propGroupId}) => {
         <Typography>Loading...</Typography>
       </Layout>
     ) : (
-      <Box sx={{margin:'2rem', textAlign: 'center' }}>
+      <Box sx={{ margin: '2rem', textAlign: 'center' }}>
         <Typography>Loading...</Typography>
       </Box>
     );
@@ -161,8 +159,6 @@ const GroupDetails = ({groupId: propGroupId}) => {
     }
   };
 
-  // const handleCloseSnackbar1 = () => setSnackbar({ ...snackbar, open: false });
-
   const handleOpenConfirmation1 = (action, data) => {
     setConfirmationDialog1({ open: true, action, data });
   };
@@ -170,7 +166,7 @@ const GroupDetails = ({groupId: propGroupId}) => {
   const handleCloseConfirmation1 = () => {
     setConfirmationDialog1({ open: false, action: null, data: null });
   };
-  
+
 
   const handleExitGroup = async () => {
     try {
@@ -179,7 +175,7 @@ const GroupDetails = ({groupId: propGroupId}) => {
       });
       setSnackbar({ open: true, message: 'You have left the group.', severity: 'success' });
       setConfirmationDialog({ open: false, action: null });
-       // Refresh the page
+      // Refresh the page
       setTimeout(() => {
         window.location.reload();
       }, 1000);
@@ -199,35 +195,34 @@ const GroupDetails = ({groupId: propGroupId}) => {
   const content = (
     <Box p={3}>
       <Card sx={{ p: 3, display: 'flex', justifyContent: 'space-between' }}>
-        
-          <Box display="flex" alignItems="center">
-            {/* <Avatar src={group.groupPicture} alt={group.groupName} sx={{ width: 56, height: 56, mr: 2 }} /> */}
-            <Avatar
-                  alt={group.groupName[0]}
-                  src={
-                    group.groupPic
-                      ? `data:image/jpeg;base64,${group.groupPic}`
-                      : undefined
-                  }
-                  sx={{ width: 56, height: 56, mr: 2 }}
-                  >{group.groupName[0]}</Avatar>
-            <div>
+
+        <Box display="flex" alignItems="center">
+          <Avatar
+            alt={group.groupName[0]}
+            src={
+              group.groupPic
+                ? `data:image/jpeg;base64,${group.groupPic}`
+                : undefined
+            }
+            sx={{ width: 56, height: 56, mr: 2 }}
+          >{group.groupName[0]}</Avatar>
+          <div>
             <Typography variant="h5">{group.groupName}
               <IconButton
                 color="error"
                 onClick={() => handleOpenConfirmation(isAdmin ? 'delete' : 'exit')}
                 sx={{ ml: 1 }}
               >
-                {(isAdmin ? <Delete /> : <LogoutRoundedIcon />) }
+                {(isAdmin ? <Delete /> : <LogoutRoundedIcon />)}
               </IconButton>
             </Typography>
             <Typography variant='body2' sx={{ display: 'inline-block', float: 'right' }}>
               <small>{new Date(group.createdAt).toLocaleString()}</small>
             </Typography>
-            </div>
-          </Box>
+          </div>
+        </Box>
         <div>
-        <Box display="flex" alignItems="center">
+          <Box display="flex" alignItems="center">
             <Typography variant="subtitle1">Code: {group.joinCode}</Typography>
             {isAdmin && (
               <IconButton
@@ -239,10 +234,9 @@ const GroupDetails = ({groupId: propGroupId}) => {
               </IconButton>
             )}
           </Box>
-        {/* <Typography variant="subtitle1">Code: {group.joinCode}</Typography> */}
-        <Typography variant='body2' sx={{ display: 'inline-block', float: 'right' }}>
-          <small>{new Date(group.joinCodeExpiry).toLocaleString()}</small>
-        </Typography>
+          <Typography variant='body2' sx={{ display: 'inline-block', float: 'right' }}>
+            <small>{new Date(group.joinCodeExpiry).toLocaleString()}</small>
+          </Typography>
         </div>
       </Card>
 
@@ -252,7 +246,6 @@ const GroupDetails = ({groupId: propGroupId}) => {
           {group.members.map((member) => (
             <Grid item key={member.user._id} xs={12} sm={6} md={4}>
               <Card sx={{ display: 'flex', alignItems: 'center', p: 2, justifyContent: 'space-between' }}>
-                {/* <Avatar sx={{ mr: 2 }}>{member.user.username[0]}</Avatar> */}
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   <Avatar
                     alt={member.user.username[0]}
@@ -265,27 +258,25 @@ const GroupDetails = ({groupId: propGroupId}) => {
                   >{member.user.username[0]}</Avatar>
                   <Box>
                     <Typography>{member.user.username}</Typography>
-                {/* <Typography>{member.user.phone}</Typography> */}
-                {/* <div style={{ display: 'inline-block', float: 'right', marginLeft:'1rem', }}> */}
-                    <Typography variant='body1' sx={{ color: member?.role === "Admin" ? "blue" : "grey"}}>{member.role}</Typography>
-                    <Typography variant='body2' sx={{ color:'GrayText', display: 'inline-block', float: 'right' }}>
+                    <Typography variant='body1' sx={{ color: member?.role === "Admin" ? "blue" : "grey" }}>{member.role}</Typography>
+                    <Typography variant='body2' sx={{ color: 'GrayText', display: 'inline-block', float: 'right' }}>
                       Joined on : <small>{new Date(member.joined_at).toLocaleString()}</small>
                     </Typography>
                   </Box>
                 </Box>
-                  {isAdmin && member.role === "Member" && (
-                    <IconButton
-                      color="error"
-                      onClick={() => handleOpenConfirmation1('removeMember', {
-                          memberId: member.user._id,
-                          memberUsername: member.user.username,
-                        })
-                      }
-                      aria-label="Delete Member"
-                    >
-                      <LogoutRoundedIcon />
-                    </IconButton>
-                  )}
+                {isAdmin && member.role === "Member" && (
+                  <IconButton
+                    color="error"
+                    onClick={() => handleOpenConfirmation1('removeMember', {
+                      memberId: member.user._id,
+                      memberUsername: member.user.username,
+                    })
+                    }
+                    aria-label="Delete Member"
+                  >
+                    <LogoutRoundedIcon />
+                  </IconButton>
+                )}
               </Card>
             </Grid>
           ))}

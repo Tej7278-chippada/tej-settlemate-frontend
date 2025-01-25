@@ -1,17 +1,6 @@
 // components/settleMate/JoinGroup.js
 import React, { useState } from 'react';
-import {
-    Box,
-    TextField,
-    Button,
-    Dialog,
-    Snackbar,
-    Alert,
-    DialogContent,
-    IconButton,
-    Typography,
-    CircularProgress,
-} from '@mui/material';
+import { Box, TextField, Button, Dialog, Snackbar, Alert, DialogContent, IconButton, Typography, CircularProgress, } from '@mui/material';
 import apiClient from '../../utils/axiosConfig';
 import CloseIcon from '@mui/icons-material/Close';
 
@@ -37,8 +26,6 @@ const JoinGroup = ({ open, onClose, onGroupJoined }) => {
             showNotification(`You are joined the group of ${group.groupName}`, 'success');
         } catch (error) {
             setLoading(false);
-            // console.error('Error joining group:', error);
-            // showNotification('Failed to join group. Please try again.', 'error');
             if (error.response) {
                 const errorMessage = error.response.data.message;
                 if (errorMessage === 'You are already a member of this group') {
@@ -53,7 +40,7 @@ const JoinGroup = ({ open, onClose, onGroupJoined }) => {
             } else {
                 showNotification('An unexpected error occurred. Please try again later.', 'error');
             }
-            
+
         }
     };
 
@@ -93,9 +80,6 @@ const JoinGroup = ({ open, onClose, onGroupJoined }) => {
                         <Button type="submit" variant="contained" color="primary" style={{ marginTop: '1rem', }} onClick={handleJoinGroup} fullWidth disabled={loading}>
                             {loading ? <CircularProgress size={24} /> : 'Submit'}
                         </Button>
-                        {/* <Button variant="contained" onClick={handleJoinGroup}>
-            Submit
-          </Button> */}
                     </Box>
                 </DialogContent>
             </Dialog>

@@ -1,18 +1,6 @@
 // components/settleMate/settleMate.js
 import React, { useEffect, useState } from 'react';
-import {
-  Box,
-  Typography,
-  Card,
-  // Dialog,
-  // TextField,
-  Button,
-  Avatar,
-  useMediaQuery,
-  Grid2,
-  Snackbar,
-  Alert,
-} from '@mui/material';
+import { Box, Typography, Card, Button, Avatar, useMediaQuery, Grid2, Snackbar, Alert } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../Layout';
 import apiClient from '../../utils/axiosConfig'; // Use axiosConfig here
@@ -27,13 +15,12 @@ const SettleMate = () => {
   const [groups, setGroups] = useState([]);
   const [openCreateGroup, setOpenCreateGroup] = useState(false);
   const [openJoinGroup, setOpenJoinGroup] = useState(false);
-  // const [joinCode, setJoinCode] = useState('');
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [groupDetailsId, setGroupDetailsId] = useState(null); // Store the selected group ID
   const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' }); // For notifications
 
-  
+
   useEffect(() => {
     const authToken = localStorage.getItem('authToken');
     if (!authToken) {
@@ -54,25 +41,9 @@ const SettleMate = () => {
           }
         }
       };
-  
       fetchGroups();
     }
   }, [navigate]);
-
-  // const handleJoinGroup = async () => {
-  //   try {
-  //     const response = await apiClient.post(
-  //       '/api/groups/join',
-  //       { joinCode },
-  //       { headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` } }
-  //     );
-
-  //     setGroups([response.data.group, ...groups]);
-  //     setOpenJoinGroup(false);
-  //   } catch (error) {
-  //     console.error('Error joining group:', error);
-  //   }
-  // };
 
   const handleGroupClick = (group) => {
     setGroupDetailsId(group._id);
@@ -83,7 +54,6 @@ const SettleMate = () => {
 
   const handleGroupCreated = (newGroup) => {
     setGroups([newGroup, ...groups]);
-    // showNotification(`Group created successfully.`, "success");
   };
 
   const handleGroupJoined = (newGroup) => {
@@ -93,10 +63,6 @@ const SettleMate = () => {
   const handleCloseNotification = () => {
     setNotification({ ...notification, open: false });
   };
-
-  // const showNotification = (message, severity) => {
-  //   setNotification({ open: true, message, severity });
-  // };
 
   return (
     <Layout username={tokenUsername}>
@@ -119,8 +85,6 @@ const SettleMate = () => {
           onClose={() => setOpenJoinGroup(false)}
           onGroupJoined={handleGroupJoined}
         />
-
-        {/* <UserGroups /> */}
 
         <Box
           display="flex"
@@ -145,16 +109,6 @@ const SettleMate = () => {
                     sx={{ mb: 1, display: 'flex', alignItems: 'center', cursor: 'pointer', '&:hover': { backgroundColor: '#f5f5f5' }, }}
                     onClick={() => handleGroupClick(group)}
                   >
-                    {/* <Avatar src={group.groupPicture} alt={group.groupName} sx={{ width: 56, height: 56, m: 2 }} /> */}
-                    {/* <Avatar
-                  alt={group.groupName[0]}
-                  src={
-                    group.groupPic
-                      ? `data:image/jpeg;base64,${group.groupPic}`
-                      : undefined
-                  }
-                  sx={{ width: 56, height: 56, m: 2 }}
-                >{group.groupName[0]}</Avatar> */}
                     <Avatar
                       src={
                         group.groupPic
@@ -185,31 +139,14 @@ const SettleMate = () => {
                 <GroupDetails groupId={groupDetailsId} /> {/* // Use GroupDetails component */}
               </Box>
             ) : (
-              <Box sx={{margin:'2rem', textAlign: 'center' }}>
-              <Typography variant="h6">Select a group to see details</Typography>
+              <Box sx={{ margin: '2rem', textAlign: 'center' }}>
+                <Typography variant="h6">Select a group to see details</Typography>
               </Box>
             )}
           </Card>)}
 
         </Box>
 
-
-
-        {/* <Dialog open={openJoinGroup} onClose={() => setOpenJoinGroup(false)}>
-          <Box p={3} display="flex" flexDirection="column">
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Group Code"
-              value={joinCode}
-              onChange={(e) => setJoinCode(e.target.value)}
-            />
-            <Button variant="contained" onClick={handleJoinGroup}>
-              Submit
-            </Button>
-          </Box>
-        </Dialog> */}
-        
         <Snackbar
           open={notification.open}
           autoHideDuration={6000}

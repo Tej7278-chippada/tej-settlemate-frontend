@@ -26,28 +26,28 @@ const theme = createTheme({
 function App() {
   return (
     <ThemeProvider theme={theme}>
-    <Router>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/settleMate" element={ 
+      <Router>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/settleMate" element={
             <PrivateRoute>
               <SettleMate />
             </PrivateRoute>
-        } />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/user/:id" element={
-          <PrivateRoute>
-            <UserProfile />
-          </PrivateRoute>} 
-        />
-        <Route path="/group/:groupId" element={
-          <PrivateRoute>
-            <GroupDetails />
+          } />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/user/:id" element={
+            <PrivateRoute>
+              <UserProfile />
+            </PrivateRoute>}
+          />
+          <Route path="/group/:groupId" element={
+            <PrivateRoute>
+              <GroupDetails />
             </PrivateRoute>
           } />
-      </Routes>
-    </Router>
+        </Routes>
+      </Router>
     </ThemeProvider>
   );
 }
