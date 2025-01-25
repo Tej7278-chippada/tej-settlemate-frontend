@@ -1,6 +1,6 @@
 // components/settleMate/settleMate.js
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Card, Button, Avatar, useMediaQuery, Snackbar, Alert } from '@mui/material';
+import { Box, Typography, Card, Avatar, useMediaQuery, Snackbar, Alert, IconButton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../Layout';
 import apiClient from '../../utils/axiosConfig'; // Use axiosConfig here
@@ -9,6 +9,9 @@ import GroupDetails from './GroupDetails';
 import CreateGroup from './CreateGroup';
 import JoinGroup from './JoinGroup';
 import SkeletonGroups from './SkeletonGroups';
+import PersonAddRoundedIcon from '@mui/icons-material/PersonAddRounded';
+import Diversity2RoundedIcon from '@mui/icons-material/Diversity2Rounded';
+
 
 const SettleMate = () => {
   const tokenUsername = localStorage.getItem('tokenUsername');
@@ -70,14 +73,14 @@ const SettleMate = () => {
   return (
     <Layout username={tokenUsername}>
       <Box p={2}>
-        <Box display="flex" justifyContent="space-between" mb={2}>
+        {/* <Box display="flex" justifyContent="space-between" mb={2}>
           <Button variant="contained" onClick={() => setOpenCreateGroup(true)}>
             Create Group
           </Button>
           <Button variant="outlined" onClick={() => setOpenJoinGroup(true)}>
             Join Group
           </Button>
-        </Box>
+        </Box> */}
         <CreateGroup
           open={openCreateGroup}
           onClose={() => setOpenCreateGroup(false)}
@@ -96,16 +99,35 @@ const SettleMate = () => {
         >
           <Card sx={{
             flex: 1.5,
-            height: '77vh', // Fixed height relative to viewport
+            height: '80vh', // Fixed height relative to viewport
             overflowY: 'auto',
             bgcolor: 'white', // Card background color (customizable)
-            borderRadius: 3, // Card border radius (customizable)
+            borderRadius: 2, // Card border radius (customizable)
             // boxShadow: 3, // Shadow for a modern look
-            scrollbarWidth: 'thin'
+            scrollbarWidth: 'none'
           }}>
             
             <Box height={isMobile ? "77vh" : "auto"} sx={{ padding: '8px' }}>
-              <Typography position="relative" variant="h6">Groups</Typography>
+              <Box display="flex" justifyContent="space-between" mb={2}>
+                <Typography position="relative" variant="h5">Groups</Typography>
+                <Box>
+                  <IconButton
+                    color="default"
+                    onClick={() => setOpenCreateGroup(true)}
+                    sx={{ mr: 1 }}
+                  >
+                    <Diversity2RoundedIcon/>
+                  </IconButton>
+                  <IconButton
+                    color="default"
+                    onClick={() => setOpenJoinGroup(true)}
+                    // sx={{ mr: 1 }}
+                  >
+                    <PersonAddRoundedIcon/>
+                  </IconButton>
+                </Box>
+              </Box>
+              {/* <Typography position="relative" variant="h6">Groups</Typography> */}
 
               {/* <Grid2 style={{ paddingTop: '1rem' }}> */}
               <Box style={{ paddingTop: '8px', paddingBottom:'1rem' }}>
@@ -139,11 +161,11 @@ const SettleMate = () => {
 
           {!isMobile && (<Card sx={{
             flex: 3, padding: '1rem',
-            height: '73vh', // Fixed height relative to viewport
+            height: '76vh', // Fixed height relative to viewport
             overflowY: 'auto',
             bgcolor: 'white', // Card background color (customizable)
-            borderRadius: 3, // Card border radius (customizable)
-            boxShadow: 3, // Shadow for a modern look
+            borderRadius: 2, // Card border radius (customizable)
+            // boxShadow: 3, // Shadow for a modern look
             scrollbarWidth: 'thin'
           }}>
             {groupDetailsId ? (

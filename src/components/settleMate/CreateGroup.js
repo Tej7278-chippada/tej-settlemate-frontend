@@ -113,24 +113,28 @@ const CreateGroup = ({ open, onClose, onGroupCreated }) => {
     <>
       <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
         <Box p={3} display="flex" flexDirection="column" alignItems="center">
-          <IconButton
-            onClick={onClose}
-            style={{
-              position: 'absolute',
-              top: 10,
-              right: 10,
-              // color: '#fff', backgroundColor: 'rgba(0, 0, 0, 0.2)',
-            }}
-          >
-            <CloseIcon />
-          </IconButton>
+          <Box sx={{ textAlign: 'center', marginBottom:'1rem' }}>
+            <Typography variant="h6">Create New Group</Typography>
+            <IconButton
+              onClick={onClose}
+              style={{
+                position: 'absolute',
+                top: 10,
+                right: 10,
+                // color: '#fff', backgroundColor: 'rgba(0, 0, 0, 0.2)',
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
+          </Box>
+          
           <Box textAlign="center" paddingTop={1} mb={2} >
             {croppedImage ? (
               <div>
                 <img
                   src={croppedImage}
                   alt="Cropped Profile"
-                  style={{ width: '180px', height: '180px', borderRadius: '50%', cursor: 'pointer' }}
+                  style={{ width: '120px', height: '120px', borderRadius: '50%', cursor: 'pointer' }}
                   onClick={() => setCropDialog(true)}
                 />
                 <Typography variant="body2">Your Profile Pic</Typography>
@@ -140,7 +144,7 @@ const CreateGroup = ({ open, onClose, onGroupCreated }) => {
                 <img
                   src="https://placehold.co/400?text=Add+Photo"
                   alt="Dummy Profile"
-                  style={{ width: '180px', height: '180px', borderRadius: '50%', cursor: 'pointer' }}
+                  style={{ width: '120px', height: '120px', borderRadius: '50%', cursor: 'pointer' }}
                   onClick={() => setCropDialog(true)}
                 />
                 <Typography variant="body2">Add Profile Pic</Typography>

@@ -55,17 +55,21 @@ const JoinGroup = ({ open, onClose, onGroupJoined }) => {
     return (
         <>
             <Dialog open={open} onClose={onClose}   >
-                <IconButton
-                    onClick={onClose}
-                    style={{
-                        position: 'absolute',
-                        top: 10,
-                        right: 10,
-                        // color: '#fff', backgroundColor: 'rgba(0, 0, 0, 0.2)',
-                    }}
-                >
-                    <CloseIcon />
-                </IconButton>
+                <Box sx={{  marginTop:'1rem', textAlign: 'center' }}>
+                    <Typography variant="h6">Join into group</Typography>
+                    <IconButton
+                        onClick={onClose}
+                        style={{
+                            position: 'absolute',
+                            top: 10,
+                            right: 10,
+                            // color: '#fff', backgroundColor: 'rgba(0, 0, 0, 0.2)',
+                        }}
+                    >
+                        <CloseIcon />
+                    </IconButton>
+                </Box>
+                
                 <DialogContent style={{ minHeight: '200px', }}>
 
                     <Box p={3} display="flex" flexDirection="column">
