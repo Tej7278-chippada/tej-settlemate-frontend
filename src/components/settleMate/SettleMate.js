@@ -33,26 +33,31 @@ const SettleMate = () => {
   const [groupDetailsId, setGroupDetailsId] = useState(null); // Store the selected group ID
   const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' }); // For notifications
 
-
+  
   useEffect(() => {
     const authToken = localStorage.getItem('authToken');
     if (!authToken) {
       navigate('/');
     } else {
+      const fetchGroups = async () => {
+        try {
+          const response = await apiClient.get('/api/groups', {
+            headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+          });
+          setGroups(response.data.groups.reverse() || []);
+        } catch (error) {
+          if (error.response && error.response.status === 401) {
+            console.error('Unauthorized user, redirecting to login');
+            navigate('/');
+          } else {
+            console.error('Error fetching groups:', error);
+          }
+        }
+      };
+  
       fetchGroups();
     }
   }, [navigate]);
-
-  const fetchGroups = async () => {
-    try {
-      const response = await apiClient.get('/api/groups', {
-        headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
-      });
-      setGroups(response.data.groups.reverse() || []);
-    } catch (error) {
-      console.error('Error fetching groups:', error);
-    }
-  };
 
   // const handleJoinGroup = async () => {
   //   try {
@@ -89,9 +94,9 @@ const SettleMate = () => {
     setNotification({ ...notification, open: false });
   };
 
-  const showNotification = (message, severity) => {
-    setNotification({ open: true, message, severity });
-  };
+  // const showNotification = (message, severity) => {
+  //   setNotification({ open: true, message, severity });
+  // };
 
   return (
     <Layout username={tokenUsername}>
