@@ -1,6 +1,6 @@
 // GroupDetails.js
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Box, Typography, Card, Avatar, Grid, useMediaQuery, IconButton, CircularProgress, Snackbar, Alert, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button  } from '@mui/material';
 import apiClient from '../../utils/axiosConfig';
 import Layout from '../Layout';
@@ -21,7 +21,7 @@ const GroupDetails = ({groupId: propGroupId}) => {
   const [confirmationDialog, setConfirmationDialog] = useState({ open: false, action: null });
   const [groupError, setGroupError] = useState(false); // Track if the group doesn't exist
   const [confirmationDialog1, setConfirmationDialog1] = useState({ open: false, action: null, data: null });
-
+  const navigate = useNavigate(); // Initialize navigation
 
   useEffect(() => {
     // Set media query readiness after first render
@@ -35,18 +35,29 @@ const GroupDetails = ({groupId: propGroupId}) => {
         const response = await apiClient.get(`/api/groups/${groupId}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
         });
-        setGroup(response.data);
-        setGroupError(false); // Reset error state if the group exists
+        const userId = localStorage.getItem('userId');
+        const isMember = response.data.members.some(
+          (member) => member.user._id === userId
+        );
+
+        if (!isMember) {
+          navigate('/settleMate'); // Redirect if user is not a member or admin
+        } else {
+          setGroup(response.data); // Set group data if user is authorized
+        }
       } catch (error) {
         // console.error('Error fetching group details:', error);
-        if (error.response && error.response.status === 404) {
-          setGroupError(true); // Set error state for non-existent group
+        if (error.response?.status === 404) {
+          setGroupError(true);
+        } else {
+          console.error('Error fetching group details:', error);
         }
+        navigate('/settleMate'); // Redirect if there's an error (e.g., unauthorized)
       }
     };
 
     fetchGroupDetails();
-  }, [groupId]);
+  }, [groupId, navigate]);
 
   const handleGenerateJoinCode = async () => {
     setLoadingJoinCode(true);
