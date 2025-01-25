@@ -19,6 +19,7 @@ const GroupDetails = ({groupId: propGroupId}) => {
   const [loadingJoinCode, setLoadingJoinCode] = useState(false); // Track loading state for join code
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: '' }); // Snackbar state
   const [confirmationDialog, setConfirmationDialog] = useState({ open: false, action: null });
+  const [groupError, setGroupError] = useState(false); // Track if the group doesn't exist
 
 
   useEffect(() => {
@@ -34,8 +35,12 @@ const GroupDetails = ({groupId: propGroupId}) => {
           headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
         });
         setGroup(response.data);
+        setGroupError(false); // Reset error state if the group exists
       } catch (error) {
-        console.error('Error fetching group details:', error);
+        // console.error('Error fetching group details:', error);
+        if (error.response && error.response.status === 404) {
+          setGroupError(true); // Set error state for non-existent group
+        }
       }
     };
 
@@ -81,13 +86,23 @@ const GroupDetails = ({groupId: propGroupId}) => {
     return null;
   }
 
+  if (groupError) {
+    return (
+      <Box sx={{ margin: '2rem', textAlign: 'center' }}>
+        <Typography variant="h6" color="error">
+          Group doesn't exist, it may have been deleted by Admin.
+        </Typography>
+      </Box>
+    );
+  }
+
   if (!group) {
     return isMobile ? (
       <Layout>
         <Typography>Loading...</Typography>
       </Layout>
     ) : (
-      <Box sx={{margin:'2rem'}}>
+      <Box sx={{margin:'2rem', textAlign: 'center' }}>
         <Typography>Loading...</Typography>
       </Box>
     );

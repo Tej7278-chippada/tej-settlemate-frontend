@@ -180,7 +180,9 @@ const SettleMate = () => {
                 <GroupDetails groupId={groupDetailsId} /> {/* // Use GroupDetails component */}
               </Box>
             ) : (
+              <Box sx={{margin:'2rem', textAlign: 'center' }}>
               <Typography variant="h6">Select a group to see details</Typography>
+              </Box>
             )}
           </Card>)}
 
