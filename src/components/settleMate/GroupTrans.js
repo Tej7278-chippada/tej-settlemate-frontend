@@ -1,7 +1,7 @@
-// components/settleMate/GroupDetails.js
+// components/settleMate/GroupTrans.js
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Box, Typography, Card, Avatar, Grid, useMediaQuery, IconButton,  Snackbar, Alert, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions,  } from '@mui/material';
+import { Box, Typography, Card, Avatar, Grid, useMediaQuery, IconButton,  Snackbar, Alert, Dialog, DialogTitle, DialogContent, DialogActions,  } from '@mui/material';
 import apiClient from '../../utils/axiosConfig';
 import Layout from '../Layout';
 import { useTheme } from '@emotion/react';
@@ -11,6 +11,7 @@ import { useTheme } from '@emotion/react';
 // import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import WidgetsRoundedIcon from '@mui/icons-material/WidgetsRounded';
 import GroupDetails from './GroupDetails';
+import CloseIcon from '@mui/icons-material/Close';
 
 const GroupTrans = ({ groupId: propGroupId }) => {
   const { groupId: paramGroupId } = useParams(); // Get groupId from URL if available
@@ -438,8 +439,19 @@ const GroupTrans = ({ groupId: propGroupId }) => {
           </Button>
         </DialogActions>
       </Dialog> */}
-      <Dialog open={!!groupDetailsId} /* onClose={handleCloseConfirmation1} */ maxWidth="md" fullWidth>
-        <DialogTitle>Group details</DialogTitle>
+      <Dialog open={!!groupDetailsId} onClose={() => setGroupDetailsId(null)} /* onClose={handleCloseConfirmation1} */ maxWidth="md" fullWidth>
+        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }} >
+          Group details
+          <IconButton
+            aria-label="close"
+            onClick={() => setGroupDetailsId(null)} // Close the dialog
+            sx={{
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
         <DialogContent>
           {/* <DialogContentText> */}
           {!isMobile && (<Card sx={{
