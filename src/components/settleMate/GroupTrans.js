@@ -438,10 +438,10 @@ const GroupTrans = ({ groupId: propGroupId }) => {
           </Button>
         </DialogActions>
       </Dialog> */}
-      <Dialog open={groupDetailsId} /* onClose={handleCloseConfirmation1} */ maxWidth="md" fullWidth>
+      <Dialog open={!!groupDetailsId} /* onClose={handleCloseConfirmation1} */ maxWidth="md" fullWidth>
         <DialogTitle>Group details</DialogTitle>
         <DialogContent>
-          <DialogContentText>
+          {/* <DialogContentText> */}
           {!isMobile && (<Card sx={{
             flex: 3, marginInline: '-1rem',
             height: '80vh', // Fixed height relative to viewport
@@ -462,7 +462,7 @@ const GroupTrans = ({ groupId: propGroupId }) => {
               </Box>
             )} */}
           </Card>)}
-          </DialogContentText>
+          {/* </DialogContentText> */}
         </DialogContent>
         <DialogActions>
           {/* <Button onClick={handleCloseConfirmation1}>Cancel</Button> */}
