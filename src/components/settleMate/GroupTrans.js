@@ -1,7 +1,7 @@
 // components/settleMate/GroupTrans.js
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Box, Typography, Card, Avatar, Grid, useMediaQuery, IconButton,  Snackbar, Alert, Dialog, DialogTitle, DialogContent, DialogActions,  } from '@mui/material';
+import { Box, Typography, Card, Avatar, Grid, useMediaQuery, IconButton,  Snackbar, Alert, Dialog, DialogTitle, DialogContent, DialogActions, Toolbar, Button,  } from '@mui/material';
 import apiClient from '../../utils/axiosConfig';
 import Layout from '../Layout';
 import { useTheme } from '@emotion/react';
@@ -208,7 +208,7 @@ const GroupTrans = ({ groupId: propGroupId }) => {
   };
 
   const content = (
-    <Box p={isMobile ? '0px' : 0}>
+    <Box p={isMobile ? '0px' : 0} position="relative">
       {/* <Card sx={{ p: (isMobile ? '6px' : 3), display: 'flex', justifyContent: 'space-between' }}>
 
         <Box display="flex" alignItems="center">
@@ -261,7 +261,7 @@ const GroupTrans = ({ groupId: propGroupId }) => {
                 }}>
 
         <Box
-          display="flex"
+          display="flex" 
           flexDirection={isMobile ? 'row' : 'row'}
           justifyContent={isMobile ? 'space-between' : 'space-between'}
           alignItems={isMobile ? 'center' : 'center'}
@@ -338,11 +338,12 @@ const GroupTrans = ({ groupId: propGroupId }) => {
               Valid till: <small>{new Date(group.joinCodeExpiry).toLocaleString()}</small>
             </Typography> */}
           </Box>
+          
         </Box>
       </Box>
 
-      <Box mt={2}>
-        {/* <Typography variant="h6">Members:</Typography> */}
+      <Box mt={0} height={ isMobile ? 'calc(70vh)' : 'calc(65vh)'} bgcolor="#f5f5f5" >
+        <Typography variant="h6">Members:</Typography>
         <Grid container spacing={1}>
           {/* {group.members.map((member) => (
             <Grid item key={member.user._id} xs={12} sm={12} md={6}>
@@ -383,6 +384,59 @@ const GroupTrans = ({ groupId: propGroupId }) => {
           ))} */}
         </Grid>
       </Box>
+      <Toolbar sx={{
+        position:'static',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        // bgcolor: 'white', borderRadius:'16px',
+        // boxShadow: '0 -2px 5px rgba(0, 0, 0, 0.1)',
+        display: 'flex',
+        justifyContent: 'space-between',
+        marginTop: '0rem',
+      }}>
+        <Box style={{ display: 'flex', flexGrow: 1, }}>
+          <Button
+            variant="contained" size="small"
+            // onClick={() => setIsDeliveryAddressBoxOpen((prev) => !prev)}
+          >Close
+            {/* {isDeliveryAddressBoxOpen ? 'Close Delivery Addresses' : 'Show Delivery Addresses'} */}
+          </Button>
+        </Box>
+        <Box >
+          <IconButton
+            // onClick={handleOpenDeleteDialog}
+            // onMouseEnter={() => setHoveredId(userData._id)} // Set hoveredId to the current button's ID
+            // onMouseLeave={() => setHoveredId(null)} // Reset hoveredId when mouse leaves
+            style={{
+
+              // backgroundColor: hoveredId === userData._id ? '#ffe6e6' : 'rgba(255, 255, 255, 0.2)',
+              // borderRadius: hoveredId === userData._id ? '6px' : '50%',
+              boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
+              display: 'flex',
+              alignItems: 'center', color: 'red'
+              // transition: 'all 0.2s ease',
+            }}
+          >
+            {/* {hoveredId && (
+              <span
+                style={{
+                  fontSize: '14px',
+                  color: '#ff0000',
+                  marginRight: '8px',
+                  whiteSpace: 'nowrap',
+                  opacity: hoveredId === userData._id ? 1 : 0,
+                  transform: hoveredId === userData._id ? 'translateX(0)' : 'translateX(10px)',
+                  transition: 'opacity 0.3s, transform 0.3s',
+                }}
+              >
+                Delete User Account
+              </span>
+            )} */}
+            <CloseIcon />
+          </IconButton>
+        </Box>
+      </Toolbar>
     </Box>
   );
 
