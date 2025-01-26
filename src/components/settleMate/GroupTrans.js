@@ -208,7 +208,7 @@ const GroupTrans = ({ groupId: propGroupId }) => {
   };
 
   const content = (
-    <Box p={isMobile ? '0px' : 0} position="relative">
+    <Box p={isMobile ? '0px' : 0} position="relative" sx={{scrollbarWidth:'none'}}>
       {/* <Card sx={{ p: (isMobile ? '6px' : 3), display: 'flex', justifyContent: 'space-between' }}>
 
         <Box display="flex" alignItems="center">
@@ -254,20 +254,21 @@ const GroupTrans = ({ groupId: propGroupId }) => {
           </Typography>
         </div>
       </Card> */}
-      <Box sx={{ p: (isMobile ? '6px' : 2), 
-                  bgcolor: 'white', // Background color to ensure visibility
-                  boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)', // Optional shadow for separation
-                  padding: '8px 16px', // Padding for a clean look
-                }}>
-
-        <Box
-          display="flex" 
-          flexDirection={isMobile ? 'row' : 'row'}
-          justifyContent={isMobile ? 'space-between' : 'space-between'}
-          alignItems={isMobile ? 'center' : 'center'}
-          gap={isMobile ? 0 : 0} // Add spacing between sections on mobile
-        >
-          {/* Group Name Section */}
+      <Box
+        position="sticky" //fixed
+        top={0}
+        left={0}
+        right={0}
+        zIndex={10}
+        sx={{
+          bgcolor: 'white', // Background color to ensure visibility
+          boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)', // Optional shadow for separation
+          padding: '8px 16px', // Padding for a clean look
+          scrollbarWidth:'none'
+        }}
+      >
+        <Box display="flex" justifyContent="space-between" alignItems="center" sx={{scrollbarWidth:'none'}}>
+          {/* <Typography position="relative" variant="h5">Groups</Typography> */}
           <Box display="flex" alignItems="center">
             <Avatar
               alt={group.groupName[0]}
@@ -283,41 +284,11 @@ const GroupTrans = ({ groupId: propGroupId }) => {
             <Box>
               <Typography variant="h5">
                 {group.groupName}
-                {/* <IconButton
-                  color="error"
-                  onClick={() => handleOpenConfirmation(isAdmin ? 'delete' : 'exit')}
-                  sx={{ ml: 1 }}
-                >
-                  {isAdmin ? <Delete /> : <LogoutRoundedIcon />}
-                </IconButton> */}
-              </Typography>
-              {/* <Typography
-                variant="body2"
-                sx={{
-                  color: 'GrayText',
-                  display: isMobile ? 'block' : 'inline-block',
-                }}
-              >
-                Group created on: <small>{new Date(group.createdAt).toLocaleString()}</small>
-              </Typography> */}
-            </Box>
-          </Box>
-
-          {/* Join Code Section */}
-          <Box display="flex" flexDirection={isMobile ? 'column' : 'column'} alignItems="center" ml={isMobile ? '0rem' : '0rem'}>
+                </Typography>
+                </Box>
+                </Box>
+                <Box display="flex" flexDirection={isMobile ? 'column' : 'column'} alignItems="center" ml={isMobile ? '0rem' : '0rem'}>
             <Box display="flex" alignItems="center">
-              {/* <Typography variant="subtitle1">
-                Join Code: {group.joinCode}
-              </Typography> */}
-              {/* {isAdmin && (
-                <IconButton
-                  onClick={handleGenerateJoinCode}
-                  disabled={loadingJoinCode}
-                  sx={{ ml: 1 }}
-                >
-                  {loadingJoinCode ? <CircularProgress size={20} /> : <Refresh />}
-                </IconButton>
-              )} */}
               <IconButton
                   onClick={() => handleGroupClick(group)}
                 //   disabled={loadingJoinCode}
@@ -326,23 +297,32 @@ const GroupTrans = ({ groupId: propGroupId }) => {
                   <WidgetsRoundedIcon />
                 </IconButton>
             </Box>
-            {/* <Typography
-              variant="body2"
-              sx={{
-                color: 'GrayText',
-                display: isMobile ? 'block' : 'inline-block',
-                mt: isMobile ? 1 : 0, // Add margin on mobile for spacing
-                ml: isMobile ? 0 : 2, // Add margin on desktop for spacing
-              }}
+            </Box>
+          {/* <Box>
+            <IconButton
+              color="default"
+              // onClick={() => setOpenCreateGroup(true)}
+              sx={{ mr: 1 }}
             >
-              Valid till: <small>{new Date(group.joinCodeExpiry).toLocaleString()}</small>
-            </Typography> */}
-          </Box>
-          
+              <CloseIcon />
+            </IconButton>
+            <IconButton
+              color="default"
+              // onClick={() => setOpenJoinGroup(true)}
+            >
+              <CloseIcon />
+            </IconButton>
+          </Box> */}
         </Box>
       </Box>
+      <Box height={isMobile ? 'calc(80vh - 64px)' : 'calc(75vh - 64px)'}
+        sx={{
+        overflowY: 'auto',
+        padding: '8px', scrollbarWidth:'thin'
+      }}>
+      
 
-      <Box mt={0} height={ isMobile ? 'calc(70vh)' : 'calc(65vh)'} bgcolor="#f5f5f5" >
+      <Box mt={0} height={ isMobile ? 'calc(65vh)' : 'calc(65vh)'} bgcolor="#f5f5f5" sx={{scrollbarWidth:'none'}}>
         <Typography variant="h6">Members:</Typography>
         <Grid container spacing={1}>
           {/* {group.members.map((member) => (
@@ -437,6 +417,7 @@ const GroupTrans = ({ groupId: propGroupId }) => {
           </IconButton>
         </Box>
       </Toolbar>
+      </Box>
     </Box>
   );
 
