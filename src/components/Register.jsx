@@ -252,7 +252,7 @@ const Register = () => {
             />
             {error && <Alert severity="error">{error}</Alert>}
             {success && <Alert severity="success">{success}</Alert>}
-            <Button type="submit" variant="contained" color="primary" fullWidth disabled={loading}>
+            <Button type="submit" style={{marginTop:'1rem'}} variant="contained" color="primary" fullWidth disabled={loading}>
               {loading ? <CircularProgress size={24} /> : 'Register'}
             </Button>
             <Typography variant="body2" align="center" style={{ marginTop: '10px' }}>
