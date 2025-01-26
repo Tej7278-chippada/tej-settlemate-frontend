@@ -72,7 +72,7 @@ const SettleMate = () => {
 
   return (
     <Layout username={tokenUsername}>
-      <Box p={2}>
+      <Box  mt={isMobile ? '4px' : '8px'} mb={isMobile ? '4px' : '8px'}>  {/* m={isMobile ? '8px' : '1rem'} sx={{ marginTop: (isMobile ? '-2rem' : '-1rem')}} */}
         {/* <Box display="flex" justifyContent="space-between" mb={2}>
           <Button variant="contained" onClick={() => setOpenCreateGroup(true)}>
             Create Group
@@ -95,7 +95,7 @@ const SettleMate = () => {
         <Box
           display="flex"
           flexDirection={isMobile ? "column" : "row"}
-          gap={1} p={1} sx={{ bgcolor: '#f5f5f5', borderRadius: '10px', margin: '-10px' }}
+          gap={1} p={isMobile ? '6px' : 1} sx={{ bgcolor: '#f5f5f5', borderRadius: '10px',  }} /* p={isMobile ? '6px' : 1} paddingBottom:(isMobile ? '4px' : '8px' ), paddingTop:(isMobile ? '0px' : '8px' ) */
         >
           <Card sx={{
             flex: 1.5,
@@ -149,7 +149,7 @@ const SettleMate = () => {
                       alt={group.groupName}
                       sx={{ width: 56, height: 56, mr: 2, m: 1 }}
                     />
-                    <Typography variant="h6">{group.groupName}</Typography>
+                    <Typography variant="h6" m="1rem">{group.groupName}</Typography>
                   </Card>
                 ))
                 )}
