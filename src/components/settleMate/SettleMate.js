@@ -107,61 +107,92 @@ const SettleMate = () => {
             scrollbarWidth: 'none'
           }}>
             
-            <Box height={isMobile ? "77vh" : "auto"} sx={{ padding: '8px' }}>
-              <Box display="flex" justifyContent="space-between" mb={2}>
-                <Typography position="relative" variant="h5">Groups</Typography>
-                <Box>
-                  <IconButton
-                    color="default"
-                    onClick={() => setOpenCreateGroup(true)}
-                    sx={{ mr: 1 }}
-                  >
-                    <Diversity2RoundedIcon/>
-                  </IconButton>
-                  <IconButton
-                    color="default"
-                    onClick={() => setOpenJoinGroup(true)}
-                    // sx={{ mr: 1 }}
-                  >
-                    <PersonAddRoundedIcon/>
-                  </IconButton>
+            <Box height={isMobile ? "77vh" : "auto"} sx={{ padding: '0px' }}>
+              <Box
+                position="sticky" //fixed
+                top={0}
+                left={0}
+                right={0}
+                zIndex={10}
+                sx={{
+                  bgcolor: 'white', // Background color to ensure visibility
+                  boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)', // Optional shadow for separation
+                  padding: '8px 16px', // Padding for a clean look
+                }}
+              >
+                <Box display="flex" justifyContent="space-between" alignItems="center">
+                  <Typography position="relative" variant="h5">Groups</Typography>
+                  <Box>
+                    <IconButton
+                      color="default"
+                      onClick={() => setOpenCreateGroup(true)}
+                      sx={{ mr: 1 }}
+                    >
+                      <Diversity2RoundedIcon />
+                    </IconButton>
+                    <IconButton
+                      color="default"
+                      onClick={() => setOpenJoinGroup(true)}
+                    >
+                      <PersonAddRoundedIcon />
+                    </IconButton>
+                  </Box>
                 </Box>
               </Box>
+
               {/* <Typography position="relative" variant="h6">Groups</Typography> */}
 
               {/* <Grid2 style={{ paddingTop: '1rem' }}> */}
-              <Box style={{ paddingTop: '8px', paddingBottom:'1rem' }}>
-                { loading ? (
-                  <SkeletonGroups /> // Show SkeletonGroups while loading
-                ) : (
-                  groups.map((group) => (
-                  <Card
-                    key={group._id}
-                    sx={{ mb: 1, display: 'flex', alignItems: 'center', cursor: 'pointer', '&:hover': { backgroundColor: '#f5f5f5' }, }}
-                    onClick={() => handleGroupClick(group)}
-                  >
-                    <Avatar
-                      src={
-                        group.groupPic
-                          ? `data:image/jpeg;base64,${group.groupPic}`
-                          : 'https://placehold.co/56x56?text=No+Image'
-                      }
-                      alt={group.groupName}
-                      sx={{ width: 56, height: 56, mr: 2, m: 1 }}
-                    />
-                    <Typography variant="h6" m="1rem">{group.groupName}</Typography>
-                  </Card>
-                ))
-                )}
+              <Box
+                // mt="64px" // Matches the approximate height of the fixed header
+                height="calc(80vh - 64px)" // Adjust the height of the scrollable area
+                sx={{
+                  overflowY: 'auto',
+                  padding: '8px', scrollbarWidth:'none'
+                }}
+              >
+                <Box style={{ paddingTop: '8px', paddingBottom: '1rem' }}>
+                  {loading ? (
+                    <SkeletonGroups /> // Show SkeletonGroups while loading
+                  ) : (
+                    groups.map((group) => (
+                      <Card
+                        key={group._id}
+                        sx={{
+                          mb: 1,
+                          display: 'flex',
+                          alignItems: 'center',
+                          cursor: 'pointer',
+                          '&:hover': { backgroundColor: '#f5f5f5' },
+                        }}
+                        onClick={() => handleGroupClick(group)}
+                      >
+                        <Avatar
+                          src={
+                            group.groupPic
+                              ? `data:image/jpeg;base64,${group.groupPic}`
+                              : 'https://placehold.co/56x56?text=No+Image'
+                          }
+                          alt={group.groupName}
+                          sx={{ width: 56, height: 56, mr: 2, m: 1 }}
+                        />
+                        <Typography variant="h6" m="1rem">
+                          {group.groupName}
+                        </Typography>
+                      </Card>
+                    ))
+                  )}
+                </Box>
               </Box>
+
               {/* </Grid2> */}
 
             </Box>
           </Card>
 
           {!isMobile && (<Card sx={{
-            flex: 3, padding: '1rem',
-            height: '76vh', // Fixed height relative to viewport
+            flex: 3, padding: '0rem',
+            height: '80vh', // Fixed height relative to viewport
             overflowY: 'auto',
             bgcolor: 'white', // Card background color (customizable)
             borderRadius: 2, // Card border radius (customizable)
@@ -169,12 +200,12 @@ const SettleMate = () => {
             scrollbarWidth: 'thin'
           }}>
             {groupDetailsId ? (
-              <Box sx={{ margin: '-2rem' }}>
+              <Box sx={{ margin: '0rem' }}>
                 <GroupDetails groupId={groupDetailsId} /> {/* // Use GroupDetails component */}
               </Box>
             ) : (
-              <Box sx={{ margin: '2rem', textAlign: 'center' }}>
-                <Typography variant="h6">Select a group to see details</Typography>
+              <Box sx={{ margin: '0rem', textAlign: 'center', marginTop:'1rem' }}>
+                <Typography variant="h6" color="grey">Select a group to see details</Typography>
               </Box>
             )}
           </Card>)}
