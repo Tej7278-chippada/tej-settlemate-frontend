@@ -5,12 +5,13 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '../Layout';
 import apiClient from '../../utils/axiosConfig'; // Use axiosConfig here
 import { useTheme } from '@emotion/react';
-import GroupDetails from './GroupDetails';
+// import GroupDetails from './GroupDetails';
 import CreateGroup from './CreateGroup';
 import JoinGroup from './JoinGroup';
 import SkeletonGroups from './SkeletonGroups';
 import PersonAddRoundedIcon from '@mui/icons-material/PersonAddRounded';
 import Diversity2RoundedIcon from '@mui/icons-material/Diversity2Rounded';
+import GroupTrans from './GroupTrans';
 
 
 const SettleMate = () => {
@@ -201,7 +202,7 @@ const SettleMate = () => {
           }}>
             {groupDetailsId ? (
               <Box sx={{ margin: '0rem' }}>
-                <GroupDetails groupId={groupDetailsId} /> {/* // Use GroupDetails component */}
+                <GroupTrans groupId={groupDetailsId} /> {/* // Use GroupDetails component */}
               </Box>
             ) : (
               <Box sx={{ margin: '0rem', textAlign: 'center', marginTop: '1rem' }}>

@@ -10,6 +10,7 @@ import ForgotPassword from './components/ForgotPassword';
 import SettleMate from './components/settleMate/SettleMate';
 import UserProfile from './components/UserProfile';
 import GroupDetails from './components/settleMate/GroupDetails';
+import GroupTrans from './components/settleMate/GroupTrans';
 
 const theme = createTheme({
   breakpoints: {
@@ -41,9 +42,14 @@ function App() {
               <UserProfile />
             </PrivateRoute>}
           />
-          <Route path="/group/:groupId" element={
+          <Route path="/group-details/:groupId" element={
             <PrivateRoute>
               <GroupDetails />
+            </PrivateRoute>
+          } />
+          <Route path="/group/:groupId" element={
+            <PrivateRoute>
+              <GroupTrans />
             </PrivateRoute>
           } />
         </Routes>
