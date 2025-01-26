@@ -72,7 +72,7 @@ const SettleMate = () => {
 
   return (
     <Layout username={tokenUsername}>
-      <Box  mt={isMobile ? '4px' : '8px'} mb={isMobile ? '4px' : '8px'}>  {/* m={isMobile ? '8px' : '1rem'} sx={{ marginTop: (isMobile ? '-2rem' : '-1rem')}} */}
+      <Box mt={isMobile ? '4px' : '8px'} mb={isMobile ? '4px' : '8px'}>  {/* m={isMobile ? '8px' : '1rem'} sx={{ marginTop: (isMobile ? '-2rem' : '-1rem')}} */}
         {/* <Box display="flex" justifyContent="space-between" mb={2}>
           <Button variant="contained" onClick={() => setOpenCreateGroup(true)}>
             Create Group
@@ -95,7 +95,7 @@ const SettleMate = () => {
         <Box
           display="flex"
           flexDirection={isMobile ? "column" : "row"}
-          gap={1} p={isMobile ? '6px' : 1} sx={{ bgcolor: '#f5f5f5', borderRadius: '10px',  }} /* p={isMobile ? '6px' : 1} paddingBottom:(isMobile ? '4px' : '8px' ), paddingTop:(isMobile ? '0px' : '8px' ) */
+          gap={1} p={isMobile ? '6px' : 1} sx={{ bgcolor: '#f5f5f5', borderRadius: '10px', }} /* p={isMobile ? '6px' : 1} paddingBottom:(isMobile ? '4px' : '8px' ), paddingTop:(isMobile ? '0px' : '8px' ) */
         >
           <Card sx={{
             flex: 1.5,
@@ -106,7 +106,7 @@ const SettleMate = () => {
             // boxShadow: 3, // Shadow for a modern look
             scrollbarWidth: 'none'
           }}>
-            
+
             <Box height={isMobile ? "77vh" : "auto"} sx={{ padding: '0px' }}>
               <Box
                 position="sticky" //fixed
@@ -148,7 +148,7 @@ const SettleMate = () => {
                 height="calc(80vh - 64px)" // Adjust the height of the scrollable area
                 sx={{
                   overflowY: 'auto',
-                  padding: '8px', scrollbarWidth:'none'
+                  padding: '8px', scrollbarWidth: 'none'
                 }}
               >
                 <Box style={{ paddingTop: '8px', paddingBottom: '1rem' }}>
@@ -204,7 +204,7 @@ const SettleMate = () => {
                 <GroupDetails groupId={groupDetailsId} /> {/* // Use GroupDetails component */}
               </Box>
             ) : (
-              <Box sx={{ margin: '0rem', textAlign: 'center', marginTop:'1rem' }}>
+              <Box sx={{ margin: '0rem', textAlign: 'center', marginTop: '1rem' }}>
                 <Typography variant="h6" color="grey">Select a group to see details</Typography>
               </Box>
             )}
