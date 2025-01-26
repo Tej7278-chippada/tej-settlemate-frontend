@@ -12,6 +12,7 @@ import { useTheme } from '@emotion/react';
 import WidgetsRoundedIcon from '@mui/icons-material/WidgetsRounded';
 import GroupDetails from './GroupDetails';
 import CloseIcon from '@mui/icons-material/Close';
+import { Close } from '@mui/icons-material';
 
 const GroupTrans = ({ groupId: propGroupId }) => {
   const { groupId: paramGroupId } = useParams(); // Get groupId from URL if available
@@ -322,7 +323,7 @@ const GroupTrans = ({ groupId: propGroupId }) => {
       }}>
       
 
-      <Box mt={0} height={ isMobile ? 'calc(65vh)' : 'calc(65vh)'} bgcolor="#f5f5f5" sx={{scrollbarWidth:'none'}}>
+      <Box mt={0} height={ isMobile ? 'calc(80vh)' : 'calc(67vh)'} bgcolor="#f5f5f5" sx={{scrollbarWidth:'none'}}>
         <Typography variant="h6">Members:</Typography>
         <Grid container spacing={1}>
           {/* {group.members.map((member) => (
@@ -363,8 +364,45 @@ const GroupTrans = ({ groupId: propGroupId }) => {
             </Grid>
           ))} */}
         </Grid>
+        <IconButton
+          // onClick={(event) => {
+            // event.stopPropagation(); // Prevent triggering the parent onClick
+            // handleRemove(product._id);
+          // }}
+          // onMouseEnter={() => setHoveredId(product._id)} // Set hoveredId to the current button's ID
+          // onMouseLeave={() => setHoveredId(null)} // Reset hoveredId when mouse leaves
+          style={{
+            position: 'absolute',
+            bottom: '15px',
+            right: '25px',
+            // backgroundColor: hoveredId === product._id ? '#ffe6e6' : 'rgba(255, 255, 255, 0.2)',
+            // borderRadius: hoveredId === product._id ? '6px' : '50%',
+            boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
+            display: 'flex',
+            alignItems: 'center',
+            //  color: 'red'
+            // transition: 'all 0.2s ease',
+          }}
+        >
+          {/* {hoveredId === product._id && (
+            <span
+              style={{
+                fontSize: '14px',
+                color: '#ff0000',
+                marginRight: '8px',
+                whiteSpace: 'nowrap',
+                opacity: hoveredId === product._id ? 1 : 0,
+                transform: hoveredId === product._id ? 'translateX(0)' : 'translateX(10px)',
+                transition: 'opacity 0.3s, transform 0.3s',
+              }}
+            >
+              Remove from Wishlist
+            </span>
+          )} */}
+          <Close />
+        </IconButton>
       </Box>
-      <Toolbar sx={{
+      {/* <Toolbar sx={{
         position:'static',
         bottom: 0,
         left: 0,
@@ -380,7 +418,7 @@ const GroupTrans = ({ groupId: propGroupId }) => {
             variant="contained" size="small"
             // onClick={() => setIsDeliveryAddressBoxOpen((prev) => !prev)}
           >Close
-            {/* {isDeliveryAddressBoxOpen ? 'Close Delivery Addresses' : 'Show Delivery Addresses'} */}
+            {isDeliveryAddressBoxOpen ? 'Close Delivery Addresses' : 'Show Delivery Addresses'}
           </Button>
         </Box>
         <Box >
@@ -398,7 +436,7 @@ const GroupTrans = ({ groupId: propGroupId }) => {
               // transition: 'all 0.2s ease',
             }}
           >
-            {/* {hoveredId && (
+            {hoveredId && (
               <span
                 style={{
                   fontSize: '14px',
@@ -412,11 +450,11 @@ const GroupTrans = ({ groupId: propGroupId }) => {
               >
                 Delete User Account
               </span>
-            )} */}
+            )}
             <CloseIcon />
           </IconButton>
         </Box>
-      </Toolbar>
+      </Toolbar> */}
       </Box>
     </Box>
   );
