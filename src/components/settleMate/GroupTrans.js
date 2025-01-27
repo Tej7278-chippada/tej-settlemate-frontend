@@ -1,7 +1,7 @@
 // components/settleMate/GroupTrans.js
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Box, Typography, Card, Avatar, Grid, useMediaQuery, IconButton,  Snackbar, Alert, Dialog, DialogTitle, DialogContent, DialogActions, } from '@mui/material';
+import { Box, Typography, Card, Avatar, Grid, useMediaQuery, IconButton,  Snackbar, Alert, Dialog, DialogTitle, DialogContent, DialogActions, TextField, FormControlLabel, Checkbox, Button, List, ListItem, ListItemText, ListItemSecondaryAction, } from '@mui/material';
 import apiClient from '../../utils/axiosConfig';
 import Layout from '../Layout';
 import { useTheme } from '@emotion/react';
@@ -21,10 +21,29 @@ const GroupTrans = ({ groupId: propGroupId }) => {
   const [groupError, setGroupError] = useState(false); // Track if the group doesn't exist
   const navigate = useNavigate(); // Initialize navigation
   const [groupDetailsId, setGroupDetailsId] = useState(null); // Store the selected group ID
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [transactionDetails, setTransactionDetails] = useState({
+    amount: '',
+    description: '',
+    paidBy: [],
+    splitTo: [],
+  });
+
+  const fetchGroupDetails1 = async () => {
+    try {
+      const response = await apiClient.get(`/api/groups/${groupId}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+      });
+      setGroup(response.data);
+    } catch (error) {
+      console.error('Error fetching group details:', error);
+    }
+  };
 
   useEffect(() => {
     // Set media query readiness after first render
     setIsMediaReady(true);
+    fetchGroupDetails1();
   }, [isMobile]);
 
   useEffect(() => {
@@ -95,6 +114,53 @@ const GroupTrans = ({ groupId: propGroupId }) => {
     }
   };
 
+ 
+
+  // useEffect(() => {
+  //   fetchGroupDetails1();
+  // }, [groupId]);
+
+  // const fetchGroupMembers = async () => {
+  //   try {
+  //     const response = await apiClient.get(`/api/groups/${groupId}`);
+  //     setGroupMembers(response.data.members);
+  //   } catch (error) {
+  //     console.error('Error fetching group members:', error);
+  //   }
+  // };
+
+  const handleCheckboxChange = (memberId, type) => {
+    setTransactionDetails((prev) => {
+      const updatedList = prev[type].includes(memberId)
+        ? prev[type].filter((id) => id !== memberId)
+        : [...prev[type], memberId];
+      return { ...prev, [type]: updatedList };
+    });
+  };
+
+  const handleAddTransaction = async () => {
+    // Logic to send data to backend
+    const transactionData = {
+      amount : transactionDetails.amount,
+      description : transactionDetails.description,
+      paidBy: transactionDetails.paidBy,
+      splitsTo: transactionDetails.splitTo,
+      transPerson: localStorage.getItem('userId'),
+    };
+    try {
+      await apiClient.post(`/api/groups/${groupId}/transactions`, transactionData, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+      });
+      // handleClose();
+      console.log('Transaction Submitted:', transactionDetails);
+      setDialogOpen(false);
+    } catch (error) {
+      console.error('Error submitting transaction:', error);
+    }
+    // console.log('Transaction Submitted:', transactionDetails);
+    // setDialogOpen(false);
+  };
+
   const content = (
     <Box p={isMobile ? '0px' : 0} position="relative" sx={{scrollbarWidth:'none'}}>
       <Box
@@ -141,16 +207,43 @@ const GroupTrans = ({ groupId: propGroupId }) => {
             </Box>
         </Box>
       </Box>
-      <Box height={isMobile ? 'calc(80vh - 64px)' : 'calc(75vh - 64px)'}
+      <Box height={isMobile ? 'calc(80vh - 64px)' : 'calc(75vh - 64px)'} bgcolor="#f5f5f5"
         sx={{
         overflowY: 'auto',
         padding: '8px', scrollbarWidth:'thin'
       }}>
       
 
-      <Box mt={0} height={ isMobile ? 'calc(71vh)' : 'calc(66vh)'} bgcolor="#f5f5f5" sx={{scrollbarWidth:'none'}}>
-        <Typography variant="h6">Members:</Typography>
+      <Box mt={0}  sx={{scrollbarWidth:'none'}}>
+        <Typography variant="h6">Goup Transactions:</Typography>
         <Grid container spacing={1}>
+          {group.transactions.map((trans) => (
+            <Grid item key={trans.transPerson._id} xs={12} sm={12} md={12}>
+              <Card sx={{ display: 'flex', alignItems: 'center', p: (isMobile ? '6px' : 1), justifyContent: 'space-between', marginInline:'0px' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <Avatar
+                    alt={trans.transPerson.username}
+                    src={
+                      trans.transPerson.profilePic
+                        ? `data:image/jpeg;base64,${trans.transPerson.profilePic}`
+                        : undefined
+                    }
+                    sx={{ width: 56, height: 56, mr: 2 }}
+                  >{trans.transPerson.username}</Avatar>
+                  <Box>
+                    <Typography>Added by : {trans.transPerson.username}</Typography>
+                    <Typography>Amount : {trans.amount}</Typography>
+                    <Typography>Description: {trans.description}</Typography>
+                    {/* <Typography variant='body1' sx={{ color: member?.role === "Admin" ? "blue" : "grey" }}>{member.role}</Typography> */}
+                    <Typography variant='body2' sx={{ color: 'GrayText', display: 'inline-block', float: 'right' }}>
+                      Added on : <small>{new Date(trans.createdAt).toLocaleString()}</small>
+                    </Typography>
+                  </Box>
+                </Box>
+                
+              </Card>
+            </Grid>
+          ))}
         </Grid>
         <IconButton
           // onClick={(event) => {
@@ -171,6 +264,7 @@ const GroupTrans = ({ groupId: propGroupId }) => {
             //  color: 'red'
             // transition: 'all 0.2s ease',
           }}
+          onClick={() => setDialogOpen(true)}
         >
           {/* {hoveredId === product._id && (
             <span
@@ -290,6 +384,114 @@ const GroupTrans = ({ groupId: propGroupId }) => {
         </DialogContent>
         <DialogActions>
         </DialogActions>
+      </Dialog>
+      {/* Dialog for Adding Group Transaction */}
+      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} fullWidth>
+        <DialogTitle>
+          Group Transactions
+          <IconButton
+            aria-label="close"
+            onClick={() => setDialogOpen(false)}
+            sx={{
+              position: 'absolute',
+              right: 8,
+              top: 8,
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+
+        <DialogContent>
+          {/* Transaction Details */}
+          <Typography variant="h6" mb={2}>
+            Transaction Details
+          </Typography>
+          <TextField
+            fullWidth
+            label="Amount"
+            type="number"
+            value={transactionDetails.amount}
+            onChange={(e) =>
+              setTransactionDetails((prev) => ({ ...prev, amount: e.target.value }))
+            }
+            sx={{ mb: 2 }}
+          />
+          <TextField
+            fullWidth
+            label="Transaction Description"
+            value={transactionDetails.description}
+            onChange={(e) =>
+              setTransactionDetails((prev) => ({ ...prev, description: e.target.value }))
+            }
+            sx={{ mb: 4 }}
+          />
+
+          {/* Amount Paid By */}
+          <Typography variant="h6" mb={2}>
+            Amount Paid By
+          </Typography>
+          <Card sx={{ mb: 4, p: 2 }}>
+            <List>
+              {group.members.map((member) => (
+                <ListItem key={member.user._id}>
+                  <ListItemText primary={member.user.username} />
+                  <ListItemSecondaryAction>
+                    <Checkbox
+                      checked={transactionDetails.paidBy.includes(member.user._id)}
+                      onChange={() => handleCheckboxChange(member.user._id, 'paidBy')}
+                    />
+                  </ListItemSecondaryAction>
+                </ListItem>
+              ))}
+            </List>
+          </Card>
+          <Button
+            variant="contained"
+            color="primary"
+            fullWidth
+            disabled={transactionDetails.paidBy.length === 0}
+            onClick={() =>
+              setTransactionDetails((prev) => ({ ...prev, step: 'splitTo' }))
+            }
+          >
+            Next
+          </Button>
+
+          {/* Amount Splits To (only shown after clicking Next) */}
+          {transactionDetails.step === 'splitTo' && (
+            <>
+              <Typography variant="h6" mt={4} mb={2}>
+                Amount Splits To
+              </Typography>
+              <Card sx={{ mb: 4, p: 2 }}>
+                <List>
+                  {group.members.map((member) => (
+                    <ListItem key={member.user._id}>
+                      <ListItemText primary={member.user.username} />
+                      <ListItemSecondaryAction>
+                        <Checkbox
+                          checked={transactionDetails.splitTo.includes(member.user._id)}
+                          onChange={() => handleCheckboxChange(member.user._id, 'splitTo')}
+                        />
+                      </ListItemSecondaryAction>
+                    </ListItem>
+                  ))}
+                </List>
+              </Card>
+              <Button
+                variant="contained"
+                color="primary"
+                fullWidth
+                disabled={transactionDetails.splitTo.length === 0}
+                onClick={handleAddTransaction}
+              >
+                Submit Transaction
+              </Button>
+            </>
+          )}
+        </DialogContent>
       </Dialog>
     </>
   );
