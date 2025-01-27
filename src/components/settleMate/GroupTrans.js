@@ -1,7 +1,7 @@
 // components/settleMate/GroupTrans.js
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Box, Typography, Card, Avatar, Grid, useMediaQuery, IconButton,  Snackbar, Alert, Dialog, DialogTitle, DialogContent, DialogActions, TextField, FormControlLabel, Checkbox, Button, List, ListItem, ListItemText, ListItemSecondaryAction, } from '@mui/material';
+import { Box, Typography, Card, Avatar, Grid, useMediaQuery, IconButton,  Snackbar, Alert, Dialog, DialogTitle, DialogContent, DialogActions, } from '@mui/material';
 import apiClient from '../../utils/axiosConfig';
 import Layout from '../Layout';
 import { useTheme } from '@emotion/react';
@@ -9,6 +9,7 @@ import WidgetsRoundedIcon from '@mui/icons-material/WidgetsRounded';
 import GroupDetails from './GroupDetails';
 import CloseIcon from '@mui/icons-material/Close';
 import PlaylistAddRoundedIcon from '@mui/icons-material/PlaylistAddRounded';
+import GroupTransAdd from './GroupTransAdd';
 
 const GroupTrans = ({ groupId: propGroupId }) => {
   const { groupId: paramGroupId } = useParams(); // Get groupId from URL if available
@@ -21,29 +22,30 @@ const GroupTrans = ({ groupId: propGroupId }) => {
   const [groupError, setGroupError] = useState(false); // Track if the group doesn't exist
   const navigate = useNavigate(); // Initialize navigation
   const [groupDetailsId, setGroupDetailsId] = useState(null); // Store the selected group ID
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [transactionDetails, setTransactionDetails] = useState({
-    amount: '',
-    description: '',
-    paidBy: [],
-    splitTo: [],
-  });
+  // const [dialogOpen, setDialogOpen] = useState(false);
+  // const [transactionDetails, setTransactionDetails] = useState({
+  //   amount: '',
+  //   description: '',
+  //   paidBy: [],
+  //   splitTo: [],
+  // });
+  const [isAddDialogOpen, setAddDialogOpen] = useState(false);
 
-  const fetchGroupDetails1 = async () => {
-    try {
-      const response = await apiClient.get(`/api/groups/${groupId}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
-      });
-      setGroup(response.data);
-    } catch (error) {
-      console.error('Error fetching group details:', error);
-    }
-  };
+  // const fetchGroupDetails1 = async () => {
+  //   try {
+  //     const response = await apiClient.get(`/api/groups/${groupId}`, {
+  //       headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+  //     });
+  //     setGroup(response.data);
+  //   } catch (error) {
+  //     console.error('Error fetching group details:', error);
+  //   }
+  // };
 
   useEffect(() => {
     // Set media query readiness after first render
     setIsMediaReady(true);
-    fetchGroupDetails1();
+    // fetchGroupDetails1();
   }, [isMobile]);
 
   useEffect(() => {
@@ -129,36 +131,44 @@ const GroupTrans = ({ groupId: propGroupId }) => {
   //   }
   // };
 
-  const handleCheckboxChange = (memberId, type) => {
-    setTransactionDetails((prev) => {
-      const updatedList = prev[type].includes(memberId)
-        ? prev[type].filter((id) => id !== memberId)
-        : [...prev[type], memberId];
-      return { ...prev, [type]: updatedList };
-    });
-  };
+  // const handleCheckboxChange = (memberId, type) => {
+  //   setTransactionDetails((prev) => {
+  //     const updatedList = prev[type].includes(memberId)
+  //       ? prev[type].filter((id) => id !== memberId)
+  //       : [...prev[type], memberId];
+  //     return { ...prev, [type]: updatedList };
+  //   });
+  // };
 
-  const handleAddTransaction = async () => {
-    // Logic to send data to backend
-    const transactionData = {
-      amount : transactionDetails.amount,
-      description : transactionDetails.description,
-      paidBy: transactionDetails.paidBy,
-      splitsTo: transactionDetails.splitTo,
-      transPerson: localStorage.getItem('userId'),
-    };
-    try {
-      await apiClient.post(`/api/groups/${groupId}/transactions`, transactionData, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
-      });
-      // handleClose();
-      console.log('Transaction Submitted:', transactionDetails);
-      setDialogOpen(false);
-    } catch (error) {
-      console.error('Error submitting transaction:', error);
-    }
-    // console.log('Transaction Submitted:', transactionDetails);
-    // setDialogOpen(false);
+  // const handleAddTransaction = async () => {
+  //   // Logic to send data to backend
+  //   const transactionData = {
+  //     amount : transactionDetails.amount,
+  //     description : transactionDetails.description,
+  //     paidBy: transactionDetails.paidBy,
+  //     splitsTo: transactionDetails.splitTo,
+  //     transPerson: localStorage.getItem('userId'),
+  //   };
+  //   try {
+  //     await apiClient.post(`/api/groups/${groupId}/transactions`, transactionData, {
+  //       headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+  //     });
+  //     // handleClose();
+  //     console.log('Transaction Submitted:', transactionDetails);
+  //     setDialogOpen(false);
+  //   } catch (error) {
+  //     console.error('Error submitting transaction:', error);
+  //   }
+  //   // console.log('Transaction Submitted:', transactionDetails);
+  //   // setDialogOpen(false);
+  // };
+
+  const handleAddTransaction = () => setAddDialogOpen(true);
+  const handleCloseAddDialog = () => setAddDialogOpen(false);
+
+  const handleTransactionAdded = (newTransaction) => {
+    // Update the UI with the new transaction
+    console.log('New Transaction:', newTransaction);
   };
 
   const content = (
@@ -264,7 +274,7 @@ const GroupTrans = ({ groupId: propGroupId }) => {
             //  color: 'red'
             // transition: 'all 0.2s ease',
           }}
-          onClick={() => setDialogOpen(true)}
+          onClick={handleAddTransaction}
         >
           {/* {hoveredId === product._id && (
             <span
@@ -386,7 +396,7 @@ const GroupTrans = ({ groupId: propGroupId }) => {
         </DialogActions>
       </Dialog>
       {/* Dialog for Adding Group Transaction */}
-      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} fullWidth>
+      {/* <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} fullWidth>
         <DialogTitle>
           Group Transactions
           <IconButton
@@ -404,7 +414,7 @@ const GroupTrans = ({ groupId: propGroupId }) => {
         </DialogTitle>
 
         <DialogContent>
-          {/* Transaction Details */}
+          Transaction Details
           <Typography variant="h6" mb={2}>
             Transaction Details
           </Typography>
@@ -428,7 +438,7 @@ const GroupTrans = ({ groupId: propGroupId }) => {
             sx={{ mb: 4 }}
           />
 
-          {/* Amount Paid By */}
+          Amount Paid By
           <Typography variant="h6" mb={2}>
             Amount Paid By
           </Typography>
@@ -459,7 +469,7 @@ const GroupTrans = ({ groupId: propGroupId }) => {
             Next
           </Button>
 
-          {/* Amount Splits To (only shown after clicking Next) */}
+          Amount Splits To (only shown after clicking Next)
           {transactionDetails.step === 'splitTo' && (
             <>
               <Typography variant="h6" mt={4} mb={2}>
@@ -492,7 +502,14 @@ const GroupTrans = ({ groupId: propGroupId }) => {
             </>
           )}
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
+      {/* Add Transaction Dialog */}
+      <GroupTransAdd
+        open={isAddDialogOpen}
+        onClose={handleCloseAddDialog}
+        group={group}
+        onTransactionAdded={handleTransactionAdded}
+      />
     </>
   );
 };
