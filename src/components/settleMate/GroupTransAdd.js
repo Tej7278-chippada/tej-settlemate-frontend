@@ -16,6 +16,8 @@ import {
   ListItemText,
   ListItemSecondaryAction,
   IconButton,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 import apiClient from '../../utils/axiosConfig';
 import CloseIcon from '@mui/icons-material/Close';
@@ -27,6 +29,7 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded }) => {
   const [paidBy, setPaidBy] = useState({});
   const [splitsTo, setSplitsTo] = useState({});
   const [isNextDisabled, setIsNextDisabled] = useState(true);
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: '' });
 
   useEffect(() => {
     // Initialize "paidBy" and "splitTo" with group members
@@ -55,6 +58,11 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded }) => {
     const selectedPaidBy = Object.keys(paidBy).filter((key) => paidBy[key]);
     const selectedSplitsTo = Object.keys(splitsTo).filter((key) => splitsTo[key]);
 
+    if (!amount || !description || selectedPaidBy.length === 0 || selectedSplitsTo.length === 0) {
+      setSnackbar({ open: true, message: 'Please complete all required fields.', severity: 'warning' });
+      return;
+    }
+
     try {
       const response = await apiClient.post(
         `/api/groups/${group._id}/transactions`,
@@ -68,15 +76,31 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded }) => {
         { headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` } }
       );
       onTransactionAdded(response.data); // Notify parent component about the new transaction
+      setSnackbar({ open: true, message: 'Transaction added successfully!', severity: 'success' });
+      resetForm(); // Clear input fields
       onClose(); // Close the dialog
     } catch (error) {
       console.error('Error adding transaction:', error);
+      setSnackbar({ open: true, message: 'Failed to add transaction. Please try again.', severity: 'error' });
+
     }
   };
 
+  const resetForm = () => {
+    setAmount('');
+    setDescription('');
+    setPaidBy(group.members.reduce((acc, member) => ({ ...acc, [member.user._id]: false }), {}));
+    setSplitsTo(group.members.reduce((acc, member) => ({ ...acc, [member.user._id]: false }), {}));
+    setStep(1);
+    setIsNextDisabled(true);
+  };
+
+  const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
+
   return (
+    <>
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>
+      <DialogTitle>Add Transaction
         <IconButton
             aria-label="close"
             onClick={onClose}
@@ -181,6 +205,17 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded }) => {
         </Box>
       </DialogActions>
     </Dialog>
+    <Snackbar
+      open={snackbar.open}
+      autoHideDuration={6000}
+      onClose={handleCloseSnackbar}
+      anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+    >
+      <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+        {snackbar.message}
+      </Alert>
+    </Snackbar>
+    </>
   );
 };
 
