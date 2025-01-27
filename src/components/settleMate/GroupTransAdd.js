@@ -18,6 +18,7 @@ import {
   IconButton,
   Snackbar,
   Alert,
+  Avatar,
 } from '@mui/material';
 import apiClient from '../../utils/axiosConfig';
 import CloseIcon from '@mui/icons-material/Close';
@@ -142,6 +143,17 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded }) => {
                 <List>
                 {group.members.map((member) => (
                     <ListItem key={member.user._id}>
+                    <Avatar
+                      alt={member.user.username}
+                      src={
+                        member.user.profilePic
+                          ? `data:image/jpeg;base64,${member.user.profilePic}`
+                          : undefined
+                      }
+                      sx={{ marginRight: 2 }}
+                    >
+                      {member.user.username[0]}
+                    </Avatar>
                     <ListItemText primary={member.user.username} />
                     <ListItemSecondaryAction>
                         <Checkbox
@@ -162,6 +174,17 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded }) => {
                     <List>
                     {group.members.map((member) => (
                         <ListItem key={member.user._id}>
+                        <Avatar
+                          alt={member.user.username}
+                          src={
+                            member.user.profilePic
+                              ? `data:image/jpeg;base64,${member.user.profilePic}`
+                              : undefined
+                          }
+                          sx={{ marginRight: 2 }}
+                        >
+                          {member.user.username[0]}
+                        </Avatar>
                         <ListItemText primary={member.user.username} />
                         <ListItemSecondaryAction>
                             <Checkbox
