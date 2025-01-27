@@ -123,16 +123,16 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded }) => {
                 label="Amount"
                 type="number"
                 fullWidth
-                margin="normal"
+                margin="normal" required placeholder='Ex: 500'
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
             />
             <TextField
-                label="Description"
-                fullWidth
-                margin="normal"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                label=" Transcation Description"
+                fullWidth multiline rows={3}
+                margin="normal" sx={{scrollbarWidth:'thin'}}
+                value={description} required placeholder='Ex: Goa trip expenses'
+                onChange={(e) => setDescription(e.target.value)} 
             />
         </Box>
         {step === 1 && (
