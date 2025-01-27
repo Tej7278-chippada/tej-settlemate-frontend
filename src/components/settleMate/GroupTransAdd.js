@@ -77,11 +77,6 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded }) => {
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>
-        {/* Group Transactions */}
-        {/* {step === 1 ? 'Transaction Details' : 'Amount Splits To'} */}
-        {/* <Typography variant="h6" mb={2}>
-            Transaction Details
-          </Typography> */}
         <IconButton
             aria-label="close"
             onClick={onClose}
@@ -120,19 +115,6 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded }) => {
         <Box mb={2}>
             <Typography variant="h6" mb={0} mt={2}> Amount Paid By </Typography>
             <Card sx={{ padding: 1, mt: 0 }}>
-                {/* <Typography variant="h6">Amount Paid By</Typography> */}
-                {/* {group.members.map((member) => (
-                    <FormControlLabel
-                    key={member.user._id}
-                    control={
-                        <Checkbox
-                        checked={paidBy[member.user._id]}
-                        onChange={() => handleCheckboxChange(setPaidBy, member.user._id)}
-                        />
-                    }
-                    label={member.user.username}
-                    />
-                ))} */}
                 <List>
                 {group.members.map((member) => (
                     <ListItem key={member.user._id}>
@@ -153,19 +135,6 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded }) => {
             <Box mb={2}>
                 <Typography variant="h6" mb={0} mt={2}> Amount Splits To </Typography>
                 <Card sx={{ padding: 1, mt: 0 }}>
-                    {/* <Typography variant="h6">Amount Splits To</Typography> */}
-                    {/* {group.members.map((member) => (
-                    <FormControlLabel
-                        key={member.user._id}
-                        control={
-                        <Checkbox
-                            checked={splitsTo[member.user._id]}
-                            onChange={() => handleCheckboxChange(setSplitsTo, member.user._id)}
-                        />
-                        }
-                        label={member.user.username}
-                    />
-                    ))} */}
                     <List>
                     {group.members.map((member) => (
                         <ListItem key={member.user._id}>

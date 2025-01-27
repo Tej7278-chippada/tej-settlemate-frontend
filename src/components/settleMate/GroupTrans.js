@@ -22,30 +22,12 @@ const GroupTrans = ({ groupId: propGroupId }) => {
   const [groupError, setGroupError] = useState(false); // Track if the group doesn't exist
   const navigate = useNavigate(); // Initialize navigation
   const [groupDetailsId, setGroupDetailsId] = useState(null); // Store the selected group ID
-  // const [dialogOpen, setDialogOpen] = useState(false);
-  // const [transactionDetails, setTransactionDetails] = useState({
-  //   amount: '',
-  //   description: '',
-  //   paidBy: [],
-  //   splitTo: [],
-  // });
   const [isAddDialogOpen, setAddDialogOpen] = useState(false);
 
-  // const fetchGroupDetails1 = async () => {
-  //   try {
-  //     const response = await apiClient.get(`/api/groups/${groupId}`, {
-  //       headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
-  //     });
-  //     setGroup(response.data);
-  //   } catch (error) {
-  //     console.error('Error fetching group details:', error);
-  //   }
-  // };
-
+  
   useEffect(() => {
     // Set media query readiness after first render
     setIsMediaReady(true);
-    // fetchGroupDetails1();
   }, [isMobile]);
 
   useEffect(() => {
@@ -115,53 +97,6 @@ const GroupTrans = ({ groupId: propGroupId }) => {
       navigate(`/group-details/${group._id}`);
     }
   };
-
- 
-
-  // useEffect(() => {
-  //   fetchGroupDetails1();
-  // }, [groupId]);
-
-  // const fetchGroupMembers = async () => {
-  //   try {
-  //     const response = await apiClient.get(`/api/groups/${groupId}`);
-  //     setGroupMembers(response.data.members);
-  //   } catch (error) {
-  //     console.error('Error fetching group members:', error);
-  //   }
-  // };
-
-  // const handleCheckboxChange = (memberId, type) => {
-  //   setTransactionDetails((prev) => {
-  //     const updatedList = prev[type].includes(memberId)
-  //       ? prev[type].filter((id) => id !== memberId)
-  //       : [...prev[type], memberId];
-  //     return { ...prev, [type]: updatedList };
-  //   });
-  // };
-
-  // const handleAddTransaction = async () => {
-  //   // Logic to send data to backend
-  //   const transactionData = {
-  //     amount : transactionDetails.amount,
-  //     description : transactionDetails.description,
-  //     paidBy: transactionDetails.paidBy,
-  //     splitsTo: transactionDetails.splitTo,
-  //     transPerson: localStorage.getItem('userId'),
-  //   };
-  //   try {
-  //     await apiClient.post(`/api/groups/${groupId}/transactions`, transactionData, {
-  //       headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
-  //     });
-  //     // handleClose();
-  //     console.log('Transaction Submitted:', transactionDetails);
-  //     setDialogOpen(false);
-  //   } catch (error) {
-  //     console.error('Error submitting transaction:', error);
-  //   }
-  //   // console.log('Transaction Submitted:', transactionDetails);
-  //   // setDialogOpen(false);
-  // };
 
   const handleAddTransaction = () => setAddDialogOpen(true);
   const handleCloseAddDialog = () => setAddDialogOpen(false);
@@ -396,114 +331,6 @@ const GroupTrans = ({ groupId: propGroupId }) => {
         </DialogActions>
       </Dialog>
       {/* Dialog for Adding Group Transaction */}
-      {/* <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} fullWidth>
-        <DialogTitle>
-          Group Transactions
-          <IconButton
-            aria-label="close"
-            onClick={() => setDialogOpen(false)}
-            sx={{
-              position: 'absolute',
-              right: 8,
-              top: 8,
-              color: (theme) => theme.palette.grey[500],
-            }}
-          >
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-
-        <DialogContent>
-          Transaction Details
-          <Typography variant="h6" mb={2}>
-            Transaction Details
-          </Typography>
-          <TextField
-            fullWidth
-            label="Amount"
-            type="number"
-            value={transactionDetails.amount}
-            onChange={(e) =>
-              setTransactionDetails((prev) => ({ ...prev, amount: e.target.value }))
-            }
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            fullWidth
-            label="Transaction Description"
-            value={transactionDetails.description}
-            onChange={(e) =>
-              setTransactionDetails((prev) => ({ ...prev, description: e.target.value }))
-            }
-            sx={{ mb: 4 }}
-          />
-
-          Amount Paid By
-          <Typography variant="h6" mb={2}>
-            Amount Paid By
-          </Typography>
-          <Card sx={{ mb: 4, p: 2 }}>
-            <List>
-              {group.members.map((member) => (
-                <ListItem key={member.user._id}>
-                  <ListItemText primary={member.user.username} />
-                  <ListItemSecondaryAction>
-                    <Checkbox
-                      checked={transactionDetails.paidBy.includes(member.user._id)}
-                      onChange={() => handleCheckboxChange(member.user._id, 'paidBy')}
-                    />
-                  </ListItemSecondaryAction>
-                </ListItem>
-              ))}
-            </List>
-          </Card>
-          <Button
-            variant="contained"
-            color="primary"
-            fullWidth
-            disabled={transactionDetails.paidBy.length === 0}
-            onClick={() =>
-              setTransactionDetails((prev) => ({ ...prev, step: 'splitTo' }))
-            }
-          >
-            Next
-          </Button>
-
-          Amount Splits To (only shown after clicking Next)
-          {transactionDetails.step === 'splitTo' && (
-            <>
-              <Typography variant="h6" mt={4} mb={2}>
-                Amount Splits To
-              </Typography>
-              <Card sx={{ mb: 4, p: 2 }}>
-                <List>
-                  {group.members.map((member) => (
-                    <ListItem key={member.user._id}>
-                      <ListItemText primary={member.user.username} />
-                      <ListItemSecondaryAction>
-                        <Checkbox
-                          checked={transactionDetails.splitTo.includes(member.user._id)}
-                          onChange={() => handleCheckboxChange(member.user._id, 'splitTo')}
-                        />
-                      </ListItemSecondaryAction>
-                    </ListItem>
-                  ))}
-                </List>
-              </Card>
-              <Button
-                variant="contained"
-                color="primary"
-                fullWidth
-                disabled={transactionDetails.splitTo.length === 0}
-                onClick={handleAddTransaction}
-              >
-                Submit Transaction
-              </Button>
-            </>
-          )}
-        </DialogContent>
-      </Dialog> */}
-      {/* Add Transaction Dialog */}
       <GroupTransAdd
         open={isAddDialogOpen}
         onClose={handleCloseAddDialog}
