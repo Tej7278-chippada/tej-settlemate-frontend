@@ -26,7 +26,7 @@ const GroupTransHistory = ({ transactions, loggedInUserId }) => {
             xs={12}
             sx={{
               display: 'flex',
-              justifyContent: trans.transPerson === loggedInUserId ? 'flex-end' : 'flex-start',
+              justifyContent: trans.transPerson._id === loggedInUserId ? 'flex-end' : 'flex-start',
             }}
           >
             <Card
@@ -34,12 +34,13 @@ const GroupTransHistory = ({ transactions, loggedInUserId }) => {
                 display: 'flex',
                 flexDirection: 'row',
                 alignItems: 'center',
-                p: 1, mb: 1,
+                p: 1, mb: '8px',
                 maxWidth: isMobile ? '100%' : '60%',
-                backgroundColor: trans.transPerson === loggedInUserId ? '#e3f2fd' : '#ffffff',
-                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                backgroundColor: trans.transPerson._id === loggedInUserId ? '#dcf8c6' : '#e3f2fd',
+                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', borderRadius:'14px'
               }}
             >
+              {/* {!(trans.transPerson._id === loggedInUserId) && ( */}
               <Avatar
                 alt={trans.transPerson.username}
                 src={
@@ -47,20 +48,23 @@ const GroupTransHistory = ({ transactions, loggedInUserId }) => {
                     ? `data:image/jpeg;base64,${trans.transPerson.profilePic}`
                     : undefined
                 }
-                sx={{ width: 48, height: 48, mr: 2 }}
+                sx={{ width: 38, height: 38, mr: 2 }}
               >
-                {trans.transPerson.username}
+                {trans.transPerson.username[0]}
               </Avatar>
+              {/* )} */}
               <Box>
-                <Typography variant="subtitle1" fontWeight="bold">
+              <Typography variant="body1" sx={{float:'inline-end'}}>₹{trans.amount}</Typography>
+                <Typography variant="body2" fontWeight="bold">
                   {trans.transPerson.username}
                 </Typography>
-                <Typography variant="body2">Amount: ₹{trans.amount}</Typography>
-                <Typography variant="body2" noWrap sx={{ maxWidth: '150px' }}>
-                  Description: {trans.description}
+                <Typography variant="body2" noWrap sx={{  color: 'GrayText' }}>
+                  {trans.description.length > 50
+                      ? `${trans.description.substring(0, 50)}...`
+                      : trans.description}
                 </Typography>
-                <Typography variant="caption" color="textSecondary">
-                  Added on: {new Date(trans.createdAt).toLocaleString()}
+                <Typography variant="caption" sx={{ color: 'GrayText', display: 'block', textAlign: 'right'}}>
+                  {new Date(trans.createdAt).toLocaleString()}
                 </Typography>
               </Box>
             </Card>

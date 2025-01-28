@@ -1,7 +1,7 @@
 // components/settleMate/GroupTrans.js
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Box, Typography, Card, Avatar, Grid, useMediaQuery, IconButton,  Snackbar, Alert, Dialog, DialogTitle, DialogContent, DialogActions, } from '@mui/material';
+import { Box, Typography, Card, Avatar, useMediaQuery, IconButton,  Snackbar, Alert, Dialog, DialogTitle, DialogContent, DialogActions, } from '@mui/material';
 import apiClient from '../../utils/axiosConfig';
 import Layout from '../Layout';
 import { useTheme } from '@emotion/react';
@@ -155,9 +155,12 @@ const GroupTrans = ({ groupId: propGroupId }) => {
       <Box height={isMobile ? 'calc(80vh - 64px)' : 'calc(77vh - 64px)'} bgcolor="#f5f5f5"
         sx={{
         overflowY: 'auto',
-        padding: '0px', scrollbarWidth:'none'
+        padding: '0px', scrollbarWidth:'thin'
       }}>
-      <GroupTransHistory transactions={group.transactions} loggedInUserId={loggedInUserId} />
+        <Box mt={0} sx={{ scrollbarWidth: 'thin' }}>
+        {/* <Typography variant="h6">Group Transactions:</Typography> */}
+         <GroupTransHistory transactions={group.transactions} loggedInUserId={loggedInUserId} />
+        </Box>
 
       {/* <Box mt={0}  sx={{scrollbarWidth:'none'}}> */}
       {/* <Box sx={{ height: '70vh', overflowY: 'auto', padding: '8px', scrollbarWidth:'thin' }}> */}
