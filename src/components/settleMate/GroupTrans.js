@@ -1,5 +1,5 @@
 // components/settleMate/GroupTrans.js
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Box, Typography, Card, Avatar, Grid, useMediaQuery, IconButton,  Snackbar, Alert, Dialog, DialogTitle, DialogContent, DialogActions, } from '@mui/material';
 import apiClient from '../../utils/axiosConfig';
@@ -24,47 +24,45 @@ const GroupTrans = ({ groupId: propGroupId }) => {
   const [groupDetailsId, setGroupDetailsId] = useState(null); // Store the selected group ID
   const [isAddDialogOpen, setAddDialogOpen] = useState(false);
 
+  // Fetch group details
+  const fetchGroupDetails = useCallback(async () => {
+    if (!groupId) return; // Exit early if groupId is undefined
+    try {
+      const response = await apiClient.get(`/api/groups/${groupId}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+      });
+      const userId = localStorage.getItem('userId');
+      const isMember = response.data.members.some(
+        (member) => member.user._id === userId
+      );
+
+      if (!isMember) {
+        navigate('/settleMate'); // Redirect if user is not a member or admin
+      } else {
+        setGroup(response.data); // Set group data if user is authorized
+      }
+    } catch (error) {
+      if (error.response?.status === 404) {
+        setGroupError(true);
+      } else {
+        console.error('Error fetching group details:', error);
+      }
+      navigate('/settleMate'); // Redirect if there's an error (e.g., unauthorized)
+    }
+  }, [groupId, navigate]);
   
   useEffect(() => {
-    // Set media query readiness after first render
-    setIsMediaReady(true);
+    setIsMediaReady(true); // Set media query readiness after first render
   }, [isMobile]);
 
   useEffect(() => {
-    const fetchGroupDetails = async () => {
-      if (!groupId) return; // Exit early if groupId is undefined
-      try {
-        const response = await apiClient.get(`/api/groups/${groupId}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
-        });
-        const userId = localStorage.getItem('userId');
-        const isMember = response.data.members.some(
-          (member) => member.user._id === userId
-        );
-
-        if (!isMember) {
-          navigate('/settleMate'); // Redirect if user is not a member or admin
-        } else {
-          setGroup(response.data); // Set group data if user is authorized
-        }
-      } catch (error) {
-        if (error.response?.status === 404) {
-          setGroupError(true);
-        } else {
-          console.error('Error fetching group details:', error);
-        }
-        navigate('/settleMate'); // Redirect if there's an error (e.g., unauthorized)
-      }
-    };
-
-    fetchGroupDetails();
-  }, [groupId, navigate]);
+    fetchGroupDetails(); // Fetch group details on component mount or groupId change
+  }, [fetchGroupDetails]);
 
   const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
 
   if (!isMediaReady) {
-    // Prevent rendering until media query result is ready
-    return null;
+    return null; // Prevent rendering until media query result is ready
   }
 
   if (groupError) {
@@ -102,7 +100,7 @@ const GroupTrans = ({ groupId: propGroupId }) => {
   const handleCloseAddDialog = () => setAddDialogOpen(false);
 
   const handleTransactionAdded = (newTransaction) => {
-    // Update the UI with the new transaction
+    fetchGroupDetails(); // Refetch group details to update the UI with the new transaction
     console.log('New Transaction:', newTransaction);
   };
 

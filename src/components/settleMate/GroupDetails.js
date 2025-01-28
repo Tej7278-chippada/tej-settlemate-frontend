@@ -321,9 +321,9 @@ const GroupDetails = ({ groupId: propGroupId }) => {
         <Typography variant="h6">Members:</Typography>
         <Grid container spacing={1}>
           {group.members.map((member) => (
-            <Grid item key={member.user._id} xs={12} sm={12} md={6}>
-              <Card sx={{ display: 'flex', alignItems: 'center', p: (isMobile ? '6px' : 1), justifyContent: 'space-between' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Grid item key={member.user._id} xs={12} sm={6} md={6}>
+              <Card sx={{ display: 'flex', alignItems: 'center', p: (isMobile ? '8px' : 2), justifyContent: 'space-between', gap: 2, }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', flex: 1, }}>
                   <Avatar
                     alt={member.user.username[0]}
                     src={
@@ -333,14 +333,25 @@ const GroupDetails = ({ groupId: propGroupId }) => {
                     }
                     sx={{ width: 56, height: 56, mr: 2 }}
                   >{member.user.username[0]}</Avatar>
-                  <Box>
-                    <Typography>{member.user.username}</Typography>
+                  <Box sx={{ flex: 1 }}>
+                    <Typography sx={{display: 'inline-block', float: 'right', color: member.balance >= 0 ? 'green' : 'red', fontWeight: 'bold',}}>{member.balance}</Typography>
+                    <Typography >{member.user.username}</Typography>
                     <Typography variant='body1' sx={{ color: member?.role === "Admin" ? "blue" : "grey" }}>{member.role}</Typography>
-                    <Typography variant='body2' sx={{ color: 'GrayText', display: 'inline-block', float: 'right' }}>
+                    <Typography variant='body2' sx={{ color: 'GrayText', display: 'inline-block', float: 'inline-start', mt: 0.5 }}>
                       Joined on : <small>{new Date(member.joined_at).toLocaleString()}</small>
                     </Typography>
                   </Box>
                 </Box>
+                <Box sx={{ textAlign: 'right' }}>
+                {/* <Typography
+                  variant="h6"
+                  sx={{
+                    color: member.balance >= 0 ? 'green' : 'red',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  {member.balance}
+                </Typography> */}
                 {isAdmin && member.role === "Member" && (
                   <IconButton
                     color="error"
@@ -354,6 +365,7 @@ const GroupDetails = ({ groupId: propGroupId }) => {
                     <LogoutRoundedIcon />
                   </IconButton>
                 )}
+                </Box>
               </Card>
             </Grid>
           ))}
