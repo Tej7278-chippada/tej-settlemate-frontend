@@ -10,6 +10,7 @@ import GroupDetails from './GroupDetails';
 import CloseIcon from '@mui/icons-material/Close';
 import PlaylistAddRoundedIcon from '@mui/icons-material/PlaylistAddRounded';
 import GroupTransAdd from './GroupTransAdd';
+import GroupTransHistory from './GroupTransHistory';
 
 const GroupTrans = ({ groupId: propGroupId }) => {
   const { groupId: paramGroupId } = useParams(); // Get groupId from URL if available
@@ -23,6 +24,7 @@ const GroupTrans = ({ groupId: propGroupId }) => {
   const navigate = useNavigate(); // Initialize navigation
   const [groupDetailsId, setGroupDetailsId] = useState(null); // Store the selected group ID
   const [isAddDialogOpen, setAddDialogOpen] = useState(false);
+  const loggedInUserId = localStorage.getItem('userId'); // Get logged-in user's ID
 
   // Fetch group details
   const fetchGroupDetails = useCallback(async () => {
@@ -115,11 +117,11 @@ const GroupTrans = ({ groupId: propGroupId }) => {
         sx={{
           bgcolor: 'white', // Background color to ensure visibility
           boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)', // Optional shadow for separation
-          padding: '8px 16px', // Padding for a clean look
+          padding: '18px 16px', // Padding for a clean look
           scrollbarWidth:'none'
         }}
       >
-        <Box display="flex" justifyContent="space-between" alignItems="center" sx={{scrollbarWidth:'none'}}>
+        <Box display="flex" justifyContent="space-between" alignItems="center" sx={{scrollbarWidth:'none', margin: -1}}>
           <Box display="flex" alignItems="center">
             <Avatar
               alt={group.groupName[0]}
@@ -135,31 +137,33 @@ const GroupTrans = ({ groupId: propGroupId }) => {
             <Box>
               <Typography variant="h5">
                 {group.groupName}
-                </Typography>
-                </Box>
-                </Box>
-                <Box display="flex" flexDirection={isMobile ? 'column' : 'column'} alignItems="center" ml={isMobile ? '0rem' : '0rem'}>
+              </Typography>
+            </Box>
+          </Box>
+          <Box display="flex" flexDirection={isMobile ? 'column' : 'column'} alignItems="center" ml={isMobile ? '0rem' : '0rem'}>
             <Box display="flex" alignItems="center">
               <IconButton
                   onClick={() => handleGroupClick(group)}
                   sx={{ ml: 0 }}
                 >
-                  <WidgetsRoundedIcon />
-                </IconButton>
+                <WidgetsRoundedIcon />
+              </IconButton>
             </Box>
-            </Box>
+          </Box>
         </Box>
       </Box>
-      <Box height={isMobile ? 'calc(80vh - 64px)' : 'calc(75vh - 64px)'} bgcolor="#f5f5f5"
+      <Box height={isMobile ? 'calc(80vh - 64px)' : 'calc(77vh - 64px)'} bgcolor="#f5f5f5"
         sx={{
         overflowY: 'auto',
-        padding: '8px', scrollbarWidth:'thin'
+        padding: '0px', scrollbarWidth:'none'
       }}>
-      
+      <GroupTransHistory transactions={group.transactions} loggedInUserId={loggedInUserId} />
 
-      <Box mt={0}  sx={{scrollbarWidth:'none'}}>
-        <Typography variant="h6">Goup Transactions:</Typography>
-        <Grid container spacing={1}>
+      {/* <Box mt={0}  sx={{scrollbarWidth:'none'}}> */}
+      {/* <Box sx={{ height: '70vh', overflowY: 'auto', padding: '8px', scrollbarWidth:'thin' }}> */}
+            
+          {/* </Box> */}
+        {/* <Grid container spacing={1}>
           {group.transactions.map((trans) => (
             <Grid item key={trans.transPerson._id} xs={12} sm={12} md={12}>
               <Card sx={{ display: 'flex', alignItems: 'center', p: (isMobile ? '6px' : 1), justifyContent: 'space-between', marginInline:'0px' }}>
@@ -177,7 +181,7 @@ const GroupTrans = ({ groupId: propGroupId }) => {
                     <Typography>Added by : {trans.transPerson.username}</Typography>
                     <Typography>Amount : {trans.amount}</Typography>
                     <Typography>Description: {trans.description}</Typography>
-                    {/* <Typography variant='body1' sx={{ color: member?.role === "Admin" ? "blue" : "grey" }}>{member.role}</Typography> */}
+                    <Typography variant='body1' sx={{ color: member?.role === "Admin" ? "blue" : "grey" }}>{member.role}</Typography>
                     <Typography variant='body2' sx={{ color: 'GrayText', display: 'inline-block', float: 'right' }}>
                       Added on : <small>{new Date(trans.createdAt).toLocaleString()}</small>
                     </Typography>
@@ -187,7 +191,7 @@ const GroupTrans = ({ groupId: propGroupId }) => {
               </Card>
             </Grid>
           ))}
-        </Grid>
+        </Grid> */}
         <IconButton
           // onClick={(event) => {
             // event.stopPropagation(); // Prevent triggering the parent onClick
@@ -280,7 +284,7 @@ const GroupTrans = ({ groupId: propGroupId }) => {
           </IconButton>
         </Box>
       </Toolbar> */}
-      </Box>
+      {/* </Box> */}
     </Box>
   );
 
