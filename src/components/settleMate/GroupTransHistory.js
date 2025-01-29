@@ -15,7 +15,7 @@ const GroupTransHistory = ({ transactions, loggedInUserId }) => {
         justifyContent: 'flex-end',
         height: '96%',
         overflowY: 'auto',
-        padding: '8px', scrollbarWidth:'thin'
+        padding: '8px', scrollbarWidth: 'thin'
       }}
     >
       <Grid container spacing={0} direction="row-reverse">
@@ -33,11 +33,11 @@ const GroupTransHistory = ({ transactions, loggedInUserId }) => {
               sx={{
                 display: 'flex',
                 flexDirection: 'row',
-                alignItems: 'center',
+                alignItems: 'center', cursor: 'pointer',
                 p: 1, mb: '8px',
-                maxWidth: isMobile ? '100%' : '60%',
+                maxWidth: isMobile ? '80%' : '60%',
                 backgroundColor: trans.transPerson._id === loggedInUserId ? '#dcf8c6' : '#e3f2fd',
-                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', borderRadius:'14px'
+                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', borderRadius: '14px'
               }}
             >
               {/* {!(trans.transPerson._id === loggedInUserId) && ( */}
@@ -54,16 +54,26 @@ const GroupTransHistory = ({ transactions, loggedInUserId }) => {
               </Avatar>
               {/* )} */}
               <Box>
-              <Typography variant="body1" sx={{float:'inline-end'}}>₹{trans.amount}</Typography>
+                <Typography variant="body1" sx={{ display: 'block', float: 'inline-end' }}>₹{trans.amount}</Typography>
                 <Typography variant="body2" fontWeight="bold">
                   {trans.transPerson.username}
                 </Typography>
-                <Typography variant="body2" noWrap sx={{  color: 'GrayText' }}>
-                  {trans.description.length > 50
-                      ? `${trans.description.substring(0, 50)}...`
-                      : trans.description}
+                <Typography variant="body2" noWrap sx={{ color: 'GrayText' }}>
+                  {trans.description.length > 30
+                    ? `${trans.description.substring(0, 30)}...`
+                    : trans.description}
                 </Typography>
-                <Typography variant="caption" sx={{ color: 'GrayText', display: 'block', textAlign: 'right'}}>
+                {/* <Typography
+                          variant="body2"
+                          color="textSecondary"
+                          style={{
+                            marginBottom: '0.5rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis',
+                            maxHeight: '4.5rem',  // This keeps the text within three lines based on the line height.
+                            lineHeight: '1.5rem'  // Adjust to control exact line spacing.
+                          }}>
+                          {trans.description}
+                        </Typography> */}
+                <Typography variant="caption" sx={{ color: 'GrayText', display: 'block', textAlign: 'right' }}>
                   {new Date(trans.createdAt).toLocaleString()}
                 </Typography>
               </Box>
