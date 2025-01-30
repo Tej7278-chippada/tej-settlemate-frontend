@@ -1,7 +1,8 @@
 // components/settleMate/GroupTransHistory.js
 import React from 'react';
-import { Box, Typography, Card, Avatar, Grid, useMediaQuery } from '@mui/material';
+import { Box, Typography, Card, Avatar, Grid, useMediaQuery, IconButton } from '@mui/material';
 import { useTheme } from '@emotion/react';
+import KeyboardDoubleArrowDownRoundedIcon from '@mui/icons-material/KeyboardDoubleArrowDownRounded';
 
 const GroupTransHistory = ({ transactions, loggedInUserId }) => {
   const theme = useTheme();
@@ -81,6 +82,22 @@ const GroupTransHistory = ({ transactions, loggedInUserId }) => {
           </Grid>
         ))}
       </Grid>
+      <IconButton
+          style={{
+            position: 'absolute',
+            bottom: '45px',
+            right: '5px',
+            boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
+            display: 'flex',
+            alignItems: 'center',
+            // padding: '4px', // Reduce padding to shrink button size
+            // width: '30px', // Set smaller width
+            // height: '30px', // Set smaller height
+          }}
+          // onClick={handleAddTransaction}
+        >
+          <KeyboardDoubleArrowDownRoundedIcon style={{ fontSize: '14px' }}/>
+        </IconButton>
     </Box>
   );
 };
