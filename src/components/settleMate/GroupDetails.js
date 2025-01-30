@@ -8,7 +8,7 @@ import { useTheme } from '@emotion/react';
 import { Delete, Refresh } from '@mui/icons-material';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 
-const GroupDetails = ({ groupId: propGroupId, loggedInUserId }) => {
+const GroupDetails = ({ groupId: propGroupId }) => {
   const { groupId: paramGroupId } = useParams(); // Get groupId from URL if available
   const groupId = propGroupId || paramGroupId; // Use propGroupId if provided, else use paramGroupId
   const [group, setGroup] = useState(null);
@@ -34,9 +34,9 @@ const GroupDetails = ({ groupId: propGroupId, loggedInUserId }) => {
         const response = await apiClient.get(`/api/groups/${groupId}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
         });
-        // const userId = localStorage.getItem('userId');
+        const userId = localStorage.getItem('userId');
         const isMember = response.data.members.some(
-          (member) => member.user._id === loggedInUserId
+          (member) => member.user._id === userId
         );
 
         if (!isMember) {
@@ -55,7 +55,7 @@ const GroupDetails = ({ groupId: propGroupId, loggedInUserId }) => {
     };
 
     fetchGroupDetails();
-  }, [groupId, loggedInUserId, navigate]);
+  }, [groupId, navigate]);
 
   const handleGenerateJoinCode = async () => {
     setLoadingJoinCode(true);
@@ -121,7 +121,7 @@ const GroupDetails = ({ groupId: propGroupId, loggedInUserId }) => {
   }
 
   const isAdmin = group.members.some(
-    (member) => member.user._id === loggedInUserId && member.role === 'Admin'
+    (member) => member.user._id === localStorage.getItem('userId') && member.role === 'Admin'
   );
 
   const handleDeleteGroup = async () => {

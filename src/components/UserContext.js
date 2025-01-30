@@ -1,6 +1,5 @@
 // /src/UserContext.js
 import React, { createContext, useEffect, useState } from 'react';
-import { decryptData, encryptData } from '../utils/encryptionUtils';
 
 // Create a context for the user
 export const UserContext = createContext();
@@ -11,20 +10,18 @@ export const UserProvider = ({ children }) => {
 
   // Initialize userId from localStorage on app load
   useEffect(() => {
-    const encryptedUserId = localStorage.getItem('encryptedUserId');
-    if (encryptedUserId) {
-      const decryptedUserId = decryptData(encryptedUserId); // Decrypt userId
-      setUserId(decryptedUserId);
+    const storedUserId = localStorage.getItem('userId');
+    if (storedUserId) {
+      setUserId(storedUserId);
     }
   }, []);
 
   // Update localStorage whenever userId changes
   useEffect(() => {
     if (userId) {
-      const encryptedUserId = encryptData(userId); // Encrypt userId
-      localStorage.setItem('encryptedUserId', encryptedUserId);
+      localStorage.setItem('userId', userId);
     } else {
-      localStorage.removeItem('encryptedUserId');
+      localStorage.removeItem('userId');
     }
   }, [userId]);
 
