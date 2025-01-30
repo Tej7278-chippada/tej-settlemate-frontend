@@ -10,6 +10,7 @@ import { useLocation } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import ForgotPassword from './ForgotPassword';
 import { UserContext } from './UserContext';
+import { encryptData } from '../utils/encryptionUtils';
 // import CloseIcon from '@mui/icons-material/Close';
 
 const theme = createTheme({
@@ -116,9 +117,13 @@ const Login = () => {
       localStorage.setItem('tokenUsername', tokenUsername);
       // localStorage.setItem('userId', userId); // Store userId
 
-      // Set userId in context and localStorage
+      // Encrypt and store userId in localStorage
+      const encryptedUserId = encryptData(userId); // Encrypt userId
+      localStorage.setItem('encryptedUserId', encryptedUserId);
+
+      // Set userId in context
       setUserId(userId); // Update the context with the userId
-      localStorage.setItem('userId', userId); // Store userId in localStorage
+      // localStorage.setItem('userId', userId); // Store userId in localStorage
 
       setSuccess('Login successful!');
       navigate('/settleMate', { replace: true });

@@ -16,11 +16,6 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  List,
-  ListItem,
-  ListItemText,
-  Card,
-  TextField,
 } from '@mui/material';
 // import API from '../../api/sellerApi';
 // import SellerLayout from './SellerLayout';

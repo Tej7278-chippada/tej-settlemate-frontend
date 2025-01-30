@@ -77,8 +77,11 @@ const Header = ({ username }) => {
     localStorage.removeItem('activeUser'); // Clear active user on logout
     localStorage.removeItem('tokenUsername'); 
     // localStorage.removeItem('userId');
+
+    // Clear encrypted userId from localStorage
+    localStorage.removeItem('encryptedUserId');
     setUserId(null); // Clear the userId in context
-    localStorage.removeItem('userId'); // Remove userId from localStorage
+    // localStorage.removeItem('userId'); // Remove userId from localStorage
     
     navigate('/');
   };
