@@ -1,5 +1,5 @@
 // /components/Login.js
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { TextField, Button, Typography, Box, Alert, useMediaQuery, ThemeProvider, createTheme, Dialog, DialogContent, DialogActions, CircularProgress,
   //  IconButton
    } from '@mui/material';
@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import ForgotPassword from './ForgotPassword';
+import { UserContext } from './UserContext';
 // import CloseIcon from '@mui/icons-material/Close';
 
 const theme = createTheme({
@@ -36,6 +37,7 @@ const Login = () => {
   const location = useLocation();
   const isMobile = useMediaQuery(theme => theme.breakpoints.down('sm')); // Media query for small screens
   const [loading, setLoading] = useState(false);
+  const { setUserId } = useContext(UserContext); // Access setUserId from context
   
 
   // const isEmail = (input) => {
@@ -112,7 +114,10 @@ const Login = () => {
       localStorage.setItem('authToken', authToken);
       localStorage.setItem('activeUser', tokenUsername);
       localStorage.setItem('tokenUsername', tokenUsername);
-      localStorage.setItem('userId', userId); // Store userId
+      // localStorage.setItem('userId', userId); // Store userId
+
+      // Set userId in context
+      setUserId(userId); // Update the context with the userId
 
       setSuccess('Login successful!');
       navigate('/settleMate', { replace: true });

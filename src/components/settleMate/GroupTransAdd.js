@@ -3,7 +3,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, I
 import apiClient from '../../utils/axiosConfig';
 import CloseIcon from '@mui/icons-material/Close';
 
-const GroupTransAdd = ({ open, onClose, group, onTransactionAdded }) => {
+const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, loggedInUserId }) => {
   const [step, setStep] = useState(1); // Step 1: Transaction Details, Step 2: Amount Split
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
@@ -127,7 +127,8 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded }) => {
           description,
           paidBy: selectedPaidBy,
           splitsTo: selectedSplitsTo,
-          transPerson: localStorage.getItem('userId'),
+          // transPerson: localStorage.getItem('userId'),
+          transPerson: loggedInUserId,
           paidAmounts: paidAmountsCalculated,
           splitAmounts: splitAmountsCalculated,
           updatedMembers, // Send updated members with new balances

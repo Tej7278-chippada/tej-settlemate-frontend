@@ -11,6 +11,7 @@ import SettleMate from './components/settleMate/SettleMate';
 import UserProfile from './components/UserProfile';
 import GroupDetails from './components/settleMate/GroupDetails';
 import GroupTrans from './components/settleMate/GroupTrans';
+import { UserProvider } from './components/UserContext';
 
 const theme = createTheme({
   breakpoints: {
@@ -27,6 +28,7 @@ const theme = createTheme({
 function App() {
   return (
     <ThemeProvider theme={theme}>
+      <UserProvider> {/* Wrap the app with UserProvider */}
       <Router>
         <Routes>
           <Route path="/" element={<Login />} />
@@ -54,6 +56,7 @@ function App() {
           } />
         </Routes>
       </Router>
+      </UserProvider>
     </ThemeProvider>
   );
 }

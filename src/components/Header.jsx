@@ -1,5 +1,5 @@
 // Header.js
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AppBar, Toolbar, Typography, TextField, List, ListItem, ListItemText, Box, CircularProgress, Paper, useMediaQuery, IconButton, Menu, MenuItem, Dialog, } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -7,6 +7,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import axios from 'axios';
 import { useTheme } from '@mui/material/styles';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { UserContext } from './UserContext';
 
 const Header = ({ username }) => {
   const location = useLocation();
@@ -20,6 +21,7 @@ const Header = ({ username }) => {
   const [loggedInUsers, setLoggedInUsers] = useState([]);
   const navigate = useNavigate();
   const [currentUsername, setCurrentUsername] = useState(username || '');
+  const { userId, setUserId } = useContext(UserContext); // Access userId from context
 
   // Only show search bar when user is logged in and on chat page
   // const showSearchBar = location.pathname.includes('/productList') && username;
@@ -74,7 +76,8 @@ const Header = ({ username }) => {
     setCurrentUsername('');
     localStorage.removeItem('activeUser'); // Clear active user on logout
     localStorage.removeItem('tokenUsername'); 
-    localStorage.removeItem('userId');
+    // localStorage.removeItem('userId');
+    setUserId(null); // Clear the userId in context
     navigate('/');
   };
   
@@ -145,8 +148,11 @@ const Header = ({ username }) => {
   };
 
   const openUserProfile = () => {
-    const userId = localStorage.getItem('userId'); 
-    navigate(`/user/${userId}`); //, { replace: true }
+    // const userId = localStorage.getItem('userId'); 
+    // navigate(`/user/${userId}`); //, { replace: true }
+    if (userId) {
+      navigate(`/user/${userId}`); // Use userId from context
+    }
   };
   
   return (

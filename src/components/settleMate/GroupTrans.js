@@ -1,5 +1,5 @@
 // components/settleMate/GroupTrans.js
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Box, Typography, Card, Avatar, useMediaQuery, IconButton,  Snackbar, Alert, Dialog, DialogTitle, DialogContent, DialogActions, } from '@mui/material';
 import apiClient from '../../utils/axiosConfig';
@@ -11,6 +11,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import PlaylistAddRoundedIcon from '@mui/icons-material/PlaylistAddRounded';
 import GroupTransAdd from './GroupTransAdd';
 import GroupTransHistory from './GroupTransHistory';
+import { UserContext } from '../UserContext';
 
 const GroupTrans = ({ groupId: propGroupId }) => {
   const { groupId: paramGroupId } = useParams(); // Get groupId from URL if available
@@ -24,7 +25,8 @@ const GroupTrans = ({ groupId: propGroupId }) => {
   const navigate = useNavigate(); // Initialize navigation
   const [groupDetailsId, setGroupDetailsId] = useState(null); // Store the selected group ID
   const [isAddDialogOpen, setAddDialogOpen] = useState(false);
-  const loggedInUserId = localStorage.getItem('userId'); // Get logged-in user's ID
+  // const loggedInUserId = localStorage.getItem('userId'); // Get logged-in user's ID
+  const { userId } = useContext(UserContext); // Get userId from context
 
   // Fetch group details
   const fetchGroupDetails = useCallback(async () => {
@@ -33,7 +35,7 @@ const GroupTrans = ({ groupId: propGroupId }) => {
       const response = await apiClient.get(`/api/groups/${groupId}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
       });
-      const userId = localStorage.getItem('userId');
+      // const userId = localStorage.getItem('userId');
       const isMember = response.data.members.some(
         (member) => member.user._id === userId
       );
@@ -51,7 +53,7 @@ const GroupTrans = ({ groupId: propGroupId }) => {
       }
       navigate('/settleMate'); // Redirect if there's an error (e.g., unauthorized)
     }
-  }, [groupId, navigate]);
+  }, [groupId, navigate, userId]);
   
   useEffect(() => {
     setIsMediaReady(true); // Set media query readiness after first render
@@ -159,7 +161,7 @@ const GroupTrans = ({ groupId: propGroupId }) => {
       }}>
         <Box mt={0} sx={{ scrollbarWidth: 'thin' }}>
         {/* <Typography variant="h6">Group Transactions:</Typography> */}
-         <GroupTransHistory transactions={group.transactions} loggedInUserId={loggedInUserId} />
+         <GroupTransHistory transactions={group.transactions} loggedInUserId={userId} />
         </Box>
 
       {/* <Box mt={0}  sx={{scrollbarWidth:'none'}}> */}
@@ -328,7 +330,7 @@ const GroupTrans = ({ groupId: propGroupId }) => {
             scrollbarWidth: 'thin'
           }}>
               <Box sx={{ margin: '-1rem' }}>
-                <GroupDetails groupId={groupDetailsId} /> {/* // Use GroupDetails component */}
+                <GroupDetails groupId={groupDetailsId} loggedInUserId={userId} /> {/* // Use GroupDetails component */}
               </Box>
           </Card>)}
         </DialogContent>
@@ -341,6 +343,7 @@ const GroupTrans = ({ groupId: propGroupId }) => {
         onClose={handleCloseAddDialog}
         group={group}
         onTransactionAdded={handleTransactionAdded}
+        loggedInUserId={userId}
       />
     </>
   );
