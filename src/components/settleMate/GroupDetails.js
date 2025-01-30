@@ -56,6 +56,50 @@ const GroupDetails = ({ groupId: propGroupId }) => {
 
     fetchGroupDetails();
   }, [groupId, navigate]);
+  
+  const calculatePayments = (members) => {
+    let debtors = [];
+    let creditors = [];
+    
+    // Categorize members based on balance
+    members.forEach((member) => {
+      if (member.balance < 0) {
+        debtors.push({ ...member, balance: Math.abs(member.balance) }); // Convert debt to positive for easier calculation
+      } else if (member.balance > 0) {
+        creditors.push({ ...member });
+      }
+    });
+  
+    let transactions = [];
+  
+    // Match debtors to creditors
+    while (debtors.length > 0 && creditors.length > 0) {
+      let debtor = debtors[0];
+      let creditor = creditors[0];
+  
+      let amount = Math.min(debtor.balance, creditor.balance);
+      transactions.push({
+        from: debtor.user.username,
+        to: creditor.user.username,
+        amount: amount.toFixed(2),
+      });
+  
+      // Adjust balances after payment
+      debtor.balance -= amount;
+      creditor.balance -= amount;
+  
+      // Remove settled members
+      if (debtor.balance === 0) debtors.shift();
+      if (creditor.balance === 0) creditors.shift();
+    }
+  
+    return transactions;
+  };
+
+  const payments = group && group.members ? calculatePayments(group.members) : [];
+
+
+  
 
   const handleGenerateJoinCode = async () => {
     setLoadingJoinCode(true);
@@ -336,10 +380,21 @@ const GroupDetails = ({ groupId: propGroupId }) => {
                   <Box sx={{ flex: 1 }}>
                     <Typography sx={{display: 'inline-block', float: 'right', color: member.balance >= 0 ? 'green' : 'red', fontWeight: 'bold',}}>{member.balance.toFixed(2)}</Typography>
                     <Typography >{member.user.username}</Typography>
+                    {payments
+                    .filter(payment => payment.from === member.user.username || payment.to === member.user.username)
+                    .map((payment, index) => (
+                      <Typography key={index} variant="body2" sx={{ color: payment.from === member.user.username ? 'red' : 'green' }}>
+                        {payment.from === member.user.username
+                          ? `You have to pay ₹${payment.amount} to ${payment.to}`
+                          : `You get ₹${payment.amount} from ${payment.from}`}
+                      </Typography>
+                    ))}
                     <Typography variant='body1' sx={{ color: member?.role === "Admin" ? "blue" : "grey" }}>{member.role}</Typography>
                     <Typography variant='body2' sx={{ color: 'GrayText', display: 'inline-block', float: 'inline-start', mt: 0.5 }}>
                       Joined on : <small>{new Date(member.joined_at).toLocaleString()}</small>
                     </Typography>
+                    
+
                   </Box>
                 </Box>
                 <Box sx={{ textAlign: 'right' }}>
