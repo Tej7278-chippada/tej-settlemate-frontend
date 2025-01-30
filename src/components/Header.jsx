@@ -78,6 +78,8 @@ const Header = ({ username }) => {
     localStorage.removeItem('tokenUsername'); 
     // localStorage.removeItem('userId');
     setUserId(null); // Clear the userId in context
+    localStorage.removeItem('userId'); // Remove userId from localStorage
+    
     navigate('/');
   };
   

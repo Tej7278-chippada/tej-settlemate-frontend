@@ -116,8 +116,9 @@ const Login = () => {
       localStorage.setItem('tokenUsername', tokenUsername);
       // localStorage.setItem('userId', userId); // Store userId
 
-      // Set userId in context
+      // Set userId in context and localStorage
       setUserId(userId); // Update the context with the userId
+      localStorage.setItem('userId', userId); // Store userId in localStorage
 
       setSuccess('Login successful!');
       navigate('/settleMate', { replace: true });
