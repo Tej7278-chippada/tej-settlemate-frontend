@@ -334,7 +334,7 @@ const GroupDetails = ({ groupId: propGroupId }) => {
                     sx={{ width: 56, height: 56, mr: 2 }}
                   >{member.user.username[0]}</Avatar>
                   <Box sx={{ flex: 1 }}>
-                    <Typography sx={{display: 'inline-block', float: 'right', color: member.balance >= 0 ? 'green' : 'red', fontWeight: 'bold',}}>{member.balance}</Typography>
+                    <Typography sx={{display: 'inline-block', float: 'right', color: member.balance >= 0 ? 'green' : 'red', fontWeight: 'bold',}}>{member.balance.toFixed(2)}</Typography>
                     <Typography >{member.user.username}</Typography>
                     <Typography variant='body1' sx={{ color: member?.role === "Admin" ? "blue" : "grey" }}>{member.role}</Typography>
                     <Typography variant='body2' sx={{ color: 'GrayText', display: 'inline-block', float: 'inline-start', mt: 0.5 }}>
