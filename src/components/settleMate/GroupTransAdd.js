@@ -130,6 +130,8 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, isMobile }) =
           transPerson: localStorage.getItem('userId'),
           paidAmounts: paidAmountsCalculated,
           splitAmounts: splitAmountsCalculated,
+          paidWay,
+          splitsWay,
           updatedMembers, // Send updated members with new balances
         },
         { headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` } }
@@ -154,6 +156,15 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, isMobile }) =
   };
 
   const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
+
+  const renderAmount = (memberId, type) => {
+    const { paidAmountsCalculated, splitAmountsCalculated } = calculateAmounts();
+    if (type === 'paid') {
+      return paidAmountsCalculated[memberId] ? `₹${paidAmountsCalculated[memberId].toFixed(2)}` : '₹0.00';
+    } else if (type === 'split') {
+      return splitAmountsCalculated[memberId] ? `₹${splitAmountsCalculated[memberId].toFixed(2)}` : '₹0.00';
+    }
+  };
 
   return (
     <>
@@ -213,7 +224,9 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, isMobile }) =
                     >
                       {member.user.username[0]}
                     </Avatar>
-                    <ListItemText primary={member.user.username} />
+                    <ListItemText primary={member.user.username}
+                      secondary={renderAmount(member.user._id, 'paid')}
+                    />
                     <ListItemSecondaryAction>
                       <Checkbox
                         checked={paidBy[member.user._id]}
@@ -290,7 +303,9 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, isMobile }) =
                     >
                       {member.user.username[0]}
                     </Avatar>
-                      <ListItemText primary={member.user.username} />
+                      <ListItemText primary={member.user.username} 
+                        secondary={renderAmount(member.user._id, 'split')}
+                      />
                       <ListItemSecondaryAction>
                         <Checkbox
                           checked={splitsTo[member.user._id]}

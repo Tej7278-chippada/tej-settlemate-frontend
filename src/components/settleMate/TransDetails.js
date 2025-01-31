@@ -60,9 +60,12 @@ const TransDetails = ({ open, onClose, transaction, isMobile}) => {
         <Box sx={{display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap:'1rem', padding:'2px', overflowY: 'auto', marginTop:'1rem' }}>
         {/* <Typography variant="body1" mt={2}>Paid By:</Typography> */}
         <Card sx={{padding:1, borderRadius:'8px', minWidth:'245px' }}>
-            <Typography variant="body1" mb={1}>Paid By:</Typography>
+            <Typography variant="body2" sx={{float:'inline-end'}}>
+              ({transaction.paidWay})
+            </Typography>
+            <Typography variant="body1" mb={1}>Paid By: </Typography>
             {transaction.paidBy.map(user => (
-                <Box display="flex" alignItems="center" mb={1} ml={1} gap={0} >
+                <Box key={user._id} display="flex" alignItems="center" mb={1} ml={1} gap={0} >
                     <Avatar
                         alt={user.username}
                         src={user.profilePic ? `data:image/jpeg;base64,${user.profilePic}` : undefined}
@@ -70,15 +73,23 @@ const TransDetails = ({ open, onClose, transaction, isMobile}) => {
                     >
                             {user.username[0]}
                     </Avatar>
-                    <Typography key={user._id} variant="body2">{user.username}</Typography>
+                    <Box>
+                      <Typography variant="body2">{user.username}</Typography>
+                      <Typography variant="body2" color="textSecondary">
+                        Paid: ₹{(transaction.paidAmounts[user._id.toString()] || 0).toFixed(2)}
+                      </Typography>
+                    </Box>
                 </Box>
             ))}
         </Card>
         {/* <Typography variant="body1" mt={2}>Split Among:</Typography> */}
         <Card sx={{padding:1, borderRadius:'8px', minWidth:'245px'  }}>
-            <Typography variant="body1" mb={1}>Split Among:</Typography>
+            <Typography variant="body2" sx={{float:'inline-end'}} >
+              ({transaction.splitsWay})
+            </Typography>
+            <Typography variant="body1" mb={1}>Split Among: </Typography>
             {transaction.splitsTo.map(user => (
-                <Box display="flex" alignItems="center" mb={1} ml={1} >
+                <Box key={user._id} display="flex" alignItems="center" mb={1} ml={1} >
                     <Avatar
                         alt={user.username}
                         src={user.profilePic ? `data:image/jpeg;base64,${user.profilePic}` : undefined}
@@ -86,7 +97,12 @@ const TransDetails = ({ open, onClose, transaction, isMobile}) => {
                     >
                         {user.username[0]}
                     </Avatar>
-                    <Typography key={user._id} variant="body2">{user.username}</Typography>
+                    <Box>
+                      <Typography variant="body2">{user.username}</Typography>
+                      <Typography variant="body2" color="textSecondary">
+                        Split: ₹{(transaction.splitAmounts[user._id.toString()] || 0).toFixed(2)}
+                      </Typography>
+                    </Box>
                 </Box>
             ))}
         </Card>
