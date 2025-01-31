@@ -1,5 +1,5 @@
 // components/settleMate/GroupTransHistory.js
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Box, Typography, Card, Avatar, Grid, useMediaQuery, IconButton } from '@mui/material';
 import { useTheme } from '@emotion/react';
 import KeyboardDoubleArrowDownRoundedIcon from '@mui/icons-material/KeyboardDoubleArrowDownRounded';
@@ -10,6 +10,14 @@ const GroupTransHistory = ({ transactions, loggedInUserId }) => {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [isDialogOpen, setDialogOpen] = useState(false);
+  const bottomRef = useRef(null); // Reference to the last transaction
+
+  useEffect(() => {
+    // Instantly scroll to the latest transaction without animation
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: 'auto' });
+    }
+  }, [transactions]); // Runs every time transactions update
 
   const handleTransactionClick = (transaction) => {
     setSelectedTransaction(transaction);
@@ -41,7 +49,7 @@ const GroupTransHistory = ({ transactions, loggedInUserId }) => {
       }}
     >
       <Grid container spacing={0} direction="row-reverse">
-        {transactions.map((trans) => (
+        {transactions.map((trans, index) => (
           <Grid
             item
             key={trans._id}
@@ -50,6 +58,7 @@ const GroupTransHistory = ({ transactions, loggedInUserId }) => {
               display: 'flex',
               justifyContent: trans.transPerson._id === loggedInUserId ? 'flex-end' : 'flex-start',
             }}
+            ref={index === transactions.length - 1 ? bottomRef : null} // Attach ref to last transaction
           >
             <Card
               sx={{
