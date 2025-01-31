@@ -1,12 +1,25 @@
 // components/settleMate/GroupTransHistory.js
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, Typography, Card, Avatar, Grid, useMediaQuery, IconButton } from '@mui/material';
 import { useTheme } from '@emotion/react';
 import KeyboardDoubleArrowDownRoundedIcon from '@mui/icons-material/KeyboardDoubleArrowDownRounded';
+import TransDetails from './TransDetails';
 
 const GroupTransHistory = ({ transactions, loggedInUserId }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const [selectedTransaction, setSelectedTransaction] = useState(null);
+  const [isDialogOpen, setDialogOpen] = useState(false);
+
+  const handleTransactionClick = (transaction) => {
+    setSelectedTransaction(transaction);
+    setDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+    setSelectedTransaction(null);
+  };
 
   if (transactions.length === 0) {
     return (
@@ -48,6 +61,7 @@ const GroupTransHistory = ({ transactions, loggedInUserId }) => {
                 backgroundColor: trans.transPerson._id === loggedInUserId ? '#dcf8c6' : '#e3f2fd',
                 boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', borderRadius: '14px'
               }}
+              onClick={() => handleTransactionClick(trans)}
             >
               {/* {!(trans.transPerson._id === loggedInUserId) && ( */}
               <Avatar
@@ -106,6 +120,12 @@ const GroupTransHistory = ({ transactions, loggedInUserId }) => {
         >
           <KeyboardDoubleArrowDownRoundedIcon style={{ fontSize: '14px' }}/>
         </IconButton>
+
+        <TransDetails
+        transaction={selectedTransaction}
+        open={isDialogOpen} isMobile={isMobile}
+        onClose={handleCloseDialog}
+      />
     </Box>
   );
 };
