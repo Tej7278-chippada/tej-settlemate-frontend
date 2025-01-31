@@ -1,6 +1,6 @@
 // components/settleMate/settleMate.js
-import React, { useEffect, useState } from 'react';
-import { Box, Typography, Card, Avatar, useMediaQuery, Snackbar, Alert, IconButton } from '@mui/material';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Box, Typography, Card, Avatar, useMediaQuery, IconButton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../Layout';
 import apiClient from '../../utils/axiosConfig'; // Use axiosConfig here
@@ -22,34 +22,36 @@ const SettleMate = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [groupDetailsId, setGroupDetailsId] = useState(null); // Store the selected group ID
-  const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' }); // For notifications
+  // const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' }); // For notifications
   const [loading, setLoading] = useState(true); // Track loading state
+
+  const fetchGroups = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await apiClient.get('/api/groups', {
+        headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+      });
+      setGroups(response.data.groups.reverse() || []);
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        console.error('Unauthorized user, redirecting to login');
+        navigate('/');
+      } else {
+        console.error('Error fetching groups:', error);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, [navigate]); // ✅ Add 'navigate' as dependency
 
   useEffect(() => {
     const authToken = localStorage.getItem('authToken');
     if (!authToken) {
       navigate('/');
     } else {
-      const fetchGroups = async () => {
-        try {
-          const response = await apiClient.get('/api/groups', {
-            headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
-          });
-          setGroups(response.data.groups.reverse() || []);
-        } catch (error) {
-          if (error.response && error.response.status === 401) {
-            console.error('Unauthorized user, redirecting to login');
-            navigate('/');
-          } else {
-            console.error('Error fetching groups:', error);
-          }
-        } finally {
-          setLoading(false); // Stop loading
-        }
-      };
-      fetchGroups();
+      fetchGroups(); // ✅ Fetch groups on component mount
     }
-  }, [navigate]);
+  }, [fetchGroups, navigate]); // ✅ Add 'fetchGroups' and 'navigate' in dependencies
 
   const handleGroupClick = (group) => {
     setGroupDetailsId(group._id);
@@ -58,17 +60,21 @@ const SettleMate = () => {
     }
   };
 
-  const handleGroupCreated = (newGroup) => {
-    setGroups([newGroup, ...groups]);
+  // Refetch groups on successful creation
+  const handleGroupCreated = async () => {
+    // setNotification({ open: true, message: 'Group created successfully!', severity: 'success' });
+    await fetchGroups(); // Refetch groups
   };
 
-  const handleGroupJoined = (newGroup) => {
-    setGroups([newGroup, ...groups]);
+  // Refetch groups on successful join
+  const handleGroupJoined = async () => {
+    // setNotification({ open: true, message: 'Joined group successfully!', severity: 'success' });
+    await fetchGroups(); // Refetch groups
   };
 
-  const handleCloseNotification = () => {
-    setNotification({ ...notification, open: false });
-  };
+  // const handleCloseNotification = () => {
+  //   setNotification({ ...notification, open: false });
+  // };
 
   return (
     <Layout username={tokenUsername}>
@@ -197,7 +203,7 @@ const SettleMate = () => {
 
         </Box>
 
-        <Snackbar
+        {/* <Snackbar
           open={notification.open}
           autoHideDuration={6000}
           onClose={handleCloseNotification}
@@ -206,7 +212,7 @@ const SettleMate = () => {
           <Alert onClose={handleCloseNotification} severity={notification.severity} sx={{ width: '100%' }}>
             {notification.message}
           </Alert>
-        </Snackbar>
+        </Snackbar> */}
       </Box>
     </Layout>
   );

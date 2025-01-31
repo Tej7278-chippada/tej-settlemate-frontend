@@ -8,6 +8,14 @@ const GroupTransHistory = ({ transactions, loggedInUserId }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
+  if (transactions.length === 0) {
+    return (
+      <Box sx={{ margin: '2rem', textAlign: 'center' }}>
+        <Typography variant="h6" color="grey">Don't have Transactions on this group...</Typography>
+      </Box>
+    );
+  }
+
   return (
     <Box
       sx={{
