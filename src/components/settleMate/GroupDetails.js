@@ -437,7 +437,11 @@ const GroupDetails = ({ groupId: propGroupId }) => {
           {snackbar.message}
         </Alert>
       </Snackbar>
-      <Dialog open={confirmationDialog.open} onClose={handleCloseConfirmation}>
+      <Dialog open={confirmationDialog.open} onClose={handleCloseConfirmation} 
+        sx={{
+          '& .MuiPaper-root': { borderRadius: '16px', },
+        }}
+      >
         <DialogTitle>
           {confirmationDialog.action === 'delete' ? 'Delete Group' : 'Leave Group'}
         </DialogTitle>
@@ -458,7 +462,11 @@ const GroupDetails = ({ groupId: propGroupId }) => {
           </Button>
         </DialogActions>
       </Dialog>
-      <Dialog open={confirmationDialog1.open} onClose={handleCloseConfirmation1}>
+      <Dialog open={confirmationDialog1.open} onClose={handleCloseConfirmation1}
+        sx={{
+          '& .MuiPaper-root': { borderRadius: '16px', },
+        }}
+      >
         <DialogTitle>Confirm Action</DialogTitle>
         <DialogContent>
           <DialogContentText>

@@ -3,7 +3,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, I
 import apiClient from '../../utils/axiosConfig';
 import CloseIcon from '@mui/icons-material/Close';
 
-const GroupTransAdd = ({ open, onClose, group, onTransactionAdded }) => {
+const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, isMobile }) => {
   const [step, setStep] = useState(1); // Step 1: Transaction Details, Step 2: Amount Split
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
@@ -157,7 +157,10 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded }) => {
 
   return (
     <>
-      <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+      <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth fullScreen={isMobile ? true : false}
+      sx={{padding: isMobile ? '1rem' : '0rem',
+        '& .MuiPaper-root': { borderRadius: '16px', },
+    }}>
         <DialogTitle>Add Transaction
           <IconButton
             aria-label="close"
@@ -172,7 +175,7 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded }) => {
             <CloseIcon />
           </IconButton>
         </DialogTitle>
-        <DialogContent>
+        <DialogContent sx={{scrollbarWidth:'thin'}}>
           <Box>
             <Typography variant="h6" mb={0}>
               Transaction Details

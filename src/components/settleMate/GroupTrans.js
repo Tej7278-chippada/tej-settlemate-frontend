@@ -305,7 +305,11 @@ const GroupTrans = ({ groupId: propGroupId }) => {
           {snackbar.message}
         </Alert>
       </Snackbar>
-      <Dialog open={!!groupDetailsId} onClose={() => setGroupDetailsId(null)} /* onClose={handleCloseConfirmation1} */ maxWidth="md" fullWidth>
+      <Dialog open={!!groupDetailsId} onClose={() => setGroupDetailsId(null)} /* onClose={handleCloseConfirmation1} */ maxWidth="md" fullWidth
+        sx={{padding: isMobile ? '1rem' : '0rem',
+          '& .MuiPaper-root': { borderRadius: '16px', },
+        }}
+        >
         <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }} >
           Group details
           <IconButton
@@ -340,7 +344,7 @@ const GroupTrans = ({ groupId: propGroupId }) => {
       <GroupTransAdd
         open={isAddDialogOpen}
         onClose={handleCloseAddDialog}
-        group={group}
+        group={group} isMobile={isMobile}
         onTransactionAdded={handleTransactionAdded}
       />
     </>

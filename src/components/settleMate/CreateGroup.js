@@ -111,7 +111,11 @@ const CreateGroup = ({ open, onClose, onGroupCreated }) => {
 
   return (
     <>
-      <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+      <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth
+        sx={{
+          '& .MuiPaper-root': { borderRadius: '16px', },
+        }}
+      >
         <Box p={3} display="flex" flexDirection="column" alignItems="center">
           <Box sx={{ textAlign: 'center', marginBottom:'1rem' }}>
             <Typography variant="h6">Create New Group</Typography>

@@ -54,7 +54,11 @@ const JoinGroup = ({ open, onClose, onGroupJoined }) => {
 
     return (
         <>
-            <Dialog open={open} onClose={onClose}   >
+            <Dialog open={open} onClose={onClose} 
+                sx={{
+                    '& .MuiPaper-root': { borderRadius: '16px', },
+                }}
+            >
                 <Box sx={{  marginTop:'1rem', textAlign: 'center' }}>
                     <Typography variant="h6">Join into group</Typography>
                     <IconButton
