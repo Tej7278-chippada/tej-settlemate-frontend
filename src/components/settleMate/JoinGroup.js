@@ -95,10 +95,10 @@ const JoinGroup = ({ open, onClose, onGroupJoined }) => {
             <Snackbar
                 open={notification.open}
                 autoHideDuration={6000}
-                onClose={handleCloseNotification}
+                onClose={handleCloseNotification} 
                 anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
             >
-                <Alert onClose={handleCloseNotification} severity={notification.severity} sx={{ width: '100%' }}>
+                <Alert onClose={handleCloseNotification} severity={notification.severity} sx={{ width: '100%', borderRadius:'1rem' }}>
                     {notification.message}
                 </Alert>
             </Snackbar>

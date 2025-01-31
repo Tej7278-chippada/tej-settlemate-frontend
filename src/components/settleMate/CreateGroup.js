@@ -218,7 +218,7 @@ const CreateGroup = ({ open, onClose, onGroupCreated }) => {
         onClose={handleCloseNotification}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
-        <Alert onClose={handleCloseNotification} severity={notification.severity} sx={{ width: '100%' }}>
+        <Alert onClose={handleCloseNotification} severity={notification.severity} sx={{ width: '100%', borderRadius:'1rem' }}>
           {notification.message}
         </Alert>
       </Snackbar>
