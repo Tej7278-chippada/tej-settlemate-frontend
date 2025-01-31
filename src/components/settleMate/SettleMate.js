@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '../Layout';
 import apiClient from '../../utils/axiosConfig'; // Use axiosConfig here
 import { useTheme } from '@emotion/react';
-// import GroupDetails from './GroupDetails';
 import CreateGroup from './CreateGroup';
 import JoinGroup from './JoinGroup';
 import SkeletonGroups from './SkeletonGroups';
@@ -73,15 +72,7 @@ const SettleMate = () => {
 
   return (
     <Layout username={tokenUsername}>
-      <Box mt={isMobile ? '2px' : '4px'} mb={isMobile ? '4px' : '8px'}>  {/* m={isMobile ? '8px' : '1rem'} sx={{ marginTop: (isMobile ? '-2rem' : '-1rem')}} */}
-        {/* <Box display="flex" justifyContent="space-between" mb={2}>
-          <Button variant="contained" onClick={() => setOpenCreateGroup(true)}>
-            Create Group
-          </Button>
-          <Button variant="outlined" onClick={() => setOpenJoinGroup(true)}>
-            Join Group
-          </Button>
-        </Box> */}
+      <Box mt={isMobile ? '2px' : '4px'} mb={isMobile ? '4px' : '8px'}>
         <CreateGroup
           open={openCreateGroup}
           onClose={() => setOpenCreateGroup(false)}
@@ -140,10 +131,6 @@ const SettleMate = () => {
                   </Box>
                 </Box>
               </Box>
-
-              {/* <Typography position="relative" variant="h6">Groups</Typography> */}
-
-              {/* <Grid2 style={{ paddingTop: '1rem' }}> */}
               <Box bgcolor="#f5f5f5"
                 // mt="64px" // Matches the approximate height of the fixed header
                 height="calc(80vh - 64px)" // Adjust the height of the scrollable area
@@ -162,8 +149,8 @@ const SettleMate = () => {
                         sx={{
                           mb: '4px',
                           display: 'flex',
-                          alignItems: 'center', boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)', backgroundColor:'white',
-                          cursor: 'pointer',  borderRadius:'8px',
+                          alignItems: 'center', boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)', backgroundColor: 'white',
+                          cursor: 'pointer', borderRadius: '8px',
                           '&:hover': { backgroundColor: '#f5f5f5' },
                         }}
                         onClick={() => handleGroupClick(group)}
@@ -175,7 +162,7 @@ const SettleMate = () => {
                               : 'https://placehold.co/56x56?text=No+Image'
                           }
                           alt={group.groupName}
-                          sx={{ width: 50, height: 50,  marginInline: 1 }}
+                          sx={{ width: 50, height: 50, marginInline: 1 }}
                         />
                         <Typography variant="h6" m="1rem">
                           {group.groupName}
@@ -185,9 +172,6 @@ const SettleMate = () => {
                   )}
                 </Box>
               </Box>
-
-              {/* </Grid2> */}
-
             </Box>
           </Card>
 
