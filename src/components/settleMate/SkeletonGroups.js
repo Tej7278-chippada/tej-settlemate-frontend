@@ -25,7 +25,7 @@ function SkeletonGroups() {
                   display: 'flex',
                   alignItems: 'center',
                 //   marginBottom: 2,
-                  cursor: 'pointer', marginBottom:'8px',
+                  cursor: 'pointer', marginBottom:'4px',
                   '&:hover': { backgroundColor: '#f5f5f5' },
                 //   padding: '4px',
                   borderRadius: 1,
@@ -33,12 +33,12 @@ function SkeletonGroups() {
               >
                 <Card sx={{
               height: '100%', // Matches the Groups section height
-              borderRadius: 1,
+              borderRadius: '8px',
             //   boxShadow: 3,
               padding: '8px',
               overflowY: 'auto', scrollbarWidth:'none', width:'100%'
             }}>
-                <Skeleton variant="circular" width={56} height={56} sx={{ marginRight: 2 , float:'inline-start', display: 'inline-block'}} />
+                <Skeleton variant="circular" width={50} height={50} sx={{ marginRight: 3 , float:'inline-start', display: 'inline-block'}} />
                 <Skeleton variant="text" width="60%" height={35} sx={{float:'left',}} />
                 </Card>
               </Box>
