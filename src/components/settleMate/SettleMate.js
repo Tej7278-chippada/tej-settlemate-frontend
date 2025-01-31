@@ -73,7 +73,7 @@ const SettleMate = () => {
 
   return (
     <Layout username={tokenUsername}>
-      <Box mt={isMobile ? '4px' : '8px'} mb={isMobile ? '4px' : '8px'}>  {/* m={isMobile ? '8px' : '1rem'} sx={{ marginTop: (isMobile ? '-2rem' : '-1rem')}} */}
+      <Box mt={isMobile ? '2px' : '4px'} mb={isMobile ? '4px' : '8px'}>  {/* m={isMobile ? '8px' : '1rem'} sx={{ marginTop: (isMobile ? '-2rem' : '-1rem')}} */}
         {/* <Box display="flex" justifyContent="space-between" mb={2}>
           <Button variant="contained" onClick={() => setOpenCreateGroup(true)}>
             Create Group
@@ -96,7 +96,7 @@ const SettleMate = () => {
         <Box
           display="flex"
           flexDirection={isMobile ? "column" : "row"}
-          gap={1} p={isMobile ? '6px' : 1} sx={{ bgcolor: '#f5f5f5', borderRadius: '10px', }} /* p={isMobile ? '6px' : 1} paddingBottom:(isMobile ? '4px' : '8px' ), paddingTop:(isMobile ? '0px' : '8px' ) */
+          gap={1} p={isMobile ? '4px' : 1} sx={{ bgcolor: '#f5f5f5', borderRadius: '10px', }} /* p={isMobile ? '6px' : 1} paddingBottom:(isMobile ? '4px' : '8px' ), paddingTop:(isMobile ? '0px' : '8px' ) */
         >
           <Card sx={{
             flex: 1.5,
@@ -144,12 +144,12 @@ const SettleMate = () => {
               {/* <Typography position="relative" variant="h6">Groups</Typography> */}
 
               {/* <Grid2 style={{ paddingTop: '1rem' }}> */}
-              <Box
+              <Box bgcolor="#f5f5f5"
                 // mt="64px" // Matches the approximate height of the fixed header
                 height="calc(80vh - 64px)" // Adjust the height of the scrollable area
                 sx={{
                   overflowY: 'auto',
-                  padding: '8px', scrollbarWidth: 'none'
+                  paddingInline: isMobile ? '4px' : '6px', scrollbarWidth: 'none'
                 }}
               >
                 <Box style={{ paddingTop: '8px', paddingBottom: '1rem' }}>
@@ -157,13 +157,13 @@ const SettleMate = () => {
                     <SkeletonGroups /> // Show SkeletonGroups while loading
                   ) : (
                     groups.map((group) => (
-                      <Card
+                      <Box
                         key={group._id}
                         sx={{
-                          mb: 1,
+                          mb: '4px',
                           display: 'flex',
-                          alignItems: 'center',
-                          cursor: 'pointer',
+                          alignItems: 'center', boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)', backgroundColor:'white',
+                          cursor: 'pointer',  borderRadius:'8px',
                           '&:hover': { backgroundColor: '#f5f5f5' },
                         }}
                         onClick={() => handleGroupClick(group)}
@@ -175,12 +175,12 @@ const SettleMate = () => {
                               : 'https://placehold.co/56x56?text=No+Image'
                           }
                           alt={group.groupName}
-                          sx={{ width: 56, height: 56, mr: 2, m: 1 }}
+                          sx={{ width: 50, height: 50,  marginInline: 1 }}
                         />
                         <Typography variant="h6" m="1rem">
                           {group.groupName}
                         </Typography>
-                      </Card>
+                      </Box>
                     ))
                   )}
                 </Box>
