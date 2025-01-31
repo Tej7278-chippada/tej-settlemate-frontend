@@ -318,19 +318,19 @@ const GroupTrans = ({ groupId: propGroupId }) => {
           </IconButton>
         </DialogTitle>
         <DialogContent>
-          {!isMobile && (<Card sx={{
-            flex: 3, marginInline: '-1rem',
-            height: '80vh', // Fixed height relative to viewport
+          {!isMobile && (<Box sx={{
+            flex: 3, marginInline: '0rem',
+            height: '70vh', // Fixed height relative to viewport
             overflowY: 'auto',
             bgcolor: 'white', // Card background color (customizable)
             borderRadius: 2, // Card border radius (customizable)
             // boxShadow: 3, // Shadow for a modern look
             scrollbarWidth: 'thin'
           }}>
-              <Box sx={{ margin: '-1rem' }}>
+              <Box sx={{ margin: '0rem' }}>
                 <GroupDetails groupId={groupDetailsId} /> {/* // Use GroupDetails component */}
               </Box>
-          </Card>)}
+          </Box>)}
         </DialogContent>
         <DialogActions>
         </DialogActions>

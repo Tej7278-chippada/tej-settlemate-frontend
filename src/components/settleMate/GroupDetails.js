@@ -239,7 +239,7 @@ const GroupDetails = ({ groupId: propGroupId }) => {
   };
 
   const content = (
-    <Box p={isMobile ? '6px' : 3}>
+    <Box p={isMobile ? '6px' : '6px'}>
       {/* <Card sx={{ p: (isMobile ? '6px' : 3), display: 'flex', justifyContent: 'space-between' }}>
 
         <Box display="flex" alignItems="center">
@@ -366,60 +366,55 @@ const GroupDetails = ({ groupId: propGroupId }) => {
         <Grid container spacing={1}>
           {group.members.map((member) => (
             <Grid item key={member.user._id} xs={12} sm={6} md={6}>
-              <Card sx={{ display: 'flex', alignItems: 'center', p: (isMobile ? '8px' : 2), justifyContent: 'space-between', gap: 2, }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', flex: 1, }}>
-                  <Avatar
-                    alt={member.user.username[0]}
-                    src={
-                      member.user.profilePic
-                        ? `data:image/jpeg;base64,${member.user.profilePic}`
-                        : undefined
-                    }
-                    sx={{ width: 56, height: 56, mr: 2 }}
-                  >{member.user.username[0]}</Avatar>
-                  <Box sx={{ flex: 1 }}>
-                    <Typography sx={{display: 'inline-block', float: 'right', color: member.balance >= 0 ? 'green' : 'red', fontWeight: 'bold',}}>{member.balance.toFixed(2)}</Typography>
-                    <Typography >{member.user.username}</Typography>
-                    {payments
-                    .filter(payment => payment.from === member.user.username || payment.to === member.user.username)
-                    .map((payment, index) => (
-                      <Typography key={index} variant="body2" sx={{ color: payment.from === member.user.username ? 'red' : 'green' }}>
-                        {payment.from === member.user.username
-                          ? `You have to pay ₹${payment.amount} to ${payment.to}`
-                          : `You get ₹${payment.amount} from ${payment.from}`}
-                      </Typography>
-                    ))}
-                    <Typography variant='body1' sx={{ color: member?.role === "Admin" ? "blue" : "grey" }}>{member.role}</Typography>
-                    <Typography variant='body2' sx={{ color: 'GrayText', display: 'inline-block', float: 'inline-start', mt: 0.5 }}>
-                      Joined on : <small>{new Date(member.joined_at).toLocaleString()}</small>
-                    </Typography>
+              <Card sx={{ display: 'flex', p: (isMobile ? '8px' : 2),   gap: 0, }}>
+                <Avatar
+                   alt={member.user.username[0]}
+                   src={
+                     member.user.profilePic
+                       ? `data:image/jpeg;base64,${member.user.profilePic}`
+                       : undefined
+                   }
+                   sx={{ width: 56, height: 56, mr: 2 }}
+                >{member.user.username[0]}</Avatar>
+                <Box sx={{flexDirection: 'column',  alignItems: 'center', justifyContent: 'space-between', flex: 1}}>
+                  <Box sx={{  alignItems: 'center', gap: 0, }}>
                     
-
+                    <Box sx={{ flex: 1 }}>
+                      <Typography sx={{display: 'inline-block', float: 'right', color: member.balance >= 0 ? 'green' : 'red', fontWeight: 'bold',}}>{member.balance.toFixed(2)}</Typography>
+                      <Typography >{member.user.username}</Typography>
+                      <Typography variant='body2' sx={{ color: member?.role === "Admin" ? "blue" : "grey" }}>{member.role}</Typography>
+                      <Box sx={{marginTop:'8px', marginBottom:'8px'}}>
+                        {payments
+                        .filter(payment => payment.from === member.user.username || payment.to === member.user.username)
+                        .map((payment, index) => (
+                          <Typography key={index} variant="body2" sx={{ color: payment.from === member.user.username ? 'red' : 'green' }}>
+                            {payment.from === member.user.username
+                              ? `You have to pay ₹${payment.amount} to ${payment.to}`
+                              : `You get ₹${payment.amount} from ${payment.from}`}
+                          </Typography>
+                        ))}
+                      </Box>
+                    </Box>
                   </Box>
-                </Box>
-                <Box sx={{ textAlign: 'right' }}>
-                {/* <Typography
-                  variant="h6"
-                  sx={{
-                    color: member.balance >= 0 ? 'green' : 'red',
-                    fontWeight: 'bold',
-                  }}
-                >
-                  {member.balance}
-                </Typography> */}
-                {isAdmin && member.role === "Member" && (
-                  <IconButton
-                    color="error"
-                    onClick={() => handleOpenConfirmation1('removeMember', {
-                      memberId: member.user._id,
-                      memberUsername: member.user.username,
-                    })
-                    }
-                    aria-label="Delete Member"
-                  >
-                    <LogoutRoundedIcon />
-                  </IconButton>
-                )}
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Typography variant="caption" sx={{ color: 'gray' }}>
+                      Joined on: {new Date(member.joined_at).toLocaleString()}
+                    </Typography>
+                    {isAdmin && member.role === "Member" && (
+                      <IconButton
+                        color="error"
+                        onClick={() =>
+                          handleOpenConfirmation1('removeMember', {
+                            memberId: member.user._id,
+                            memberUsername: member.user.username,
+                          })
+                        }
+                        aria-label="Delete Member"
+                      >
+                        <LogoutRoundedIcon />
+                      </IconButton>
+                    )}
+                  </Box>
                 </Box>
               </Card>
             </Grid>
