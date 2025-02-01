@@ -11,6 +11,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import PlaylistAddRoundedIcon from '@mui/icons-material/PlaylistAddRounded';
 import GroupTransAdd from './GroupTransAdd';
 import GroupTransHistory from './GroupTransHistory';
+import RefreshRoundedIcon from '@mui/icons-material/RefreshRounded'; // Import the refresh icon
+
 
 const GroupTrans = ({ groupId: propGroupId }) => {
   const { groupId: paramGroupId } = useParams(); // Get groupId from URL if available
@@ -53,6 +55,11 @@ const GroupTrans = ({ groupId: propGroupId }) => {
       navigate('/settleMate'); // Redirect if there's an error (e.g., unauthorized)
     }
   }, [groupId, navigate]);
+
+  // Function to handle refresh
+  const handleRefresh = () => {
+    fetchGroupDetails(); // Refetch group details
+  };
   
   useEffect(() => {
     setIsMediaReady(true); // Set media query readiness after first render
@@ -143,6 +150,10 @@ const GroupTrans = ({ groupId: propGroupId }) => {
           </Box>
           <Box display="flex" flexDirection={isMobile ? 'column' : 'column'} alignItems="center" ml={isMobile ? '0rem' : '0rem'}>
             <Box display="flex" alignItems="center">
+              {/* Refresh Icon Button */}
+              <IconButton onClick={handleRefresh} sx={{ mr: 1 }}>
+                <RefreshRoundedIcon />
+              </IconButton>
               <IconButton
                   onClick={() => handleGroupClick(group)}
                   sx={{ ml: 0 }}
