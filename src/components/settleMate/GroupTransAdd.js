@@ -259,12 +259,12 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, isMobile }) =
             <Box mb={2}>
               <Box mt={3} mb={2}>
                 <Box mt={1} sx={{float:'inline-end'}}>
-                  <FormControl size="small" sx={{ minWidth: 120 , marginTop:'-12px'}}>
-                    <InputLabel id="paid-way-label">Paid Way</InputLabel>
-                    <Select labelId="paid-way-label" label="Paid Way" value={paidWay} onChange={handlePaidWayChange}>
+                  <FormControl size="small" sx={{ minWidth: 120 , margin:'-1rem', marginTop: isMobile ? '-24px' : '-26px'}}>
+                    <InputLabel sx={{margin:'1rem'}} id="paid-way-label">Paid Way</InputLabel>
+                    <Select sx={{margin:'1rem'}} labelId="paid-way-label" label="Paid Way" value={paidWay} onChange={handlePaidWayChange}>
                       <MenuItem value="Equal">Equal</MenuItem>
                       <MenuItem value="UnEqual">UnEqual</MenuItem>
-                      <MenuItem value="ByPercentage">By Percentage</MenuItem>
+                      <MenuItem value="ByPercentage">By Per %</MenuItem>
                     </Select>
                   </FormControl>
                 </Box>
@@ -381,12 +381,12 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, isMobile }) =
             <Box mb={2}>
               <Box mt={3} mb={2}>
                 <Box mt={1} sx={{float:'inline-end'}}>
-                  <FormControl size="small" sx={{ minWidth: 120 , marginTop:'-12px'}}>
-                    <InputLabel id="splits-way-label">Splits Way</InputLabel>
-                      <Select labelId="splits-way-label" label="Splits Way" value={splitsWay} onChange={handleSplitsWayChange}>
+                  <FormControl size="small" sx={{ minWidth: 120 ,  margin:'-1rem', marginTop: isMobile ? '-24px' : '-26px'}}>
+                    <InputLabel sx={{margin:'1rem'}} id="splits-way-label">Splits Way</InputLabel>
+                      <Select sx={{margin:'1rem'}} labelId="splits-way-label" label="Splits Way" value={splitsWay} onChange={handleSplitsWayChange}>
                         <MenuItem value="Equal">Equal</MenuItem>
                         <MenuItem value="UnEqual">UnEqual</MenuItem>
-                        <MenuItem value="ByPercentage">By Percentage</MenuItem>
+                        <MenuItem value="ByPercentage">By Per %</MenuItem>
                       </Select>
                   </FormControl>
                 </Box>
