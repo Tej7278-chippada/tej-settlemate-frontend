@@ -247,7 +247,16 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, isMobile }) =
           </Box>
           {step === 1 && (
             <Box mb={2}>
-              <Typography variant="h6" mb={0} mt={2}> Amount Paid By </Typography>
+              <Box mt={2} mb={1}>
+                <Box mt={1} sx={{float:'inline-end'}}>
+                  <select value={paidWay} onChange={handlePaidWayChange}>
+                    <option value="Equal">Equal</option>
+                    <option value="UnEqual">UnEqual</option>
+                    <option value="ByPercentage">By Percentage</option>
+                  </select>
+                </Box>
+                <Typography variant="h6" mb={0} mt={0}> Amount Paid By </Typography>
+              </Box>
               <Card sx={{ padding: 1, mt: 0 }}>
                 <List>
                   {group.members.map((member) => (
@@ -267,24 +276,50 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, isMobile }) =
                       secondary={renderAmount(member.user._id, 'paid')}
                     />
                     <ListItemSecondaryAction>
-                      <Checkbox
-                        checked={paidBy[member.user._id]}
-                        onChange={() => handleCheckboxChange(setPaidBy, member.user._id)}
-                      />
+                      <Box mr={-1}>
+                        <Checkbox
+                          checked={paidBy[member.user._id]}
+                          onChange={() => handleCheckboxChange(setPaidBy, member.user._id)}
+                        />
+                        <Box sx={{float: isMobile ? 'none' : 'inline-start', marginTop: isMobile ? '-20px' : '-10px'}}>
+                          {paidWay === 'UnEqual' && paidBy[member.user._id] && (
+                            <Box key={member.user._id} width={isMobile ? "100px" : "150px"}>
+                              <TextField
+                                label={`Amount for ${member.user.username}`}
+                                type="number" size="small"
+                                margin="normal"
+                                value={paidAmounts[member.user._id] || ''}
+                                onChange={(e) => handlePaidAmountChange(member.user._id, e.target.value)}
+                              />
+                            </Box>
+                          )}
+                          {paidWay === 'ByPercentage' && paidBy[member.user._id] && (
+                            <Box key={member.user._id} width={isMobile ? "100px" : "150px"}>
+                              <TextField
+                                label={`Percentage for ${member.user.username}`}
+                                type="number" size="small"
+                                margin="normal"
+                                value={paidAmounts[member.user._id] || ''}
+                                onChange={(e) => handlePaidAmountChange(member.user._id, e.target.value)}
+                              />
+                            </Box>
+                          )}
+                        </Box>
+                      </Box>
                     </ListItemSecondaryAction>
                     </ListItem>
                   ))}
                 </List>
               </Card>
-              <Box mt={2}>
+              {/* <Box mt={2}>
                 <Typography variant="h6" mb={0}> Paid Way </Typography>
                 <select value={paidWay} onChange={handlePaidWayChange}>
                   <option value="Equal">Equal</option>
                   <option value="UnEqual">UnEqual</option>
                   <option value="ByPercentage">By Percentage</option>
                 </select>
-              </Box>
-              {paidWay === 'UnEqual' && (
+              </Box> */}
+              {/* {paidWay === 'UnEqual' && (
                 <Box mt={2}>
                   <Typography variant="h6" mb={0}> Paid Amounts </Typography>
                   {group.members.map((member) => (
@@ -302,8 +337,8 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, isMobile }) =
                     )
                   ))}
                 </Box>
-              )}
-              {paidWay === 'ByPercentage' && (
+              )} */}
+              {/* {paidWay === 'ByPercentage' && (
                 <Box mt={2}>
                   <Typography variant="h6" mb={0}> Paid Percentages </Typography>
                   {group.members.map((member) => (
@@ -321,12 +356,21 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, isMobile }) =
                     )
                   ))}
                 </Box>
-              )}
+              )} */}
             </Box>
           )}
           {step === 2 && (
             <Box mb={2}>
-              <Typography variant="h6" mb={0} mt={2}> Amount Splits To </Typography>
+              <Box mt={2} mb={1}>
+                <Box mt={1} sx={{float:'inline-end'}}>
+                  <select value={splitsWay} onChange={handleSplitsWayChange}>
+                    <option value="Equal">Equal</option>
+                    <option value="UnEqual">UnEqual</option>
+                    <option value="ByPercentage">By Percentage</option>
+                  </select>
+                </Box>
+                <Typography variant="h6" mb={0} mt={2}> Amount Splits To </Typography>
+              </Box>
               <Card sx={{ padding: 1, mt: 0 }}>
                 <List>
                   {group.members.map((member) => (
@@ -346,24 +390,50 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, isMobile }) =
                         secondary={renderAmount(member.user._id, 'split')}
                       />
                       <ListItemSecondaryAction>
-                        <Checkbox
-                          checked={splitsTo[member.user._id]}
-                          onChange={() => handleCheckboxChange(setSplitsTo, member.user._id)}
-                        />
+                        <Box mr={-1}>
+                          <Checkbox
+                            checked={splitsTo[member.user._id]}
+                            onChange={() => handleCheckboxChange(setSplitsTo, member.user._id)}
+                          />
+                          <Box sx={{float: isMobile ? 'none' : 'inline-start', marginTop: isMobile ? '-20px' : '-10px'}}>
+                            {splitsWay === 'UnEqual' && splitsTo[member.user._id] && (
+                              <Box key={member.user._id} width={isMobile ? "100px" : "150px"}>
+                                <TextField
+                                  label={`Amount for ${member.user.username}`}
+                                  type="number" size="small"
+                                  margin="normal"
+                                  value={splitAmounts[member.user._id] || ''}
+                                  onChange={(e) => handleSplitAmountChange(member.user._id, e.target.value)}
+                                />
+                              </Box>
+                            )}
+                            {splitsWay === 'ByPercentage' && splitsTo[member.user._id] && (
+                              <Box key={member.user._id} width={isMobile ? "100px" : "150px"}>
+                                <TextField
+                                  label={`Percentage for ${member.user.username}`}
+                                  type="number" size="small"
+                                  margin="normal"
+                                  value={splitAmounts[member.user._id] || ''}
+                                  onChange={(e) => handleSplitAmountChange(member.user._id, e.target.value)}
+                                />
+                              </Box>
+                            )}
+                          </Box>
+                        </Box>
                       </ListItemSecondaryAction>
                     </ListItem>
                   ))}
                 </List>
               </Card>
-              <Box mt={2}>
+              {/* <Box mt={2}>
                 <Typography variant="h6" mb={0}> Splits Way </Typography>
                 <select value={splitsWay} onChange={handleSplitsWayChange}>
                   <option value="Equal">Equal</option>
                   <option value="UnEqual">UnEqual</option>
                   <option value="ByPercentage">By Percentage</option>
                 </select>
-              </Box>
-              {splitsWay === 'UnEqual' && (
+              </Box> */}
+              {/* {splitsWay === 'UnEqual' && (
                 <Box mt={2}>
                   <Typography variant="h6" mb={0}> Split Amounts </Typography>
                   {group.members.map((member) => (
@@ -381,8 +451,8 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, isMobile }) =
                     )
                   ))}
                 </Box>
-              )}
-              {splitsWay === 'ByPercentage' && (
+              )} */}
+              {/* {splitsWay === 'ByPercentage' && (
                 <Box mt={2}>
                   <Typography variant="h6" mb={0}> Split Percentages </Typography>
                   {group.members.map((member) => (
@@ -400,7 +470,7 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, isMobile }) =
                     )
                   ))}
                 </Box>
-              )}
+              )} */}
             </Box>
           )}
         </DialogContent>
