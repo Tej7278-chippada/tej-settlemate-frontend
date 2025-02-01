@@ -90,9 +90,12 @@ const GroupTransHistory = ({ transactions, loggedInUserId }) => {
                 <Typography variant="body2" fontWeight="bold">
                   {trans.transPerson.username}
                 </Typography>
-                <Typography variant="body2" noWrap sx={{ color: 'GrayText' }}>
-                  {trans.description.length > 30
-                    ? `${trans.description.substring(0, 30)}...`
+                <Typography variant="body2" noWrap sx={{ color: 'GrayText',
+                  whiteSpace: "pre-wrap", // Retain line breaks and tabs
+                  wordWrap: "break-word",
+                 }}>
+                  {trans.description.length > 50
+                    ? `${trans.description.substring(0, 50)}...`
                     : trans.description}
                 </Typography>
                 {/* <Typography
