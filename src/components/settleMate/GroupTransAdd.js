@@ -183,6 +183,10 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, isMobile }) =
     setDescription('');
     setPaidBy(group.members.reduce((acc, member) => ({ ...acc, [member.user._id]: false }), {}));
     setSplitsTo(group.members.reduce((acc, member) => ({ ...acc, [member.user._id]: false }), {}));
+    setPaidWay('Equal'); // Reset PaidWay to default
+    setSplitsWay('Equal'); // Reset SplitsWay to default
+    setPaidAmounts({}); // Clear paidAmounts
+    setSplitAmounts({}); // Clear splitAmounts
     setStep(1);
     setIsNextDisabled(true);
   };
@@ -217,6 +221,9 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, isMobile }) =
           >
             <CloseIcon />
           </IconButton>
+          <Button onClick={resetForm} color="warning" style={{ marginRight: '1rem', position: 'absolute',
+              right: 35,
+              top: 10, }}>Reset</Button>
         </DialogTitle>
         <DialogContent sx={{scrollbarWidth:'thin'}}>
           <Box>
