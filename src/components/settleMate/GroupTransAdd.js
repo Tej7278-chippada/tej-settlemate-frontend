@@ -102,12 +102,44 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, isMobile }) =
     return updatedMembers;
   };
 
+  const validatePaidAmounts = () => {
+    const { paidAmountsCalculated } = calculateAmounts();
+    const totalPaid = Object.values(paidAmountsCalculated).reduce((sum, amount) => sum + amount, 0);
+    return totalPaid.toFixed(2) === parseFloat(amount).toFixed(2);
+  };
+
+  const validateSplitAmounts = () => {
+    const { splitAmountsCalculated } = calculateAmounts();
+    const totalSplit = Object.values(splitAmountsCalculated).reduce((sum, amount) => sum + amount, 0);
+    return totalSplit.toFixed(2) === parseFloat(amount).toFixed(2);
+  };
 
   const handleNext = () => {
+    if (paidWay === 'UnEqual' || paidWay === 'ByPercentage') {
+      if (!validatePaidAmounts()) {
+        setSnackbar({
+          open: true,
+          message: `Entered paidAmounts total should equal to the Amount ${amount}.`,
+          severity: 'warning',
+        });
+        return;
+      }
+    }
     setStep(2);
   };
 
   const handleSubmit = async () => {
+    if (splitsWay === 'UnEqual' || splitsWay === 'ByPercentage') {
+      if (!validateSplitAmounts()) {
+        setSnackbar({
+          open: true,
+          message: `Entered splitsAmount total should equal to the Amount ${amount}.`,
+          severity: 'warning',
+        });
+        return;
+      }
+    }
+
     const selectedPaidBy = Object.keys(paidBy).filter((key) => paidBy[key]);
     const selectedSplitsTo = Object.keys(splitsTo).filter((key) => splitsTo[key]);
 
