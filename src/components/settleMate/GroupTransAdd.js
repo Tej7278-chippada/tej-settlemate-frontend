@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, IconButton, Box, Typography, Card, List, ListItem, ListItemText, ListItemSecondaryAction, Checkbox, Snackbar, Alert, Avatar } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, IconButton, Box, Typography, Card, List, ListItem, ListItemText, ListItemSecondaryAction, Checkbox, Snackbar, Alert, Avatar, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import apiClient from '../../utils/axiosConfig';
 import CloseIcon from '@mui/icons-material/Close';
 
@@ -49,6 +49,16 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, isMobile }) =
 
   const handleSplitAmountChange = (memberId, value) => {
     setSplitAmounts((prev) => ({ ...prev, [memberId]: parseFloat(value) }));
+  };
+
+  const toggleSelectAll = (stateSetter, currentState) => {
+    const allSelected = Object.values(currentState).every((val) => val === true);
+    const newState = Object.keys(currentState).reduce((acc, key) => {
+      acc[key] = !allSelected;
+      return acc;
+    }, {});
+    stateSetter(newState);
+    if (stateSetter === setPaidBy) setIsNextDisabled(allSelected);
   };
 
   const calculateAmounts = () => {
@@ -247,17 +257,25 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, isMobile }) =
           </Box>
           {step === 1 && (
             <Box mb={2}>
-              <Box mt={2} mb={1}>
+              <Box mt={3} mb={2}>
                 <Box mt={1} sx={{float:'inline-end'}}>
-                  <select value={paidWay} onChange={handlePaidWayChange}>
-                    <option value="Equal">Equal</option>
-                    <option value="UnEqual">UnEqual</option>
-                    <option value="ByPercentage">By Percentage</option>
-                  </select>
+                  <FormControl size="small" sx={{ minWidth: 120 , marginTop:'-12px'}}>
+                    <InputLabel id="paid-way-label">Paid Way</InputLabel>
+                    <Select labelId="paid-way-label" label="Paid Way" value={paidWay} onChange={handlePaidWayChange}>
+                      <MenuItem value="Equal">Equal</MenuItem>
+                      <MenuItem value="UnEqual">UnEqual</MenuItem>
+                      <MenuItem value="ByPercentage">By Percentage</MenuItem>
+                    </Select>
+                  </FormControl>
                 </Box>
                 <Typography variant="h6" mb={0} mt={0}> Amount Paid By </Typography>
               </Box>
               <Card sx={{ padding: 1, mt: 0 }}>
+                <Box style={{ display: 'flex', justifyContent: 'flex-end', }}>
+                  <Button size="small" onClick={() => toggleSelectAll(setPaidBy, paidBy)}>
+                    {Object.values(paidBy).every((val) => val === true) ? 'Deselect All' : 'Select All'}
+                  </Button>
+                </Box>
                 <List>
                   {group.members.map((member) => (
                     <ListItem key={member.user._id}>
@@ -361,17 +379,25 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, isMobile }) =
           )}
           {step === 2 && (
             <Box mb={2}>
-              <Box mt={2} mb={1}>
+              <Box mt={3} mb={2}>
                 <Box mt={1} sx={{float:'inline-end'}}>
-                  <select value={splitsWay} onChange={handleSplitsWayChange}>
-                    <option value="Equal">Equal</option>
-                    <option value="UnEqual">UnEqual</option>
-                    <option value="ByPercentage">By Percentage</option>
-                  </select>
+                  <FormControl size="small" sx={{ minWidth: 120 , marginTop:'-12px'}}>
+                    <InputLabel id="splits-way-label">Splits Way</InputLabel>
+                      <Select labelId="splits-way-label" label="Splits Way" value={splitsWay} onChange={handleSplitsWayChange}>
+                        <MenuItem value="Equal">Equal</MenuItem>
+                        <MenuItem value="UnEqual">UnEqual</MenuItem>
+                        <MenuItem value="ByPercentage">By Percentage</MenuItem>
+                      </Select>
+                  </FormControl>
                 </Box>
                 <Typography variant="h6" mb={0} mt={2}> Amount Splits To </Typography>
               </Box>
               <Card sx={{ padding: 1, mt: 0 }}>
+                <Box style={{ display: 'flex', justifyContent: 'flex-end', }}>
+                  <Button size="small" onClick={() => toggleSelectAll(setSplitsTo, splitsTo)}>
+                    {Object.values(splitsTo).every((val) => val === true) ? 'Deselect All' : 'Select All'}
+                  </Button>
+                </Box>
                 <List>
                   {group.members.map((member) => (
                     <ListItem key={member.user._id}>
