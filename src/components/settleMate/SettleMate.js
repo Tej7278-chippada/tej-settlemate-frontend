@@ -1,6 +1,6 @@
 // components/settleMate/settleMate.js
 import React, { useCallback, useEffect, useState } from 'react';
-import { Box, Typography, Card, Avatar, useMediaQuery, IconButton } from '@mui/material';
+import { Box, Typography, Card, Avatar, useMediaQuery, IconButton, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../Layout';
 import apiClient from '../../utils/axiosConfig'; // Use axiosConfig here
@@ -148,6 +148,42 @@ const SettleMate = () => {
                 <Box style={{ paddingTop: '8px', paddingBottom: '1rem' }}>
                   {loading ? (
                     <SkeletonGroups /> // Show SkeletonGroups while loading
+                  ) : groups.length === 0 ? (
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        height: '100%',
+                        textAlign: 'center',
+                        padding: '16px',
+                      }}
+                    >
+                      <Typography variant="h6" color="textSecondary" gutterBottom>
+                        You don't have any groups.
+                      </Typography>
+                      <Typography variant="body1" color="textSecondary" gutterBottom>
+                        Create a new group or join an existing one to get started.
+                      </Typography>
+                      <Box mt={2}>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={() => setOpenCreateGroup(true)}
+                          sx={{ mr: 2 }}
+                        >
+                          Create Group
+                        </Button>
+                        <Button
+                          variant="outlined"
+                          color="primary"
+                          onClick={() => setOpenJoinGroup(true)}
+                        >
+                          Join Group
+                        </Button>
+                      </Box>
+                    </Box>
                   ) : (
                     groups.map((group) => (
                       <Box

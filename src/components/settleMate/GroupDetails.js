@@ -285,7 +285,7 @@ const GroupDetails = ({ groupId: propGroupId }) => {
           </Typography>
         </div>
       </Card> */}
-      <Card sx={{ p: (isMobile ? '6px' : 3), }}>
+      <Card sx={{ p: (isMobile ? '6px' : 3), borderRadius:2 }}>
 
         <Box
           display="flex"
@@ -365,8 +365,8 @@ const GroupDetails = ({ groupId: propGroupId }) => {
         <Typography variant="h6">Members:</Typography>
         <Grid container spacing={1}>
           {group.members.map((member) => (
-            <Grid item key={member.user._id} xs={12} sm={6} md={6}>
-              <Card sx={{ display: 'flex', p: (isMobile ? '8px' : 2),   gap: 0, }}>
+            <Grid sx={{display: 'flex' }} item key={member.user._id} xs={12} sm={6} md={6}>
+              <Card sx={{ display: 'flex', width:'100%', p: (isMobile ? '8px' : 2),   gap: 0, borderRadius:2 }}>
                 <Avatar
                    alt={member.user.username[0]}
                    src={
