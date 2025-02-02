@@ -1,7 +1,7 @@
 // components/settleMate/GroupTrans.js
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Box, Typography, Avatar, useMediaQuery, IconButton,  Snackbar, Alert, Dialog, DialogTitle, DialogContent, DialogActions, } from '@mui/material';
+import { Box, Typography, Avatar, useMediaQuery, IconButton,  Snackbar, Alert, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress, } from '@mui/material';
 import apiClient from '../../utils/axiosConfig';
 import Layout from '../Layout';
 import { useTheme } from '@emotion/react';
@@ -29,6 +29,8 @@ const GroupTrans = ({ groupId: propGroupId }) => {
   const [isAddDialogOpen, setAddDialogOpen] = useState(false);
   const loggedInUserId = localStorage.getItem('userId'); // Get logged-in user's ID
   const [hoveredId, setHoveredId] = useState(null);
+  const [loadingRefresh, setLoadingRefresh] = useState(false);
+  const [loadingAddTransaction, setLoadingAddTransaction] = useState(false);
 
   // WebSocket connection
   const [socket, setSocket] = useState(null);
@@ -100,8 +102,10 @@ const GroupTrans = ({ groupId: propGroupId }) => {
   }, [groupId, navigate]);
 
   // Function to handle refresh
-  const handleRefresh = () => {
-    fetchGroupDetails(); // Refetch group details
+  const handleRefresh = async () => {
+    setLoadingRefresh(true);
+    await fetchGroupDetails(); // Fetch group details
+    setLoadingRefresh(false);
   };
   
   useEffect(() => {
@@ -149,7 +153,16 @@ const GroupTrans = ({ groupId: propGroupId }) => {
     }
   };
 
-  const handleAddTransaction = () => setAddDialogOpen(true);
+  // const handleAddTransaction = () => setAddDialogOpen(true);
+  // Function to handle opening the add transaction dialog
+  const handleAddTransaction = () => {
+    setLoadingAddTransaction(true);
+    setTimeout(() => {
+      setAddDialogOpen(true);
+      setLoadingAddTransaction(false);
+    }, 500); // Simulating a delay for better UX
+  };
+  
   const handleCloseAddDialog = () => setAddDialogOpen(false);
 
   const handleTransactionAdded = (newTransaction) => {
@@ -194,8 +207,16 @@ const GroupTrans = ({ groupId: propGroupId }) => {
           <Box display="flex" flexDirection={isMobile ? 'column' : 'column'} alignItems="center" ml={isMobile ? '0rem' : '0rem'}>
             <Box display="flex" alignItems="center">
               {/* Refresh Icon Button */}
-              <IconButton onClick={handleRefresh} sx={{ mr: 1 }}>
-                <RefreshRoundedIcon />
+              <IconButton onClick={handleRefresh} sx={{ mr: 1 }} disabled={loadingRefresh}>
+              <RefreshRoundedIcon
+                sx={{
+                  animation: loadingRefresh ? 'spin 1s linear infinite' : 'none',
+                  '@keyframes spin': {
+                    '0%': { transform: 'rotate(0deg)' },
+                    '100%': { transform: 'rotate(360deg)' }
+                  }
+                }}
+              />
               </IconButton>
               <IconButton
                   onClick={() => handleGroupClick(group)}
@@ -273,6 +294,7 @@ const GroupTrans = ({ groupId: propGroupId }) => {
             transition: 'all 0.2s ease',
           }}
           onClick={handleAddTransaction}
+          disabled={loadingAddTransaction}
         >
           {hoveredId === group._id && (
             <span
@@ -289,7 +311,7 @@ const GroupTrans = ({ groupId: propGroupId }) => {
               Add Transaction
             </span>
           )}
-          <PlaylistAddRoundedIcon />
+            {loadingAddTransaction ? <CircularProgress size={24} /> : <PlaylistAddRoundedIcon />}
         </IconButton>
       </Box>
       {/* <Toolbar sx={{

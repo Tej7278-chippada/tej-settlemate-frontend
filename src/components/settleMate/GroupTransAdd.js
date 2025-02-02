@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, IconButton, Box, Typography, Card, List, ListItem, ListItemText, ListItemSecondaryAction, Checkbox, Snackbar, Alert, Avatar, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, IconButton, Box, Typography, Card, List, ListItem, ListItemText, ListItemSecondaryAction, Checkbox, Snackbar, Alert, Avatar, FormControl, InputLabel, Select, MenuItem, CircularProgress } from '@mui/material';
 import apiClient from '../../utils/axiosConfig';
 import CloseIcon from '@mui/icons-material/Close';
 
@@ -15,6 +15,7 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, isMobile }) =
   const [splitsWay, setSplitsWay] = useState('Equal');
   const [paidAmounts, setPaidAmounts] = useState({});
   const [splitAmounts, setSplitAmounts] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     // Initialize "paidBy" and "splitTo" with group members
@@ -158,6 +159,8 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, isMobile }) =
       return;
     }
 
+    setIsLoading(true); // Set loading to true
+
     const { paidAmountsCalculated, splitAmountsCalculated } = calculateAmounts();
     const updatedMembers = updateBalances(paidAmountsCalculated, splitAmountsCalculated);
 
@@ -185,6 +188,8 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, isMobile }) =
     } catch (error) {
       console.error('Error adding transaction:', error);
       setSnackbar({ open: true, message: 'Failed to add transaction. Please try again.', severity: 'error' });
+    } finally {
+      setIsLoading(false); // Set loading to false regardless of success or failure
     }
   };
 
@@ -519,10 +524,11 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, isMobile }) =
                 <Button onClick={() => setStep(1)} style={{ marginRight: '1rem' }}>Back</Button>
                 <Button
                   onClick={handleSubmit}
-                  disabled={!Object.values(splitsTo).some((val) => val)}
+                  disabled={!Object.values(splitsTo).some((val) => val) || isLoading}
                   variant="contained"
+                  startIcon={isLoading ? <CircularProgress size={20} /> : null}
                 >
-                  Submit Trans
+                  {isLoading ? 'Submitting...' : 'Submit Trans'}
                 </Button>
               </>
             )}
