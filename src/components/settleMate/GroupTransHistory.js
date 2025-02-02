@@ -5,19 +5,46 @@ import { useTheme } from '@emotion/react';
 import KeyboardDoubleArrowDownRoundedIcon from '@mui/icons-material/KeyboardDoubleArrowDownRounded';
 import TransDetails from './TransDetails';
 
-const GroupTransHistory = ({ transactions, loggedInUserId }) => {
+const GroupTransHistory = ({ transactions: initialTransactions, loggedInUserId, socket, groupId }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [isDialogOpen, setDialogOpen] = useState(false);
+  const [transactions, setTransactions] = useState(initialTransactions);
   const bottomRef = useRef(null); // Reference to the last transaction
 
+  // Debugging: Log transactions when they change
+  // useEffect(() => {
+  //   console.log('Transactions in GroupTransHistory:', transactions);
+  // }, [transactions]);
+  
+  // Listen for new transactions via WebSocket
+  useEffect(() => {
+    if (socket) {
+      socket.on('newTransaction', (newTransaction) => {
+        // console.log('New transaction received:', newTransaction); // Debugging
+
+        // Check if profilePic is valid
+      // console.log('transPerson.profilePic:', newTransaction.transPerson?.profilePic);
+      // newTransaction.paidBy.forEach((user, index) => console.log(`paidBy[${index}].profilePic:`, user.profilePic));
+      // newTransaction.splitsTo.forEach((user, index) => console.log(`splitsTo[${index}].profilePic:`, user.profilePic));
+
+        setTransactions((prevTransactions) => [...prevTransactions, newTransaction]);
+      });
+
+      // Cleanup listener on unmount
+      return () => {
+        socket.off('newTransaction');
+      };
+    }
+  }, [socket]);
+  
   useEffect(() => {
     // Instantly scroll to the latest transaction without animation
     if (bottomRef.current) {
       bottomRef.current.scrollIntoView({ behavior: 'auto' });
     }
-  }, [transactions]); // Runs every time transactions update
+  }, [transactions.length]); // Runs every time transactions update
 
   const handleTransactionClick = (transaction) => {
     setSelectedTransaction(transaction);
@@ -74,7 +101,7 @@ const GroupTransHistory = ({ transactions, loggedInUserId }) => {
             >
               {/* {!(trans.transPerson._id === loggedInUserId) && ( */}
               <Avatar
-                alt={trans.transPerson.username}
+                alt={trans.transPerson.username || 'Unknown'}
                 src={
                   trans.transPerson.profilePic
                     ? `data:image/jpeg;base64,${trans.transPerson.profilePic}`
@@ -82,13 +109,13 @@ const GroupTransHistory = ({ transactions, loggedInUserId }) => {
                 }
                 sx={{ width: 38, height: 38, mr: 2 }}
               >
-                {trans.transPerson.username[0]}
+                {trans.transPerson?.username?.charAt(0) || 'U'}
               </Avatar>
               {/* )} */}
               <Box>
                 <Typography variant="body1" sx={{ display: 'block', float: 'inline-end' }}>₹{trans.amount}</Typography>
                 <Typography variant="body2" fontWeight="bold">
-                  {trans.transPerson.username}
+                  {trans.transPerson.username || 'Unknown'}
                 </Typography>
                 <Typography variant="body2" noWrap sx={{ color: 'GrayText',
                   whiteSpace: "pre-wrap", // Retain line breaks and tabs

@@ -12,6 +12,7 @@ import PlaylistAddRoundedIcon from '@mui/icons-material/PlaylistAddRounded';
 import GroupTransAdd from './GroupTransAdd';
 import GroupTransHistory from './GroupTransHistory';
 import RefreshRoundedIcon from '@mui/icons-material/RefreshRounded'; // Import the refresh icon
+import { io } from 'socket.io-client'; // Import socket.io-client
 
 
 const GroupTrans = ({ groupId: propGroupId }) => {
@@ -28,6 +29,48 @@ const GroupTrans = ({ groupId: propGroupId }) => {
   const [isAddDialogOpen, setAddDialogOpen] = useState(false);
   const loggedInUserId = localStorage.getItem('userId'); // Get logged-in user's ID
   const [hoveredId, setHoveredId] = useState(null);
+
+  // WebSocket connection
+  const [socket, setSocket] = useState(null);
+
+  // useEffect(() => {
+  //   console.log('Group state updated:', group); // Debugging
+  // }, [group]);
+
+  useEffect(() => {
+    // Connect to WebSocket server
+    const newSocket = io(process.env.REACT_APP_API_URL); // Use the backend URL from .env
+    setSocket(newSocket);
+
+    // Cleanup on unmount
+    return () => newSocket.close();
+  }, []);
+
+  useEffect(() => {
+    if (socket && groupId) {
+      // Join the room for the current group
+      socket.emit('joinGroup', groupId);
+      // console.log(`Joined group room: ${groupId}`); // Debugging
+
+      // Listen for new transactions
+      socket.on('newTransaction', (newTransaction) => {
+        // console.log('New transaction received:', newTransaction); // Debugging
+        setGroup((prevGroup) => {
+          const updatedTransactions = [...prevGroup.transactions, newTransaction];
+          // console.log('Updated transactions:', updatedTransactions); // Debugging
+          return {
+            ...prevGroup,
+            transactions: updatedTransactions,
+          };
+        });
+      });
+
+      // Cleanup event listener
+      return () => {
+        socket.off('newTransaction');
+      };
+    }
+  }, [socket, groupId]);
 
   // Fetch group details
   const fetchGroupDetails = useCallback(async () => {
@@ -171,7 +214,10 @@ const GroupTrans = ({ groupId: propGroupId }) => {
       }}>
         <Box mt={0} sx={{ scrollbarWidth: 'thin' }}>
         {/* <Typography variant="h6">Group Transactions:</Typography> */}
-         <GroupTransHistory transactions={group.transactions} loggedInUserId={loggedInUserId} />
+         <GroupTransHistory transactions={group?.transactions || []} loggedInUserId={loggedInUserId}
+         socket={socket} // Pass the socket instance
+         groupId={groupId} // Pass the groupId
+         />
         </Box>
 
       {/* <Box mt={0}  sx={{scrollbarWidth:'none'}}> */}

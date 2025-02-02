@@ -29,10 +29,10 @@ const TransDetails = ({ open, onClose, transaction, isMobile}) => {
             src={transaction.transPerson.profilePic ? `data:image/jpeg;base64,${transaction.transPerson.profilePic}` : undefined}
             sx={{ width: 48, height: 48, mr: 2 }}
           >
-            {transaction.transPerson.username[0]}
+            {transaction.transPerson?.username?.charAt(0) || 'U'}
           </Avatar>
           <Box>
-          <Typography variant="h6">{transaction.transPerson.username}</Typography>
+          <Typography variant="h6">{transaction.transPerson.username || 'Unknown'}</Typography>
           <Typography variant="body2" color="textSecondary">
             Added on: {new Date(transaction.createdAt).toLocaleString()}
           </Typography>
@@ -71,10 +71,10 @@ const TransDetails = ({ open, onClose, transaction, isMobile}) => {
                         src={user.profilePic ? `data:image/jpeg;base64,${user.profilePic}` : undefined}
                         sx={{ width: 40, height: 40, mr: 2 }}
                     >
-                            {user.username[0]}
+                      {user?.username?.charAt(0) || 'U'}
                     </Avatar>
                     <Box>
-                      <Typography variant="body2">{user.username}</Typography>
+                      <Typography variant="body2">{user.username || 'Unknown'}</Typography>
                       <Typography variant="body2" color="textSecondary">
                         Paid: ₹{(transaction.paidAmounts[user._id.toString()] || 0).toFixed(2)}
                       </Typography>
@@ -95,10 +95,10 @@ const TransDetails = ({ open, onClose, transaction, isMobile}) => {
                         src={user.profilePic ? `data:image/jpeg;base64,${user.profilePic}` : undefined}
                         sx={{ width: 40, height: 40, mr: 2 }}
                     >
-                        {user.username[0]}
+                      {user?.username?.charAt(0) || 'U'} 
                     </Avatar>
                     <Box>
-                      <Typography variant="body2">{user.username}</Typography>
+                      <Typography variant="body2">{user.username || 'Unknown'}</Typography>
                       <Typography variant="body2" color="textSecondary">
                         Split: ₹{(transaction.splitAmounts[user._id.toString()] || 0).toFixed(2)}
                       </Typography>
