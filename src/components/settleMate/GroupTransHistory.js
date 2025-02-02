@@ -38,6 +38,12 @@ const GroupTransHistory = ({ transactions: initialTransactions, loggedInUserId, 
       };
     }
   }, [socket]);
+
+  const scrollToBottom = () => {
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
   
   useEffect(() => {
     // Instantly scroll to the latest transaction without animation
@@ -156,6 +162,7 @@ const GroupTransHistory = ({ transactions: initialTransactions, loggedInUserId, 
             // height: '30px', // Set smaller height
           }}
           // onClick={handleAddTransaction}
+          onClick={scrollToBottom}
         >
           <KeyboardDoubleArrowDownRoundedIcon style={{ fontSize: '14px' }}/>
         </IconButton>
