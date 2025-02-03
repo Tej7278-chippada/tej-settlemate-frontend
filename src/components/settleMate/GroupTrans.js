@@ -279,33 +279,39 @@ const GroupTrans = ({ groupId: propGroupId }) => {
             // event.stopPropagation(); // Prevent triggering the parent onClick
             // handleRemove(product._id);
           // }}
+          onClick={(event) => {
+            handleAddTransaction();
+            event.stopPropagation();
+            setHoveredId(null); // Auto-close hover effect after clicking
+          }}
           onMouseEnter={() => setHoveredId(group._id)} // Set hoveredId to the current button's ID
           onMouseLeave={() => setHoveredId(null)} // Reset hoveredId when mouse leaves
           style={{
             position: 'absolute',
             bottom: '15px',
             right: '25px',
-            backgroundColor: hoveredId === group._id ? '#ffe6e6' : 'rgba(255, 255, 255, 0.2)',
-            borderRadius: hoveredId === group._id ? '6px' : '50%',
-            boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
+            backgroundColor: hoveredId === group._id ? 'rgba(0, 123, 255, 0.15)' : 'rgba(255, 255, 255, 0.2)', // Soft blue on hover
+            borderRadius: hoveredId === group._id ? '24px' : '24px',
+            boxShadow: hoveredId === group._id ? '0 4px 10px rgba(0, 123, 255, 0.3)' : '0 2px 5px rgba(0, 0, 0, 0.1)',
             display: 'flex',
             alignItems: 'center',
-            color: 'blue',
-            transition: 'all 0.2s ease',
+            color: hoveredId === group._id ? '#007bff' : '#1a73e8', // Google Blue style
+            padding: '10px 16px',
+            transition: 'all 0.3s ease-in-out',
           }}
-          onClick={handleAddTransaction}
+          // onClick={handleAddTransaction}
           disabled={loadingAddTransaction}
         >
           {hoveredId === group._id && (
             <span
               style={{
                 fontSize: '14px',
-                color: '#ff0000',
+                color: '#007bff', // Nice blue shade
                 marginRight: '8px',
                 whiteSpace: 'nowrap',
                 opacity: hoveredId === group._id ? 1 : 0,
                 transform: hoveredId === group._id ? 'translateX(0)' : 'translateX(10px)',
-                transition: 'opacity 0.3s, transform 0.3s',
+                transition: 'opacity 0.3s, transform 0.3s ease-in-out',
               }}
             >
               Add Transaction

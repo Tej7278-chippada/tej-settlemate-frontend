@@ -152,14 +152,17 @@ const GroupTransHistory = ({ transactions: initialTransactions, loggedInUserId, 
       <IconButton
           style={{
             position: 'absolute',
-            bottom: '45px',
-            right: '5px',
+            bottom: isMobile ? '50px' : '55px',
+            right: isMobile ? '4px' : '12px',
+            // padding: '6px 4px',
+            borderRadius: '24px',
             boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
             display: 'flex',
             alignItems: 'center',
-            // padding: '4px', // Reduce padding to shrink button size
-            // width: '30px', // Set smaller width
-            // height: '30px', // Set smaller height
+            padding: '4px', // Reduce padding to shrink button size
+            width:isMobile ? '30px' : '25px', // Set smaller width
+            height: isMobile ? '35px' : '30px', // Set smaller height
+            color: '#1a73e8', // Google Blue style
           }}
           // onClick={handleAddTransaction}
           onClick={scrollToBottom}

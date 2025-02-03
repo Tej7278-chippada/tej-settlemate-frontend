@@ -1,12 +1,14 @@
 // components/settleMate/GroupDetails.js
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Box, Typography, Card, Avatar, Grid, useMediaQuery, IconButton, CircularProgress, Snackbar, Alert, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@mui/material';
+import { Box, Typography, Card, Avatar, Grid, useMediaQuery, IconButton, Snackbar, Alert, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@mui/material';
 import apiClient from '../../utils/axiosConfig';
 import Layout from '../Layout';
 import { useTheme } from '@emotion/react';
-import { Delete, Refresh } from '@mui/icons-material';
+import { Delete } from '@mui/icons-material';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
+import RefreshRoundedIcon from '@mui/icons-material/RefreshRounded';
+
 
 const GroupDetails = ({ groupId: propGroupId }) => {
   const { groupId: paramGroupId } = useParams(); // Get groupId from URL if available
@@ -342,7 +344,15 @@ const GroupDetails = ({ groupId: propGroupId }) => {
                   disabled={loadingJoinCode}
                   sx={{ ml: 1 }}
                 >
-                  {loadingJoinCode ? <CircularProgress size={20} /> : <Refresh />}
+                  <RefreshRoundedIcon
+                    sx={{
+                      animation: loadingJoinCode ? 'spin 1s linear infinite' : 'none',
+                      '@keyframes spin': {
+                        '0%': { transform: 'rotate(0deg)' },
+                        '100%': { transform: 'rotate(360deg)' }
+                      }
+                    }}
+                  />
                 </IconButton>
               )}
             </Box>
