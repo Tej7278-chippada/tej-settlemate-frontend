@@ -77,10 +77,10 @@ const GroupTransHistory = ({ transactions: initialTransactions, loggedInUserId, 
   }, [transactions.length]); // Runs every time transactions update
 
   const handleTransactionClick = (transaction) => {
-    if (!transaction.deleted) {
+    // if (!transaction.deleted) {
       setSelectedTransaction(transaction);
       setDialogOpen(true);
-    }
+    // }
   };
 
   const handleCloseDialog = () => {
@@ -136,7 +136,7 @@ const GroupTransHistory = ({ transactions: initialTransactions, loggedInUserId, 
               sx={{
                 display: 'flex',
                 flexDirection: 'row',
-                alignItems: 'center', cursor: trans.deleted ? 'default' : 'pointer',
+                alignItems: 'center', cursor: 'pointer',
                 p: 1, mb: '8px',
                 maxWidth: isMobile ? '80%' : '60%',
                 // backgroundColor: trans.transPerson._id === loggedInUserId ? '#dcf8c6' : '#e3f2fd',

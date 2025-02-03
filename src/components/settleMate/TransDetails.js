@@ -34,6 +34,7 @@ const TransDetails = ({ open, onClose, transaction, isMobile, onTransactionDelet
     >
       <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>Transaction Details
       <Box>
+          {!transaction.deleted && (
           <IconButton
             aria-label="delete"
             onClick={() => setConfirmDelete(true)}
@@ -43,6 +44,7 @@ const TransDetails = ({ open, onClose, transaction, isMobile, onTransactionDelet
           >
             <DeleteIcon />
           </IconButton>
+          )}
           <IconButton
             aria-label="close"
             onClick={onClose}
@@ -145,10 +147,13 @@ const TransDetails = ({ open, onClose, transaction, isMobile, onTransactionDelet
       </DialogActions>
 
       {/* Confirmation Dialog */}
-      <Dialog open={confirmDelete} onClose={() => setConfirmDelete(false)}>
+      <Dialog open={confirmDelete} onClose={() => setConfirmDelete(false)}
+        sx={{'& .MuiPaper-root': { borderRadius: '16px', }, }}
+      >
         <DialogTitle>Confirm Delete</DialogTitle>
         <DialogContent>
-          <Typography>Are you sure you want to delete this transaction?</Typography>
+          <Typography >Are you sure you want to delete this transaction?</Typography>
+          <Typography color="info">Amount removed from the member's balance...</Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setConfirmDelete(false)} color="primary">
