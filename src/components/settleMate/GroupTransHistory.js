@@ -1,6 +1,6 @@
 // components/settleMate/GroupTransHistory.js
 import React, { useEffect, useRef, useState } from 'react';
-import { Box, Typography, Card, Avatar, Grid, useMediaQuery, IconButton } from '@mui/material';
+import { Box, Typography, Card, Avatar, Grid, useMediaQuery, IconButton, Snackbar, Alert } from '@mui/material';
 import { useTheme } from '@emotion/react';
 import KeyboardDoubleArrowDownRoundedIcon from '@mui/icons-material/KeyboardDoubleArrowDownRounded';
 import TransDetails from './TransDetails';
@@ -12,6 +12,7 @@ const GroupTransHistory = ({ transactions: initialTransactions, loggedInUserId, 
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [transactions, setTransactions] = useState(initialTransactions);
   const bottomRef = useRef(null); // Reference to the last transaction
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: '' }); // Snackbar state
 
   // Debugging: Log transactions when they change
   // useEffect(() => {
@@ -39,6 +40,26 @@ const GroupTransHistory = ({ transactions: initialTransactions, loggedInUserId, 
     }
   }, [socket]);
 
+  // Listen for deleted transactions via WebSocket
+  useEffect(() => {
+    if (socket) {
+      socket.on('transactionDeleted', (data) => {
+        // Update the UI to show that the transaction was deleted
+        setTransactions((prevTransactions) =>
+          prevTransactions.filter((t) => t._id !== data.transactionId)
+        );
+        // Show a notification
+        // alert(`Transaction deleted by ${data.deletedBy}`);
+        setSnackbar({ open: true, message: `Transaction deleted by ${data.deletedBy}`, severity: 'success' });
+      });
+
+      // Cleanup listener on unmount
+      return () => {
+        socket.off('transactionDeleted');
+      };
+    }
+  }, [socket]);
+
   const scrollToBottom = () => {
     if (bottomRef.current) {
       bottomRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -61,6 +82,13 @@ const GroupTransHistory = ({ transactions: initialTransactions, loggedInUserId, 
     setDialogOpen(false);
     setSelectedTransaction(null);
   };
+
+  const handleTransactionDeleted = (transactionId) => {
+    // Update the state or refetch the transactions to reflect the deletion
+    setTransactions(transactions.filter(t => t._id !== transactionId));
+  };
+
+  const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
 
   if (transactions.length === 0) {
     return (
@@ -170,11 +198,24 @@ const GroupTransHistory = ({ transactions: initialTransactions, loggedInUserId, 
           <KeyboardDoubleArrowDownRoundedIcon style={{ fontSize: '14px' }}/>
         </IconButton>
 
-        <TransDetails
+      <TransDetails
+        groupId={groupId}
         transaction={selectedTransaction}
-        open={isDialogOpen} isMobile={isMobile}
+        open={isDialogOpen} 
+        isMobile={isMobile}
         onClose={handleCloseDialog}
+        onTransactionDeleted={handleTransactionDeleted}
       />
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%', borderRadius:'1rem' }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
