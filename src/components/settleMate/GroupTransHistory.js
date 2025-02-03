@@ -46,11 +46,14 @@ const GroupTransHistory = ({ transactions: initialTransactions, loggedInUserId, 
       socket.on('transactionDeleted', (data) => {
         // Update the UI to show that the transaction was deleted
         setTransactions((prevTransactions) =>
-          prevTransactions.filter((t) => t._id !== data.transactionId)
+          // prevTransactions.filter((t) => t._id !== data.transactionId)
+          prevTransactions.map((t) =>
+            t._id === data.transactionId ? { ...t, deleted: true, deletedBy: data.deletedBy } : t
+          )
         );
         // Show a notification
         // alert(`Transaction deleted by ${data.deletedBy}`);
-        setSnackbar({ open: true, message: `Transaction deleted by ${data.deletedBy}`, severity: 'success' });
+        // setSnackbar({ open: true, message: `Transaction deleted by ${data.deletedBy}`, severity: 'success' });
       });
 
       // Cleanup listener on unmount
@@ -74,8 +77,10 @@ const GroupTransHistory = ({ transactions: initialTransactions, loggedInUserId, 
   }, [transactions.length]); // Runs every time transactions update
 
   const handleTransactionClick = (transaction) => {
-    setSelectedTransaction(transaction);
-    setDialogOpen(true);
+    if (!transaction.deleted) {
+      setSelectedTransaction(transaction);
+      setDialogOpen(true);
+    }
   };
 
   const handleCloseDialog = () => {
@@ -85,7 +90,13 @@ const GroupTransHistory = ({ transactions: initialTransactions, loggedInUserId, 
 
   const handleTransactionDeleted = (transactionId) => {
     // Update the state or refetch the transactions to reflect the deletion
-    setTransactions(transactions.filter(t => t._id !== transactionId));
+    // setTransactions(transactions.filter(t => t._id !== transactionId));
+    setTransactions((prevTransactions) =>
+      prevTransactions.map((t) =>
+        t._id === transactionId ? { ...t, deleted: true, deletedBy: loggedInUserId } : t
+      )
+    );
+    setSnackbar({ open: true, message: 'Transaction deleted by you successfully', severity: 'success' });
   };
 
   const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
@@ -147,31 +158,39 @@ const GroupTransHistory = ({ transactions: initialTransactions, loggedInUserId, 
               </Avatar>
               {/* )} */}
               <Box>
-                <Typography variant="body1" sx={{ display: 'block', float: 'inline-end' }}>₹{trans.amount}</Typography>
-                <Typography variant="body2" fontWeight="bold">
-                  {trans.transPerson.username || 'Unknown'}
-                </Typography>
-                <Typography variant="body2" noWrap sx={{ color: 'GrayText',
-                  whiteSpace: "pre-wrap", // Retain line breaks and tabs
-                  wordWrap: "break-word",
-                 }}>
-                  {trans.description.length > 50
-                    ? `${trans.description.substring(0, 50)}...`
-                    : trans.description}
-                </Typography>
-                {/* <Typography
-                          variant="body2"
-                          color="textSecondary"
-                          style={{
-                            marginBottom: '0.5rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis',
-                            maxHeight: '4.5rem',  // This keeps the text within three lines based on the line height.
-                            lineHeight: '1.5rem'  // Adjust to control exact line spacing.
-                          }}>
-                          {trans.description}
-                        </Typography> */}
-                <Typography variant="caption" sx={{ color: 'GrayText', display: 'block', textAlign: 'right' }}>
-                  {new Date(trans.createdAt).toLocaleString()}
-                </Typography>
+              {trans.deleted ? (
+                  <Typography variant="body2" color="error">
+                    This transaction was deleted by {trans.deletedBy}
+                  </Typography>
+                ) : (
+                  <>
+                  <Typography variant="body1" sx={{ display: 'block', float: 'inline-end' }}>₹{trans.amount}</Typography>
+                  <Typography variant="body2" fontWeight="bold">
+                    {trans.transPerson.username || 'Unknown'}
+                  </Typography>
+                  <Typography variant="body2" noWrap sx={{ color: 'GrayText',
+                    whiteSpace: "pre-wrap", // Retain line breaks and tabs
+                    wordWrap: "break-word",
+                  }}>
+                    {trans.description.length > 50
+                      ? `${trans.description.substring(0, 50)}...`
+                      : trans.description}
+                  </Typography>
+                  {/* <Typography
+                            variant="body2"
+                            color="textSecondary"
+                            style={{
+                              marginBottom: '0.5rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis',
+                              maxHeight: '4.5rem',  // This keeps the text within three lines based on the line height.
+                              lineHeight: '1.5rem'  // Adjust to control exact line spacing.
+                            }}>
+                            {trans.description}
+                          </Typography> */}
+                  <Typography variant="caption" sx={{ color: 'GrayText', display: 'block', textAlign: 'right' }}>
+                    {new Date(trans.createdAt).toLocaleString()}
+                  </Typography>
+                  </>
+                )}
               </Box>
             </Card>
           </Grid>
