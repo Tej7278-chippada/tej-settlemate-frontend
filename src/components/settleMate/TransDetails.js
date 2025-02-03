@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Box, Avatar, Card, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteSweepRoundedIcon from '@mui/icons-material/DeleteSweepRounded';
 import apiClient from '../../utils/axiosConfig';
 
 const TransDetails = ({ open, onClose, transaction, isMobile, onTransactionDeleted, groupId}) => {
@@ -42,7 +42,7 @@ const TransDetails = ({ open, onClose, transaction, isMobile, onTransactionDelet
               color: (theme) => theme.palette.error.main,
             }}
           >
-            <DeleteIcon />
+            <DeleteSweepRoundedIcon />
           </IconButton>
           )}
           <IconButton
