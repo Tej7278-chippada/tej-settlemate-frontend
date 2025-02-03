@@ -136,11 +136,12 @@ const GroupTransHistory = ({ transactions: initialTransactions, loggedInUserId, 
               sx={{
                 display: 'flex',
                 flexDirection: 'row',
-                alignItems: 'center', cursor: 'pointer',
+                alignItems: 'center', cursor: trans.deleted ? 'default' : 'pointer',
                 p: 1, mb: '8px',
                 maxWidth: isMobile ? '80%' : '60%',
-                backgroundColor: trans.transPerson._id === loggedInUserId ? '#dcf8c6' : '#e3f2fd',
-                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', borderRadius: '14px'
+                // backgroundColor: trans.transPerson._id === loggedInUserId ? '#dcf8c6' : '#e3f2fd',
+                backgroundColor: trans.deleted ? '#ffebee' : trans.transPerson._id === loggedInUserId ? '#dcf8c6' : '#e3f2fd',
+                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', borderRadius: '14px', opacity: trans.deleted ? 0.7 : 1,
               }}
               onClick={() => handleTransactionClick(trans)}
             >
@@ -159,9 +160,12 @@ const GroupTransHistory = ({ transactions: initialTransactions, loggedInUserId, 
               {/* )} */}
               <Box>
               {trans.deleted ? (
+                <Box>
+                  <Typography variant="body1" sx={{ display: 'block', float: 'inline-end' }}>₹{trans.amount}</Typography>
                   <Typography variant="body2" color="error">
                     This transaction was deleted by {trans.deletedBy}
                   </Typography>
+                  </Box>
                 ) : (
                   <>
                   <Typography variant="body1" sx={{ display: 'block', float: 'inline-end' }}>₹{trans.amount}</Typography>
