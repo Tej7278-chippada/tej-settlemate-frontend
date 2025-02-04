@@ -187,7 +187,7 @@ const GroupTransHistory = ({ transactions: initialTransactions, loggedInUserId, 
               <Box>
               {trans.deleted ? (
                 <Box>
-                  <Typography variant="body1" sx={{ display: 'block', float: 'inline-end' }}>₹{trans.amount}</Typography>
+                  <Typography variant="body1" sx={{ display: 'block', float: 'inline-end', marginLeft:'4px' }}>₹{trans.amount}</Typography>
                   <Typography variant="body2" color="error">
                     This transaction was deleted by {trans.deletedBy}
                   </Typography>
@@ -226,7 +226,7 @@ const GroupTransHistory = ({ transactions: initialTransactions, loggedInUserId, 
                   )} */}
                   {trans.updateCount > 0 && (
                     <Typography variant="caption" color="textSecondary">
-                      Updated {trans.updateCount} time(s) by {trans.updatedBy[trans.updatedBy.length - 1].username}
+                      Updated {trans.updateCount} time(s)...
                     </Typography>
                   )}
                   </>

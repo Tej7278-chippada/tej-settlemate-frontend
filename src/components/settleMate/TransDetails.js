@@ -1,10 +1,10 @@
 // /components/SettleMate/TransDetails.js
 import React, { useState } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Box, Avatar, Card, IconButton, List, ListItem, ListItemText } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Box, Avatar, Card, IconButton, List, ListItem, } from '@mui/material';
+// import CloseIcon from '@mui/icons-material/Close';
 import DeleteSweepRoundedIcon from '@mui/icons-material/DeleteSweepRounded';
 import apiClient from '../../utils/axiosConfig';
-import EditIcon from '@mui/icons-material/Edit';
+import EditNoteRoundedIcon from '@mui/icons-material/EditNoteRounded';
 import GroupTransAdd from './GroupTransAdd';
 
 const TransDetails = ({ open, onClose, transaction, isMobile, onTransactionDeleted, groupId, onTransactionUpdated, group}) => {
@@ -60,15 +60,7 @@ const TransDetails = ({ open, onClose, transaction, isMobile, onTransactionDelet
       <Box>
           {!transaction.deleted && (
           <>
-            <IconButton
-              aria-label="edit"
-              onClick={handleEdit}
-              sx={{
-                color: (theme) => theme.palette.primary.main,
-              }}
-            >
-              <EditIcon />
-            </IconButton>
+            
             <IconButton
               aria-label="delete"
               onClick={() => setConfirmDelete(true)}
@@ -78,9 +70,18 @@ const TransDetails = ({ open, onClose, transaction, isMobile, onTransactionDelet
             >
               <DeleteSweepRoundedIcon />
             </IconButton>
+            <IconButton
+              aria-label="edit"
+              onClick={handleEdit}
+              sx={{
+                color: (theme) => theme.palette.primary.main, marginLeft:'4px'
+              }}
+            >
+              <EditNoteRoundedIcon style={{ fontSize: '28px' }}/>
+            </IconButton>
           </>
           )}
-          <IconButton
+          {/* <IconButton
             aria-label="close"
             onClick={onClose}
             sx={{
@@ -88,7 +89,12 @@ const TransDetails = ({ open, onClose, transaction, isMobile, onTransactionDelet
             }}
           >
             <CloseIcon />
-          </IconButton>
+          </IconButton> */}
+          {transaction.deleted && (
+            <Typography variant="body2" color="error">
+            This transaction was deleted by {transaction.deletedBy}
+          </Typography>
+          )}
       </Box>
       </DialogTitle>
       <DialogContent sx={{scrollbarWidth:'thin'}}>
@@ -110,32 +116,15 @@ const TransDetails = ({ open, onClose, transaction, isMobile, onTransactionDelet
               Updated {transaction.updateCount} time(s) by {transaction.updatedBy}
             </Typography>
           )} */}
-          {transaction.updateCount > 0 && (
-            <Typography variant="caption" color="textSecondary">
-              Updated {transaction.updateCount} time(s) by {transaction.updatedBy[transaction.updatedBy.length - 1].username}
-            </Typography>
-          )}
-          {/* <Box mt={3}>
-            <Typography variant="h6">Update Timeline</Typography>
-            <List>
-              {transaction.updatedBy.map((update, index) => (
-                <ListItem key={index}>
-                  <ListItemText
-                    primary={`Updated by ${update.username}`}
-                    secondary={`on ${new Date(update.updatedAt).toLocaleString()}`}
-                  />
-                </ListItem>
-              ))}
-            </List>
-          </Box> */}
+          
           </Box>
         </Box>
-        <Typography variant="body1">Amount: ₹{transaction.amount}</Typography>
+        <Typography variant="h6">Amount: ₹{transaction.amount}</Typography>
         {/* <Typography variant="body1">Description: {transaction.description}</Typography> */}
         <Typography variant="body2" color="textSecondary" style={{ paddingLeft: '0px', marginTop:'8px' , fontWeight: 500 }}>
             Transaction Description:
         </Typography>
-        <Typography variant="body1" color="textSecondary" style={{
+        <Typography variant="body1" color="textPrimary" style={{
               marginTop: '0.5rem',
               lineHeight: '1.5',
               textAlign: 'justify', whiteSpace: "pre-wrap", // Retain line breaks and tabs
@@ -199,6 +188,25 @@ const TransDetails = ({ open, onClose, transaction, isMobile, onTransactionDelet
             ))}
         </Card>
         </Box>
+
+        {transaction.updateCount > 0 && (
+          <Box mt={3} sx={{backgroundColor: "#f5f5f5", padding: "1rem", borderRadius: "8px", border: "1px solid #ddd", }}>
+            <Typography variant="body1">Update Timeline</Typography>
+              <Typography variant="caption" color="textSecondary">
+                Updated {transaction.updateCount} time(s), Lastest updation by {transaction.updatedBy[transaction.updatedBy.length - 1].username}
+              </Typography>
+            <List dense>
+              {transaction.updatedBy.slice().reverse().map((update, index) => (
+                <ListItem key={index} sx={{ display: "flex", justifyContent: "space-between" }}>
+                  <Typography variant="body2">{update.username}</Typography>
+                  <Typography variant="caption" color="textSecondary">
+                    on {new Date(update.updatedAt).toLocaleString()}
+                  </Typography>
+                </ListItem>
+              ))}
+            </List>
+          </Box>
+        )}
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color="primary">Close</Button>
