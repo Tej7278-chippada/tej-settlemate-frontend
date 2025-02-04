@@ -4,7 +4,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, I
 import apiClient from '../../utils/axiosConfig';
 import CloseIcon from '@mui/icons-material/Close';
 
-const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, isMobile }) => {
+const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, isMobile, transactionToEdit, }) => {
   const [step, setStep] = useState(1); // Step 1: Transaction Details, Step 2: Amount Split
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
@@ -19,14 +19,60 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, isMobile }) =
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // Initialize "paidBy" and "splitTo" with group members
-    const initialState = group.members.reduce((acc, member) => {
-      acc[member.user._id] = false;
-      return acc;
-    }, {});
-    setPaidBy(initialState);
-    setSplitsTo(initialState);
-  }, [group]);
+    if (transactionToEdit) {
+      // Pre-fill the form with the transaction details
+      const paidByState = {};
+      const splitsToState = {};
+  
+      if (transactionToEdit.paidBy) {
+        transactionToEdit.paidBy.forEach((member) => {
+          if (member && member._id) {
+            paidByState[member._id] = true;
+          }
+        });
+      }
+  
+      if (transactionToEdit.splitsTo) {
+        transactionToEdit.splitsTo.forEach((member) => {
+          if (member && member._id) {
+            splitsToState[member._id] = true;
+          }
+        });
+      }
+      setAmount(transactionToEdit.amount);
+      setDescription(transactionToEdit.description);
+      setPaidWay(transactionToEdit.paidWay);
+      setSplitsWay(transactionToEdit.splitsWay);
+      setPaidAmounts(transactionToEdit.paidAmounts );
+      // setPaidAmounts(Object.fromEntries(transactionToEdit.paidAmounts.entries()));
+      // setSplitAmounts(Object.fromEntries(transactionToEdit.splitAmounts.entries()));
+  
+      setPaidBy(paidByState);
+      setSplitsTo(splitsToState);
+      // const paidByState = group.members.reduce((acc, member) => {
+      //   acc[member.user._id] = transactionToEdit.paidBy.includes(member.user._id);
+      //   return acc;
+      // }, {});
+      // setPaidBy(paidByState);
+
+      // const splitsToState = group.members.reduce((acc, member) => {
+      //   acc[member.user._id] = transactionToEdit.splitsTo.includes(member.user._id);
+      //   return acc;
+      // }, {});
+      // setSplitsTo(splitsToState);
+
+    } else if (group && group.members) {
+      // Initialize "paidBy" and "splitTo" with group members
+      const initialState = group.members.reduce((acc, member) => {
+        if (member && member.user && member.user._id) {
+          acc[member.user._id] = false;
+        }
+        return acc;
+      }, {});
+      setPaidBy(initialState);
+      setSplitsTo(initialState);
+    }
+  }, [group, transactionToEdit]);
 
   const handleCheckboxChange = (stateSetter, memberId) => {
     stateSetter((prev) => {
@@ -166,8 +212,14 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, isMobile }) =
     const updatedMembers = updateBalances(paidAmountsCalculated, splitAmountsCalculated);
 
     try {
-      const response = await apiClient.post(
-        `/api/groups/${group._id}/transactions`,
+      const endpoint = transactionToEdit
+        ? `/api/groups/${group._id}/transactions/${transactionToEdit._id}`
+        : `/api/groups/${group._id}/transactions`;
+
+      const method = transactionToEdit ? 'put' : 'post';
+
+      const response = await apiClient[method](
+        endpoint,
         {
           amount,
           description,
@@ -182,13 +234,13 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, isMobile }) =
         },
         { headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` } }
       );
-      onTransactionAdded(response.data); // Notify parent component about the new transaction
-      setSnackbar({ open: true, message: 'Transaction added successfully!', severity: 'success' });
+      onTransactionAdded(response.data); // Notify parent component about the updated/added transaction
+      setSnackbar({ open: true, message: transactionToEdit ? 'Transaction updated successfully!' : 'Transaction added successfully!', severity: 'success' });
       resetForm(); // Clear input fields
       onClose(); // Close the dialog
     } catch (error) {
-      console.error('Error adding transaction:', error);
-      setSnackbar({ open: true, message: 'Failed to add transaction. Please try again.', severity: 'error' });
+      console.error('Error updating/adding transaction:', error);
+      setSnackbar({ open: true, message: 'Failed to update/add transaction. Please try again.', severity: 'error' });
     } finally {
       setIsLoading(false); // Set loading to false regardless of success or failure
     }
@@ -224,7 +276,7 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, isMobile }) =
       sx={{padding: isMobile ? '1rem' : '0rem',
         '& .MuiPaper-root': { borderRadius: '16px', },
     }}>
-        <DialogTitle>Add Transaction
+        <DialogTitle>{transactionToEdit ? 'Edit Transaction' : 'Add Transaction'}
           <IconButton
             aria-label="close"
             onClick={onClose}
@@ -529,7 +581,7 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, isMobile }) =
                   variant="contained"
                   startIcon={isLoading ? <CircularProgress size={20} /> : null}
                 >
-                  {isLoading ? 'Submitting...' : 'Submit Trans'}
+                  {isLoading ? (transactionToEdit ? 'Updating...' : 'Submitting...') : (transactionToEdit ? 'Update Trans' : 'Submit Trans')}
                 </Button>
               </>
             )}

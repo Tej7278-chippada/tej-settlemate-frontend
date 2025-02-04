@@ -5,7 +5,7 @@ import { useTheme } from '@emotion/react';
 import KeyboardDoubleArrowDownRoundedIcon from '@mui/icons-material/KeyboardDoubleArrowDownRounded';
 import TransDetails from './TransDetails';
 
-const GroupTransHistory = ({ transactions: initialTransactions, loggedInUserId, socket, groupId }) => {
+const GroupTransHistory = ({ transactions: initialTransactions, loggedInUserId, socket, groupId, group }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [selectedTransaction, setSelectedTransaction] = useState(null);
@@ -63,6 +63,22 @@ const GroupTransHistory = ({ transactions: initialTransactions, loggedInUserId, 
     }
   }, [socket]);
 
+  useEffect(() => {
+    if (socket) {
+      socket.on('transactionUpdated', (updatedTransaction) => {
+        setTransactions((prevTransactions) =>
+          prevTransactions.map((t) =>
+            t._id === updatedTransaction._id ? updatedTransaction : t
+          )
+        );
+      });
+  
+      return () => {
+        socket.off('transactionUpdated');
+      };
+    }
+  }, [socket]);
+
   const scrollToBottom = () => {
     if (bottomRef.current) {
       bottomRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -97,6 +113,15 @@ const GroupTransHistory = ({ transactions: initialTransactions, loggedInUserId, 
       )
     );
     setSnackbar({ open: true, message: 'Transaction deleted by you successfully', severity: 'success' });
+  };
+
+  const handleTransactionUpdated = (updatedTransaction) => {
+    setTransactions((prevTransactions) =>
+      prevTransactions.map((t) =>
+        t._id === updatedTransaction._id ? updatedTransaction : t
+      )
+    );
+    setSnackbar({ open: true, message: 'Transaction updated successfully!', severity: 'success' });
   };
 
   const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
@@ -140,7 +165,8 @@ const GroupTransHistory = ({ transactions: initialTransactions, loggedInUserId, 
                 p: 1, mb: '8px',
                 maxWidth: isMobile ? '80%' : '60%',
                 // backgroundColor: trans.transPerson._id === loggedInUserId ? '#dcf8c6' : '#e3f2fd',
-                backgroundColor: trans.deleted ? '#ffebee' : trans.transPerson._id === loggedInUserId ? '#dcf8c6' : '#e3f2fd',
+                backgroundColor: trans.deleted ? '#ffebee' : trans.updateCount > 0
+                  ? '#fde3f2' : trans.transPerson._id === loggedInUserId ? '#dcf8c6' : '#e3f2fd',
                 boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', borderRadius: '14px', opacity: trans.deleted ? 0.7 : 1,
               }}
               onClick={() => handleTransactionClick(trans)}
@@ -193,6 +219,16 @@ const GroupTransHistory = ({ transactions: initialTransactions, loggedInUserId, 
                   <Typography variant="caption" sx={{ color: 'GrayText', display: 'block', textAlign: 'right' }}>
                     {new Date(trans.createdAt).toLocaleString()}
                   </Typography>
+                  {/* {trans.updateCount > 0 && (
+                    <Typography variant="caption" color="textSecondary">
+                      Updated {trans.updateCount} time(s) by {trans.updatedBy}
+                    </Typography>
+                  )} */}
+                  {trans.updateCount > 0 && (
+                    <Typography variant="caption" color="textSecondary">
+                      Updated {trans.updateCount} time(s) by {trans.updatedBy[trans.updatedBy.length - 1].username}
+                    </Typography>
+                  )}
                   </>
                 )}
               </Box>
@@ -228,6 +264,8 @@ const GroupTransHistory = ({ transactions: initialTransactions, loggedInUserId, 
         isMobile={isMobile}
         onClose={handleCloseDialog}
         onTransactionDeleted={handleTransactionDeleted}
+        onTransactionUpdated={handleTransactionUpdated}
+        group={group}
       />
       <Snackbar
         open={snackbar.open}

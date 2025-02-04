@@ -1,12 +1,15 @@
 // /components/SettleMate/TransDetails.js
 import React, { useState } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Box, Avatar, Card, IconButton } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Box, Avatar, Card, IconButton, List, ListItem, ListItemText } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteSweepRoundedIcon from '@mui/icons-material/DeleteSweepRounded';
 import apiClient from '../../utils/axiosConfig';
+import EditIcon from '@mui/icons-material/Edit';
+import GroupTransAdd from './GroupTransAdd';
 
-const TransDetails = ({ open, onClose, transaction, isMobile, onTransactionDeleted, groupId}) => {
+const TransDetails = ({ open, onClose, transaction, isMobile, onTransactionDeleted, groupId, onTransactionUpdated, group}) => {
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [isEditDialogOpen, setEditDialogOpen] = useState(false); // State for edit dialog
 
   if (!transaction) return null;
 
@@ -26,6 +29,27 @@ const TransDetails = ({ open, onClose, transaction, isMobile, onTransactionDelet
     }
   };
 
+  const handleEdit = () => {
+    if (transaction && transaction.paidBy && transaction.splitsTo) {
+      setEditDialogOpen(true);
+    } else {
+      console.error('Transaction data is incomplete:', transaction);
+    }
+  };
+
+  const handleCloseEditDialog = () => {
+    setEditDialogOpen(false); // Close the edit dialog
+  };
+
+  const handleTransactionUpdated = (updatedTransaction) => {
+    if (onTransactionUpdated) {
+      onTransactionUpdated(updatedTransaction);
+    } // Notify parent component about the updated transaction
+    onClose();
+    setEditDialogOpen(false); // Close the edit dialog
+  };
+
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth fullScreen={isMobile ? true : false} 
         sx={{padding: isMobile ? '1rem' : '0rem',
@@ -35,15 +59,26 @@ const TransDetails = ({ open, onClose, transaction, isMobile, onTransactionDelet
       <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>Transaction Details
       <Box>
           {!transaction.deleted && (
-          <IconButton
-            aria-label="delete"
-            onClick={() => setConfirmDelete(true)}
-            sx={{
-              color: (theme) => theme.palette.error.main,
-            }}
-          >
-            <DeleteSweepRoundedIcon />
-          </IconButton>
+          <>
+            <IconButton
+              aria-label="edit"
+              onClick={handleEdit}
+              sx={{
+                color: (theme) => theme.palette.primary.main,
+              }}
+            >
+              <EditIcon />
+            </IconButton>
+            <IconButton
+              aria-label="delete"
+              onClick={() => setConfirmDelete(true)}
+              sx={{
+                color: (theme) => theme.palette.error.main,
+              }}
+            >
+              <DeleteSweepRoundedIcon />
+            </IconButton>
+          </>
           )}
           <IconButton
             aria-label="close"
@@ -70,6 +105,29 @@ const TransDetails = ({ open, onClose, transaction, isMobile, onTransactionDelet
           <Typography variant="body2" color="textSecondary">
             Added on: {new Date(transaction.createdAt).toLocaleString()}
           </Typography>
+          {/* {transaction.updateCount > 0 && (
+            <Typography variant="caption" color="textSecondary">
+              Updated {transaction.updateCount} time(s) by {transaction.updatedBy}
+            </Typography>
+          )} */}
+          {transaction.updateCount > 0 && (
+            <Typography variant="caption" color="textSecondary">
+              Updated {transaction.updateCount} time(s) by {transaction.updatedBy[transaction.updatedBy.length - 1].username}
+            </Typography>
+          )}
+          {/* <Box mt={3}>
+            <Typography variant="h6">Update Timeline</Typography>
+            <List>
+              {transaction.updatedBy.map((update, index) => (
+                <ListItem key={index}>
+                  <ListItemText
+                    primary={`Updated by ${update.username}`}
+                    secondary={`on ${new Date(update.updatedAt).toLocaleString()}`}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          </Box> */}
           </Box>
         </Box>
         <Typography variant="body1">Amount: ₹{transaction.amount}</Typography>
@@ -164,6 +222,18 @@ const TransDetails = ({ open, onClose, transaction, isMobile, onTransactionDelet
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Edit Transaction Dialog */}
+      <GroupTransAdd
+        open={isEditDialogOpen}
+        onClose={handleCloseEditDialog}
+        group={{ _id: groupId, members:  group.members }} // Pass group details
+        // existedAmount={transaction.amount}
+        // existedDesc={transaction.description}
+        isMobile={isMobile}
+        onTransactionAdded={handleTransactionUpdated} // Reuse for updating
+        transactionToEdit={transaction} // Pass the transaction to edit
+      />
 
     </Dialog>
   );

@@ -166,7 +166,7 @@ const GroupTrans = ({ groupId: propGroupId }) => {
   const handleCloseAddDialog = () => setAddDialogOpen(false);
 
   const handleTransactionAdded = (newTransaction) => {
-    fetchGroupDetails(); // Refetch group details to update the UI with the new transaction
+    // fetchGroupDetails(); // Refetch group details to update the UI with the new transaction
     console.log('New Transaction:', newTransaction);
   };
 
@@ -238,6 +238,7 @@ const GroupTrans = ({ groupId: propGroupId }) => {
          <GroupTransHistory transactions={group?.transactions || []} loggedInUserId={loggedInUserId}
          socket={socket} // Pass the socket instance
          groupId={groupId} // Pass the groupId
+         group={group}
          />
         </Box>
 
