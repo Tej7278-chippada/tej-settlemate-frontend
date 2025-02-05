@@ -21,6 +21,34 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, isMobile, tra
   useEffect(() => {
     if (transactionToEdit) {
       // Pre-fill the form with the transaction details
+      setAmount(transactionToEdit.amount);
+      setDescription(transactionToEdit.description);
+      setPaidWay(transactionToEdit.paidWay);
+      setSplitsWay(transactionToEdit.splitsWay);
+
+      // Calculate percentage values if paidWay or splitsWay is ByPercentage
+      const paidAmountsState = {};
+      const splitAmountsState = {};
+
+      if (transactionToEdit.paidWay === 'ByPercentage') {
+        Object.keys(transactionToEdit.paidAmounts).forEach((memberId) => {
+          paidAmountsState[memberId] = ((transactionToEdit.paidAmounts[memberId] / transactionToEdit.amount) * 100).toFixed(2);
+        });
+      } else {
+        Object.assign(paidAmountsState, transactionToEdit.paidAmounts);
+      }
+
+      if (transactionToEdit.splitsWay === 'ByPercentage') {
+        Object.keys(transactionToEdit.splitAmounts).forEach((memberId) => {
+          splitAmountsState[memberId] = ((transactionToEdit.splitAmounts[memberId] / transactionToEdit.amount) * 100).toFixed(2);
+        });
+      } else {
+        Object.assign(splitAmountsState, transactionToEdit.splitAmounts);
+      }
+
+      setPaidAmounts(paidAmountsState);
+      setSplitAmounts(splitAmountsState);
+
       const paidByState = {};
       const splitsToState = {};
   
@@ -39,16 +67,36 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, isMobile, tra
           }
         });
       }
-      setAmount(transactionToEdit.amount);
-      setDescription(transactionToEdit.description);
-      setPaidWay(transactionToEdit.paidWay);
-      setSplitsWay(transactionToEdit.splitsWay);
-      setPaidAmounts(transactionToEdit.paidAmounts );
-      // setPaidAmounts(Object.fromEntries(transactionToEdit.paidAmounts.entries()));
-      // setSplitAmounts(Object.fromEntries(transactionToEdit.splitAmounts.entries()));
-  
+
+      // Initialize all members with false if not already set
+      group.members.forEach((member) => {
+        if (member && member.user && member.user._id) {
+          if (!paidByState[member.user._id]) {
+            paidByState[member.user._id] = false;
+          }
+          if (!splitsToState[member.user._id]) {
+            splitsToState[member.user._id] = false;
+          }
+        }
+      });
+
       setPaidBy(paidByState);
       setSplitsTo(splitsToState);
+      
+      // setPaidAmounts(transactionToEdit.paidAmounts );
+      // setPaidAmounts(Object.fromEntries(transactionToEdit.paidAmounts.entries()));
+      // setSplitAmounts(Object.fromEntries(transactionToEdit.splitAmounts.entries()));
+      // Pre-fill paidAmounts and splitAmounts if they exist
+      // if (transactionToEdit.paidAmounts) {
+      //   setPaidAmounts(transactionToEdit.paidAmounts);
+      // }
+
+      // if (transactionToEdit.splitAmounts) {
+      //   setSplitAmounts(transactionToEdit.splitAmounts);
+      // }
+      
+  
+      
       // const paidByState = group.members.reduce((acc, member) => {
       //   acc[member.user._id] = transactionToEdit.paidBy.includes(member.user._id);
       //   return acc;
@@ -60,6 +108,10 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, isMobile, tra
       //   return acc;
       // }, {});
       // setSplitsTo(splitsToState);
+
+      // Update isNextDisabled based on pre-selected members
+      const isSelected = Object.values(paidByState).some((val) => val === true);
+      setIsNextDisabled(!isSelected); // Enable Next button if at least one member is selected
 
     } else if (group && group.members) {
       // Initialize "paidBy" and "splitTo" with group members
