@@ -18,6 +18,11 @@ const GroupTransHistory = ({ transactions: initialTransactions, loggedInUserId, 
   // useEffect(() => {
   //   console.log('Transactions in GroupTransHistory:', transactions);
   // }, [transactions]);
+
+  useEffect(() => {
+    // console.log("Received Transactions:", initialTransactions); // Debugging
+    setTransactions(initialTransactions);
+  }, [initialTransactions]);
   
   // Listen for new transactions via WebSocket
   useEffect(() => {
@@ -91,7 +96,7 @@ const GroupTransHistory = ({ transactions: initialTransactions, loggedInUserId, 
       bottomRef.current.scrollIntoView({ behavior: 'auto' });
     }
   }, [transactions.length]); // Runs every time transactions update
-
+  
   const handleTransactionClick = (transaction) => {
     // if (!transaction.deleted) {
       setSelectedTransaction(transaction);
