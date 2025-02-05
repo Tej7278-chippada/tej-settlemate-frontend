@@ -1,7 +1,7 @@
 // components/settleMate/GroupTrans.js
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Box, Typography, Avatar, useMediaQuery, IconButton,  Snackbar, Alert, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress, } from '@mui/material';
+import { Box, Typography, Avatar, useMediaQuery, IconButton,  Snackbar, Alert, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress, TextField, MenuItem, InputAdornment, } from '@mui/material';
 import apiClient from '../../utils/axiosConfig';
 import Layout from '../Layout';
 import { useTheme } from '@emotion/react';
@@ -13,6 +13,11 @@ import GroupTransAdd from './GroupTransAdd';
 import GroupTransHistory from './GroupTransHistory';
 import RefreshRoundedIcon from '@mui/icons-material/RefreshRounded'; // Import the refresh icon
 import { io } from 'socket.io-client'; // Import socket.io-client
+import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
+import TextFieldsRoundedIcon from '@mui/icons-material/TextFieldsRounded';
+import CurrencyRupeeRoundedIcon from '@mui/icons-material/CurrencyRupeeRounded';
+import Person2RoundedIcon from '@mui/icons-material/Person2Rounded';
+import { blue } from '@mui/material/colors';
 
 
 const GroupTrans = ({ groupId: propGroupId }) => {
@@ -31,6 +36,10 @@ const GroupTrans = ({ groupId: propGroupId }) => {
   const [hoveredId, setHoveredId] = useState(null);
   const [loadingRefresh, setLoadingRefresh] = useState(false);
   const [loadingAddTransaction, setLoadingAddTransaction] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchCriteria, setSearchCriteria] = useState('description');
+  const searchInputRef = useRef(null);
 
   // WebSocket connection
   const [socket, setSocket] = useState(null);
@@ -170,6 +179,40 @@ const GroupTrans = ({ groupId: propGroupId }) => {
     console.log('New Transaction:', newTransaction);
   };
 
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleSearchCriteriaChange = (e) => {
+    setSearchCriteria(e.target.value);
+  };
+
+  const filteredTransactions = group?.transactions?.filter((transaction) => {
+    if (!searchQuery) return true;
+    switch (searchCriteria) {
+      case 'description':
+        return transaction.description.toLowerCase().includes(searchQuery.toLowerCase());
+      case 'amount':
+        return transaction.amount.toString().includes(searchQuery);
+      case 'transPerson':
+        return transaction.transPerson.username.toLowerCase().includes(searchQuery.toLowerCase());
+      default:
+        return true;
+    }
+  });
+
+  const handleSearchIconClick = () => {
+    setIsSearchOpen(!isSearchOpen);
+    if (!isSearchOpen && searchInputRef.current) {
+      setTimeout(() => searchInputRef.current.focus(), 0);
+    }
+    setSearchQuery("");
+  };
+
+  const handleClear = () => {
+    setSearchQuery("");
+  };
+
   const content = (
     <Box p={isMobile ? '0px' : 0} position="relative" sx={{scrollbarWidth:'none'}}>
       <Box
@@ -186,26 +229,66 @@ const GroupTrans = ({ groupId: propGroupId }) => {
         }}
       >
         <Box display="flex" justifyContent="space-between" alignItems="center" sx={{scrollbarWidth:'none', margin: -1}}>
-          <Box display="flex" alignItems="center">
-            <Avatar
-              alt={group.groupName[0]}
-              src={
-                group.groupPic
-                  ? `data:image/jpeg;base64,${group.groupPic}`
-                  : undefined
-              }
-              sx={{ width: 56, height: 56, mr: 2 }}
-            >
-              {group.groupName[0]}
-            </Avatar>
-            <Box>
-              <Typography variant="h5">
-                {group.groupName}
-              </Typography>
-            </Box>
-          </Box>
+          {!isSearchOpen || !isMobile ? (
+            <Box display="flex" alignItems="center">
+              <Avatar
+                alt={group.groupName[0]}
+                src={
+                  group.groupPic
+                    ? `data:image/jpeg;base64,${group.groupPic}`
+                    : undefined
+                }
+                sx={{ width: 56, height: 56, mr: 2 }}
+              >
+                {group.groupName[0]}
+              </Avatar>
+              <Box onClick={() => handleGroupClick(group)} sx={{cursor:'pointer'}}>
+                <Typography variant="h5">
+                  {group.groupName}
+                </Typography>
+              </Box>
+            </Box> 
+          ) : null}
           <Box display="flex" flexDirection={isMobile ? 'column' : 'column'} alignItems="center" ml={isMobile ? '0rem' : '0rem'}>
             <Box display="flex" alignItems="center">
+              {isSearchOpen && (
+                <Box display="flex" alignItems="center" 
+                // sx={{ position: isMobile ? 'absolute' : 'static', top: isMobile ? '60px' : 'auto', left: isMobile ? '16px' : 'auto', right: isMobile ? '16px' : 'auto', bgcolor: 'white', zIndex: 11, padding: isMobile ? '8px' : '0px', borderRadius: '4px', boxShadow: isMobile ? '0px 2px 4px rgba(0, 0, 0, 0.1)' : 'none' }}
+                >
+                  <TextField
+                    select 
+                    size="small" variant="standard"
+                    value={searchCriteria}
+                    onChange={handleSearchCriteriaChange}
+                    sx={{ width: '45px' }}
+                  >
+                    <MenuItem value="description"><TextFieldsRoundedIcon fontSize="small"/></MenuItem>
+                    <MenuItem value="amount"><CurrencyRupeeRoundedIcon fontSize="small"/></MenuItem>
+                    <MenuItem value="transPerson"><Person2RoundedIcon fontSize="small"/></MenuItem>
+                  </TextField>
+                  <TextField
+                    size="small" variant="standard"
+                    placeholder={`Search by ${searchCriteria}`}
+                    value={searchQuery}
+                    onChange={handleSearch}
+                    sx={{ width: '150px', ml: 1, }}
+                    inputRef={searchInputRef}
+                    InputProps={{endAdornment: (
+                      <InputAdornment position="end">
+                        {searchQuery && (
+                          <IconButton onClick={handleClear}>
+                            <CloseIcon />
+                          </IconButton>
+                        )}
+                      </InputAdornment>
+                    ),
+                    }}
+                  />
+                </Box>
+              )}
+              <IconButton onClick={handleSearchIconClick} sx={{ mr: 1 }}>
+                <SearchRoundedIcon />
+              </IconButton>
               {/* Refresh Icon Button */}
               <IconButton onClick={handleRefresh} sx={{ mr: 1 }} disabled={loadingRefresh}>
               <RefreshRoundedIcon
@@ -235,11 +318,12 @@ const GroupTrans = ({ groupId: propGroupId }) => {
       }}>
         <Box mt={0} sx={{ scrollbarWidth: 'thin' }}>
         {/* <Typography variant="h6">Group Transactions:</Typography> */}
-         <GroupTransHistory transactions={group?.transactions || []} loggedInUserId={loggedInUserId}
-         socket={socket} // Pass the socket instance
-         groupId={groupId} // Pass the groupId
-         group={group}
-         />
+        <GroupTransHistory transactions={filteredTransactions  || []} loggedInUserId={loggedInUserId}
+          socket={socket} // Pass the socket instance
+          groupId={groupId} // Pass the groupId
+          group={group}
+          isSearchOpen={isSearchOpen}
+        />
         </Box>
 
       {/* <Box mt={0}  sx={{scrollbarWidth:'none'}}> */}
