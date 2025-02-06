@@ -176,9 +176,38 @@ const GroupTransHistory = ({ transactions: initialTransactions, loggedInUserId, 
                 // backgroundColor: trans.transPerson._id === loggedInUserId ? '#dcf8c6' : '#e3f2fd',
                 backgroundColor: trans.deleted ? '#ffebee' : trans.updateCount > 0
                   ? '#fde3f2' : trans.transPerson._id === loggedInUserId ? '#dcf8c6' : '#e3f2fd',
-                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', borderRadius: '14px', opacity: trans.deleted ? 0.7 : 1,
+                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                borderRadius: '14px', 
+                opacity: trans.deleted ? 0.7 : 1,
+                transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
+                WebkitTapHighlightColor: 'transparent', // Removes the default tap highlight
               }}
               onClick={() => handleTransactionClick(trans)}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'scale(1.02)'; // Slight zoom on hover
+                e.currentTarget.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.2)'; // Enhance shadow
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'scale(1)'; // Revert zoom
+                e.currentTarget.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.1)'; // Revert shadow
+              }}
+              onTouchStart={(e) => {
+                if (e.currentTarget) {
+                  e.currentTarget.style.transform = 'scale(1.03)';
+                  e.currentTarget.style.boxShadow = '0 6px 14px rgba(0, 0, 0, 0.2)'; // More subtle effect
+                  e.currentTarget.style.borderRadius = '14px'; // Ensure smooth edges
+                }
+              }}
+              onTouchEnd={(e) => {
+                if (e.currentTarget) {
+                  setTimeout(() => {
+                    if (e.currentTarget) {
+                      e.currentTarget.style.transform = 'scale(1)';
+                      e.currentTarget.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+                    }
+                  }, 150);
+                }
+              }}
             >
               {/* {!(trans.transPerson._id === loggedInUserId) && ( */}
               <Avatar

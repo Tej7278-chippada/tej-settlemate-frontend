@@ -17,7 +17,6 @@ import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import TextFieldsRoundedIcon from '@mui/icons-material/TextFieldsRounded';
 import CurrencyRupeeRoundedIcon from '@mui/icons-material/CurrencyRupeeRounded';
 import Person2RoundedIcon from '@mui/icons-material/Person2Rounded';
-import { blue } from '@mui/material/colors';
 
 
 const GroupTrans = ({ groupId: propGroupId }) => {
@@ -175,7 +174,7 @@ const GroupTrans = ({ groupId: propGroupId }) => {
   const handleCloseAddDialog = () => setAddDialogOpen(false);
 
   const handleTransactionAdded = (newTransaction) => {
-    // fetchGroupDetails(); // Refetch group details to update the UI with the new transaction
+    fetchGroupDetails(); // Refetch group details to update the UI with the new transaction
     console.log('New Transaction:', newTransaction);
   };
 
