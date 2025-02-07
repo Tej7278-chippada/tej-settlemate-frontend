@@ -17,6 +17,7 @@ import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import TextFieldsRoundedIcon from '@mui/icons-material/TextFieldsRounded';
 import CurrencyRupeeRoundedIcon from '@mui/icons-material/CurrencyRupeeRounded';
 import Person2RoundedIcon from '@mui/icons-material/Person2Rounded';
+import TransSkeleton from './TransSkeleton';
 
 
 const GroupTrans = ({ groupId: propGroupId }) => {
@@ -143,13 +144,15 @@ const GroupTrans = ({ groupId: propGroupId }) => {
   if (!group) {
     return isMobile ? (
       <Layout>
-        <Box sx={{ margin: '2rem', textAlign: 'center' }}>
-          <Typography>Loading...</Typography>
+        <Box sx={{ margin: '0rem', textAlign: 'center' }}>
+          {/* <Typography>Loading...</Typography> */}
+          <TransSkeleton/>
         </Box>
       </Layout>
     ) : (
-      <Box sx={{ margin: '2rem', textAlign: 'center' }}>
-        <Typography>Loading...</Typography>
+      <Box sx={{ margin: '0rem', textAlign: 'center' }}>
+        {/* <Typography>Loading...</Typography> */}
+        <TransSkeleton/>
       </Box>
     );
   }
