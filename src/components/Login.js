@@ -45,15 +45,15 @@ const Login = () => {
   // };
 
   useEffect(() => {
-    const extendSession = () => {
+    const extendSession = async () => {
       const authToken = localStorage.getItem('authToken');
       if (authToken) {
-        axios.post(
+        try {
+          const response = await axios.post(
           `${process.env.REACT_APP_API_URL}/api/auth/refresh-token`,
           {},
           { headers: { Authorization: `Bearer ${authToken}` } }
-        )
-        .then((response) => {
+          );
           const newToken  = response.data.authToken;
           const tokenUsername = localStorage.getItem('tokenUsername');
           const tokens = JSON.parse(localStorage.getItem('authTokens')) || {};
@@ -61,9 +61,15 @@ const Login = () => {
           localStorage.setItem('authTokens', JSON.stringify(tokens));
           localStorage.setItem('authToken', newToken );
           console.log('authToken refreshed..! :', newToken);
-        })
-        .catch((error) => console.error('Failed to extend session:', error));
-        console.log('Refresh token failed. Token expired or invalid.');
+        } catch (error) {
+          console.error('Failed to extend session:', error);
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('authTokens');
+          localStorage.removeItem('tokenUsername');
+          localStorage.removeItem('userId');
+          navigate('/login', { replace: true });
+          console.log('Refresh token failed. Token expired or invalid.');
+        }
       }
     };
 
@@ -77,7 +83,7 @@ const Login = () => {
         window.removeEventListener(event, extendSession)
       );
     };
-  }, []);
+  }, [navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
