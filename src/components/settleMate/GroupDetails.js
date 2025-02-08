@@ -1,13 +1,15 @@
 // components/settleMate/GroupDetails.js
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Box, Typography, Card, Avatar, Grid, useMediaQuery, IconButton, Snackbar, Alert, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@mui/material';
+import { Box, Typography, Card, Avatar, Grid, useMediaQuery, IconButton, Snackbar, Alert, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, List, ListItem, ListItemText } from '@mui/material';
 import apiClient from '../../utils/axiosConfig';
 import Layout from '../Layout';
 import { useTheme } from '@emotion/react';
 import { Delete } from '@mui/icons-material';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import RefreshRoundedIcon from '@mui/icons-material/RefreshRounded';
+import { io } from 'socket.io-client';
+import TransDetails from './TransDetails';
 
 
 const GroupDetails = ({ groupId: propGroupId }) => {
@@ -23,11 +25,57 @@ const GroupDetails = ({ groupId: propGroupId }) => {
   const [groupError, setGroupError] = useState(false); // Track if the group doesn't exist
   const [confirmationDialog1, setConfirmationDialog1] = useState({ open: false, action: null, data: null });
   const navigate = useNavigate(); // Initialize navigation
+  const [socket, setSocket] = useState(null);
+  const [selectedTransaction, setSelectedTransaction] = useState(null);
+  const [isDialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
     // Set media query readiness after first render
     setIsMediaReady(true);
   }, [isMobile]);
+
+  useEffect(() => {
+    // Connect to WebSocket server
+    const newSocket = io(process.env.REACT_APP_API_URL); // Use the backend URL from .env
+    setSocket(newSocket);
+
+    // Cleanup on unmount
+    return () => newSocket.close();
+  }, []);
+
+  useEffect(() => {
+      if (socket && groupId) {
+        // Join the room for the current group
+        socket.emit('joinGroup', groupId);
+        // console.log(`Joined group room: ${groupId}`); // Debugging
+  
+        // Listen for new transactions
+        socket.on('newTransaction', (newTransaction) => {
+          // console.log('New transaction received:', newTransaction); // Debugging
+          setGroup((prevGroup) => {
+            const updatedTransactions = [...prevGroup.transactions, newTransaction];
+            // console.log('Updated transactions:', updatedTransactions); // Debugging
+            return {
+              ...prevGroup,
+              transactions: updatedTransactions,
+            };
+          });
+        });
+  
+         // Listen for new logs
+         socket.on('newLog', (log) => {
+          setGroup((prevGroup) => ({
+            ...prevGroup,
+            logs: [...prevGroup.logs, log],
+          }));
+        });
+  
+        // Cleanup event listener
+        return () => {
+          socket.off('newTransaction');
+        };
+      }
+    }, [socket, groupId]);
 
   useEffect(() => {
     const fetchGroupDetails = async () => {
@@ -240,6 +288,19 @@ const GroupDetails = ({ groupId: propGroupId }) => {
     setConfirmationDialog({ open: false, action: null });
   };
 
+  const handleTransactionClick = (transactionId) => {
+    const transaction = group.transactions.find((t) => t._id === transactionId);
+    if (transaction) {
+      setSelectedTransaction(transaction);
+      setDialogOpen(true);
+    }
+  };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+    setSelectedTransaction(null);
+  };
+
   const content = (
     <Box p={isMobile ? '6px' : '6px'}>
       {/* <Card sx={{ p: (isMobile ? '6px' : 3), display: 'flex', justifyContent: 'space-between' }}>
@@ -431,6 +492,92 @@ const GroupDetails = ({ groupId: propGroupId }) => {
           ))}
         </Grid>
       </Box>
+      <List>
+        {/* Display logs specific to this member */}
+        {/* {group.logs
+          .filter((log) => log.type === 'member_joined' )
+          .map((log, index) => (
+            <ListItem key={index}>
+              <ListItemText primary={`Joined on ${new Date(log.createdAt).toLocaleString()}`}/>
+              {log.username} - {log.type} - {log.description} - {log.balance} at {new Date(log.createdAt).toLocaleString()}
+            </ListItem>
+          ))} */}
+        {/* {group.logs
+          .filter((log) => log.type === 'member_left' )
+          .map((log, index) => (
+            <ListItem key={index}>
+              <ListItemText primary={`Left on ${new Date(log.createdAt).toLocaleString()}`} />
+            </ListItem>
+          ))} */}
+        {/* Add more log types as needed */}
+      </List>
+      {/* <ul>
+            {group.logs.map((log, index) => (
+              <li key={index}>
+                {log.username}  at {new Date(log.createdAt).toLocaleString()}
+              </li>
+            ))}
+          </ul> */}
+      {group.logs && (
+      <Box mt={3} sx={{backgroundColor: "#f5f5f5", padding: "1rem", borderRadius: "8px", border: "1px solid #ddd", }}>
+        <Typography variant="body1">Group Log</Typography>
+          {/* <Typography variant="caption" color="textSecondary"> */}
+            {/* Updated {group.log.type} time(s), Lastest updation by {group.log.type[transaction.updatedBy.length - 1].username} */}
+          {/* </Typography> */}
+        <List dense>
+          {group.logs.slice().reverse().map((log, index) => (
+            <ListItem key={index} sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Box sx={{flex: 1, marginBottom:'8px',}} >
+                
+                {/* <Typography variant="body2">{log.username}</Typography> */}
+                {/* <Typography variant="body2" sx={{display: 'inline-block', float: 'right', color: log.balance >= 0 ? 'green' : 'red'}}>With balance {log.balance}</Typography> */}
+                {/* <Typography variant="body2">{log.description}</Typography> */}
+                {log.transactionId && (
+                  <Typography variant="body2" onClick={() => handleTransactionClick(log.transactionId)} 
+                    sx={{display: 'inline-block', float: 'right', cursor:'pointer', color:'orange', transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',  }}
+                  >Click Here</Typography>
+                )}
+                {log.type === 'member_removed' && (<Typography variant="body2">{log.username} removed from the group by admin, with Balance {" "} ₹
+                  <span
+                    style={{
+                      color: log.balance >= 0 ? 'green' : 'red',
+                    }}
+                  >
+                    ({log.balance ?? "N/A"})
+                  </span>
+                </Typography>)}
+                {log.type === 'member_left' && (<Typography variant="body2">{log.username} Left the group, with Balance {" "} ₹
+                  <span
+                    style={{
+                      color: log.balance >= 0 ? 'green' : 'red',
+                    }}
+                  >
+                    ({log.balance ?? "N/A"})
+                  </span>
+                </Typography>)}
+                {/* <Typography variant="body2">{log.user.username}</Typography> */}
+                {log.type === 'member_joined' && (<Typography variant="body2">{log.username} Joined the group.</Typography>)}
+                {log.type === 'transaction_updated' && (<Typography variant="body2">{log.username} Updated the Transaction.</Typography>)}
+                {log.type === 'transaction_deleted' && (<Typography variant="body2">{log.username} Deleted the Transcation.</Typography>)}
+                <Typography variant="body2" 
+                  sx={{ display: 'inline-block', float: 'left', 
+                    color: {
+                      member_left: 'orange', // Different color for 'member_left'
+                      member_removed: 'orange',
+                      transaction_updated: 'blue',
+                      transaction_deleted: 'red', // Different color for 'transaction_deleted'
+                    }[log.type] || 'green', // Default to 'green' if log.type is not in the mapping
+                  }}
+                >{log.type}</Typography>
+                <Typography variant="caption" color="textSecondary" sx={{display: 'inline-block', float: 'right',}}>
+                  on {new Date(log.createdAt).toLocaleString()}
+                </Typography>
+              </Box>
+            </ListItem>
+          ))}
+        </List>
+      </Box>
+      )}
     </Box>
   );
 
@@ -495,6 +642,16 @@ const GroupDetails = ({ groupId: propGroupId }) => {
           </Button>
         </DialogActions>
       </Dialog>
+      <TransDetails
+        groupId={groupId}
+        transaction={selectedTransaction}
+        open={isDialogOpen} 
+        isMobile={isMobile}
+        onClose={handleCloseDialog}
+        // onTransactionDeleted={handleTransactionDeleted}
+        // onTransactionUpdated={handleTransactionUpdated}
+        group={group}
+      />
     </>
   );
 };

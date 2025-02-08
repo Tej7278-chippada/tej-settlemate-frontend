@@ -76,6 +76,14 @@ const GroupTrans = ({ groupId: propGroupId }) => {
         });
       });
 
+      // Listen for new logs
+      socket.on('newLog', (log) => {
+        setGroup((prevGroup) => ({
+          ...prevGroup,
+          logs: [...prevGroup.logs, log],
+        }));
+      });
+
       // Cleanup event listener
       return () => {
         socket.off('newTransaction');
