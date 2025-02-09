@@ -1,9 +1,11 @@
 // /src/components/Register.js
 import React, { useState } from 'react';
-import { TextField, Button, Typography, Box, Alert, useMediaQuery, ThemeProvider, createTheme, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import { TextField, Button, Typography, Box, Alert, useMediaQuery, ThemeProvider, createTheme, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions, InputAdornment, IconButton } from '@mui/material';
 import axios from 'axios';
 import Layout from './Layout';
 import Cropper from 'react-easy-crop';
+import PasswordRoundedIcon from '@mui/icons-material/PasswordRounded';
+import PinOutlinedIcon from '@mui/icons-material/PinOutlined';
 
 const theme = createTheme({
   breakpoints: {
@@ -33,6 +35,8 @@ const Register = () => {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [profilePicError, setProfilePicError] = useState('');
+  const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // State to toggle password visibility
 
   const handleCropComplete = async (_, croppedAreaPixels) => {
     if (!profilePic) return; // Ensure profilePic is set before proceeding
@@ -158,6 +162,16 @@ const Register = () => {
     setProfilePic(file);
   };
 
+  // Toggle password visibility
+  const handleTogglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  // Toggle password visibility
+  const handleToggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(!showConfirmPassword);
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Layout>
@@ -249,21 +263,45 @@ const Register = () => {
             <TextField label="Phone" fullWidth margin="normal" value={phone} onChange={(e) => setPhone(e.target.value)} />
             <TextField
               label="Password"
-              type="password"
+              type={showPassword ? 'text' : 'password'} // Toggle between text and password
               variant="outlined"
               fullWidth
               margin="normal"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              InputProps={{
+                endAdornment: isMobile && ( // Only show on desktop screens
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={handleTogglePasswordVisibility}
+                      edge="end"
+                    >
+                      {showPassword ? <PasswordRoundedIcon /> : <PinOutlinedIcon />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
             <TextField
               label="Confirm Password"
-              type="password"
+              type={showConfirmPassword ? 'text' : 'password'} // Toggle between text and password
               variant="outlined"
               fullWidth
               margin="normal"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
+              InputProps={{
+                endAdornment: isMobile && ( // Only show on desktop screens
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={handleToggleConfirmPasswordVisibility}
+                      edge="end"
+                    >
+                      {showConfirmPassword ? <PasswordRoundedIcon /> : <PinOutlinedIcon />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
             {error && <Alert severity="error">{error}</Alert>}
             {success && <Alert severity="success">{success}</Alert>}
