@@ -1,6 +1,6 @@
 // /components/Login.js
 import React, { useEffect, useState } from 'react';
-import { TextField, Button, Typography, Box, Alert, useMediaQuery, ThemeProvider, createTheme, Dialog, DialogContent, DialogActions, CircularProgress,
+import { TextField, Button, Typography, Box, Alert, useMediaQuery, ThemeProvider, createTheme, Dialog, DialogContent, DialogActions, CircularProgress, InputAdornment, IconButton,
   //  IconButton
    } from '@mui/material';
 import axios from 'axios';
@@ -10,6 +10,8 @@ import { useLocation } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import ForgotPassword from './ForgotPassword';
 // import CloseIcon from '@mui/icons-material/Close';
+import PasswordRoundedIcon from '@mui/icons-material/PasswordRounded';
+import PinOutlinedIcon from '@mui/icons-material/PinOutlined';
 
 const theme = createTheme({
   breakpoints: {
@@ -36,6 +38,7 @@ const Login = () => {
   const location = useLocation();
   const isMobile = useMediaQuery(theme => theme.breakpoints.down('sm')); // Media query for small screens
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
   
 
   // const isEmail = (input) => {
@@ -163,6 +166,11 @@ const Login = () => {
     setForgotPasswordOpen(true);
   };
 
+  // Toggle password visibility
+  const handleTogglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
     <ThemeProvider theme={theme}>
     <Layout>
@@ -184,12 +192,24 @@ const Login = () => {
         />
         <TextField
           label="Password"
-          type="password"
+          type={showPassword ? 'text' : 'password'} // Toggle between text and password
           variant="outlined"
           fullWidth
           margin="normal"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          InputProps={{
+            endAdornment: isMobile && ( // Only show on desktop screens
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={handleTogglePasswordVisibility}
+                  edge="end"
+                >
+                  {showPassword ? <PasswordRoundedIcon /> : <PinOutlinedIcon />}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
         />
         {error && <Alert severity="error">{error}</Alert>}
         {success && <Alert severity="success">{success}</Alert>}
