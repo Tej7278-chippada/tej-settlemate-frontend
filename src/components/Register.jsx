@@ -1,3 +1,4 @@
+// /src/components/Register.js
 import React, { useState } from 'react';
 import { TextField, Button, Typography, Box, Alert, useMediaQuery, ThemeProvider, createTheme, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import axios from 'axios';
@@ -31,6 +32,7 @@ const Register = () => {
   const [cropDialog, setCropDialog] = useState(false);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
+  const [profilePicError, setProfilePicError] = useState('');
 
   const handleCropComplete = async (_, croppedAreaPixels) => {
     if (!profilePic) return; // Ensure profilePic is set before proceeding
@@ -120,7 +122,10 @@ const Register = () => {
     formData.append('password', password);
     formData.append('email', email);
     formData.append('phone', phone);
-    if (profilePic) formData.append('profilePic', profilePic);
+    if (croppedImage) {
+      const blob = await fetch(croppedImage).then(r => r.blob());
+      formData.append('profilePic', blob, 'profilePic.jpg');
+    }
 
     try {                             // 'http://localhost:5002/api/auth/register' 'https://tej-chat-app-8cd7e70052a5.herokuapp.com/api/auth/register'
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/register`, formData,
@@ -142,6 +147,15 @@ const Register = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file && file.size > 2 * 1024 * 1024) {
+      setProfilePicError('Profile pic must be under 2MB size.');
+      return;
+    }
+    setProfilePic(file);
   };
 
   return (
@@ -184,7 +198,7 @@ const Register = () => {
                 <input
                   type="file"
                   accept="image/*"
-                  onChange={(e) => setProfilePic(e.target.files[0])}
+                  onChange={handleFileChange}
                   style={{ marginTop: 10 }}
                 />
                 {profilePic ? (
@@ -200,6 +214,7 @@ const Register = () => {
                 ) : (
                   <Typography variant="body2" textAlign="center">
                     Please select an image to upload.
+                    {profilePicError && <Alert severity="error">{profilePicError}</Alert>}
                   </Typography>
                 )}
 

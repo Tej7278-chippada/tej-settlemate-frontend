@@ -14,6 +14,7 @@ const CreateGroup = ({ open, onClose, onGroupCreated }) => {
   const [zoom, setZoom] = useState(1);
   const [loading, setLoading] = useState(false);
   const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' });
+  const [groupPicError, setGroupPicError] = useState('');
 
   const handleCropComplete = async (_, croppedAreaPixels) => {
     if (!groupPic) return; // Ensure profilePic is set before proceeding
@@ -76,7 +77,11 @@ const CreateGroup = ({ open, onClose, onGroupCreated }) => {
     try {
       const formData = new FormData();
       formData.append('groupName', groupName);
-      if (groupPic) formData.append('groupPic', groupPic);
+      // if (groupPic) formData.append('groupPic', groupPic);
+      if (croppedImage) {
+        const blob = await fetch(croppedImage).then(r => r.blob());
+        formData.append('groupPic', blob, 'groupPic.jpg');
+      }
 
       const response = await apiClient.post('/api/groups/create', formData, {
         headers: {
@@ -107,6 +112,15 @@ const CreateGroup = ({ open, onClose, onGroupCreated }) => {
 
   const handleCloseNotification = () => {
     setNotification({ ...notification, open: false });
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file && file.size > 2 * 1024 * 1024) {
+      setGroupPicError('Group pic must be under 2MB size.');
+      return;
+    }
+    setGroupPic(file);
   };
 
   return (
@@ -161,7 +175,7 @@ const CreateGroup = ({ open, onClose, onGroupCreated }) => {
               <input
                 type="file"
                 accept="image/*"
-                onChange={(e) => setGroupPic(e.target.files[0])}
+                onChange={handleFileChange}
                 style={{ marginTop: 10 }}
               />
               {groupPic ? (
@@ -177,6 +191,7 @@ const CreateGroup = ({ open, onClose, onGroupCreated }) => {
               ) : (
                 <Typography variant="body2" textAlign="center">
                   Please select an image to upload.
+                  {groupPicError && <Alert severity="error">{groupPicError}</Alert>}
                 </Typography>
               )}
 
