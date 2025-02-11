@@ -78,10 +78,10 @@ const Header = ({ username }) => {
     navigate('/');
   };
   
-  const handleSwitchProfile = () => {
-    setOpenDialog(true);
-    setAnchorEl(null);
-  };
+  // const handleSwitchProfile = () => {
+  //   setOpenDialog(true);
+  //   setAnchorEl(null);
+  // };
 
   const handleSelectUser = (user) => {
     if (user === 'Login with another account') {
@@ -231,7 +231,7 @@ const Header = ({ username }) => {
               >
                 <MenuItem onClick={() => openUserProfile()}>My Profile</MenuItem>
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
-                <MenuItem onClick={handleSwitchProfile}>Switch Profile</MenuItem>
+                {/* <MenuItem onClick={handleSwitchProfile}>Switch Profile</MenuItem> */}
               </Menu>
               <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
                 <List style={{ cursor: 'pointer' }}>

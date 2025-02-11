@@ -63,7 +63,7 @@ const Login = () => {
           tokens[tokenUsername] = newToken ;
           localStorage.setItem('authTokens', JSON.stringify(tokens));
           localStorage.setItem('authToken', newToken );
-          console.log('authToken refreshed..! :', newToken);
+          // console.log('authToken refreshed..! :', newToken);
         } catch (error) {
           console.error('Failed to extend session:', error);
           localStorage.removeItem('authToken');
