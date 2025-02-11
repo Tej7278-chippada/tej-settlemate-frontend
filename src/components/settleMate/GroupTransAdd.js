@@ -1,6 +1,6 @@
 // /components/SettleMate/GroupTransAdd.js
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, IconButton, Box, Typography, Card, List, ListItem, ListItemText, ListItemSecondaryAction, Checkbox, Snackbar, Alert, Avatar, FormControl, InputLabel, Select, MenuItem, CircularProgress } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, IconButton, Box, Typography, Card, List, ListItem, ListItemText, ListItemSecondaryAction, Checkbox, Snackbar, Alert, Avatar, FormControl, InputLabel, Select, MenuItem, CircularProgress, InputAdornment } from '@mui/material';
 import apiClient from '../../utils/axiosConfig';
 import CloseIcon from '@mui/icons-material/Close';
 
@@ -352,11 +352,19 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, isMobile, tra
             </Typography>
             <TextField
               label="Amount"
-              type="number"
+              type="number" // Use "text" instead of "number" for better input control
               fullWidth
-              margin="normal" required placeholder='Ex: 500'
+              margin="normal" required placeholder='Ex: 500.50'
               value={amount}
-              onChange={(e) => setAmount(e.target.value)}
+              // onChange={(e) => setAmount(e.target.value)}
+              onChange={(e) => { let value = e.target.value;
+                if (/^\d*\.?\d{0,2}$/.test(value)) { // Allow only numbers with up to two decimal places
+                  const num = Number(value);
+                  if (num >= 0 && num <= 10000000) {
+                    setAmount(value);
+                  }
+                }}
+              }
             />
             <TextField
               label="Transaction Description"
@@ -414,10 +422,19 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, isMobile, tra
                             <Box key={member.user._id} width={isMobile ? "100px" : "150px"}>
                               <TextField
                                 label={`Amount for ${member.user.username}`}
-                                type="number" size="small"
+                                type="number" // Use "text" instead of "number" for better input control
+                                size="small"
                                 margin="normal"
                                 value={paidAmounts[member.user._id] || ''}
-                                onChange={(e) => handlePaidAmountChange(member.user._id, e.target.value)}
+                                // onChange={(e) => handlePaidAmountChange(member.user._id, e.target.value)}
+                                onChange={(e) => { let value = e.target.value; 
+                                  if (/^\d*\.?\d{0,2}$/.test(value)) { // Allow only numbers with up to two decimal places
+                                    const num = Number(value);
+                                    if (num >= 0 && num <= 10000000) {
+                                      handlePaidAmountChange(member.user._id, value);
+                                    }
+                                  }
+                                }}
                               />
                             </Box>
                           )}
@@ -428,7 +445,18 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, isMobile, tra
                                 type="number" size="small"
                                 margin="normal"
                                 value={paidAmounts[member.user._id] || ''}
-                                onChange={(e) => handlePaidAmountChange(member.user._id, e.target.value)}
+                                // onChange={(e) => handlePaidAmountChange(member.user._id, e.target.value)}
+                                onChange={(e) => { let value = e.target.value;
+                                  if (/^\d*\.?\d{0,2}$/.test(value)) { // Allow only numbers and up to two decimal places
+                                    const num = Number(value);
+                                    if (num >= 0 && num <= 100) {
+                                      handlePaidAmountChange(member.user._id, value);
+                                    }
+                                  }
+                                }}
+                                InputProps={{
+                                  endAdornment: <InputAdornment position="end">%</InputAdornment>, // Add percentage symbol
+                                }}
                               />
                             </Box>
                           )}
@@ -539,7 +567,15 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, isMobile, tra
                                   type="number" size="small"
                                   margin="normal"
                                   value={splitAmounts[member.user._id] || ''}
-                                  onChange={(e) => handleSplitAmountChange(member.user._id, e.target.value)}
+                                  // onChange={(e) => handleSplitAmountChange(member.user._id, e.target.value)}
+                                  onChange={(e) => { let value = e.target.value; 
+                                    if (/^\d*\.?\d{0,2}$/.test(value)) { // Allow only numbers with up to two decimal places
+                                      const num = Number(value);
+                                      if (num >= 0 && num <= 10000000) {
+                                        handleSplitAmountChange(member.user._id, value);
+                                      }
+                                    }
+                                  }}
                                 />
                               </Box>
                             )}
@@ -550,7 +586,18 @@ const GroupTransAdd = ({ open, onClose, group, onTransactionAdded, isMobile, tra
                                   type="number" size="small"
                                   margin="normal"
                                   value={splitAmounts[member.user._id] || ''}
-                                  onChange={(e) => handleSplitAmountChange(member.user._id, e.target.value)}
+                                  // onChange={(e) => handleSplitAmountChange(member.user._id, e.target.value)}
+                                  onChange={(e) => { let value = e.target.value; 
+                                    if (/^\d*\.?\d{0,2}$/.test(value)) { // Allow only numbers and up to two decimal places
+                                      const num = Number(value);
+                                      if (num >= 0 && num <= 100) {
+                                        handleSplitAmountChange(member.user._id, value);
+                                      }
+                                    }
+                                  }}
+                                  InputProps={{
+                                    endAdornment: <InputAdornment position="end">%</InputAdornment>, // Add percentage symbol
+                                  }}
                                 />
                               </Box>
                             )}

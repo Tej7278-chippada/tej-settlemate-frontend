@@ -70,7 +70,7 @@ const Login = () => {
           localStorage.removeItem('authTokens');
           localStorage.removeItem('tokenUsername');
           localStorage.removeItem('userId');
-          navigate('/login', { replace: true });
+          navigate('/', { replace: true });
           console.log('Refresh token failed. Token expired or invalid.');
         }
       }
