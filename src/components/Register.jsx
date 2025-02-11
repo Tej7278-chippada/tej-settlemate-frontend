@@ -115,6 +115,13 @@ const Register = () => {
     }
 
     // Phone validation
+    if (!phone) {
+      setError('Phone number is required.');
+      setLoading(false);
+      return;
+    }
+
+    // Phone validation
     if (phone.length < 10 || !/^\d+$/.test(phone)) {
       setError('Invalid mobile number.');
       setLoading(false);
