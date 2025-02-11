@@ -94,9 +94,10 @@ const Login = () => {
     setSuccess('');
     setLoading(true);
                                         // `${process.env.REACT_APP_API_URL}/transfer`
-    try {                              // 'http://localhost:5002/api/auth/login' 'https://tej-chat-app-8cd7e70052a5.herokuapp.com/api/auth/login'
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/login`, { identifier, password });
-      setSuccess(`You are logged in with ${identifier.includes('@') ? 'email' : 'username'}: ${identifier}`);
+    try {     
+      const isEmail = validateEmail(identifier);                         // 'http://localhost:5002/api/auth/login' 'https://tej-chat-app-8cd7e70052a5.herokuapp.com/api/auth/login'
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/login`, { identifier, password, isEmail  });
+      setSuccess(`You are logged in with ${isEmail ? 'email' : 'username'}: ${identifier}`);
       setIdentifier('');
       setPassword('');
 
@@ -135,9 +136,9 @@ const Login = () => {
       // }
     } catch (error) {
       if (error.response && error.response.status === 404) {
-        setError(`${identifier.includes('@') ? 'Email' : 'Username'} ${identifier} doesn't match any existing account.`);
+        setError(`${validateEmail(identifier) ? 'Email' : 'Username'} ${identifier} doesn't match any existing account.`);
       } else if (error.response && error.response.status === 401) {
-        setError(`Password doesn't match for ${identifier.includes('@') ? 'Email' : 'Username'} : ${identifier}`);
+        setError(`Password doesn't match for ${validateEmail(identifier) ? 'Email' : 'Username'} : ${identifier}`);
       } else {
         setError('An error occurred while logging in.');
       }
@@ -169,6 +170,12 @@ const Login = () => {
   // Toggle password visibility
   const handleTogglePasswordVisibility = () => {
     setShowPassword(!showPassword);
+  };
+  
+  // Function to check if the identifier is a valid email
+  const validateEmail = (email) => {
+    const re = /^[a-zA-Z\d][\w.+-]*@[a-zA-Z\d-]+(\.[a-zA-Z\d-]+)*(\.[a-zA-Z]{2,})$/;
+    return re.test(email);
   };
 
   return (
