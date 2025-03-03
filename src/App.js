@@ -11,6 +11,7 @@ import SettleMate from './components/settleMate/SettleMate';
 import UserProfile from './components/UserProfile';
 import GroupDetails from './components/settleMate/GroupDetails';
 import GroupTrans from './components/settleMate/GroupTrans';
+import NotFound from './components/NotFound'; // Import 404 Page
 
 const theme = createTheme({
   breakpoints: {
@@ -52,6 +53,8 @@ function App() {
               <GroupTrans />
             </PrivateRoute>
           } />
+          {/* 404 Not Found Page */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
     </ThemeProvider>
